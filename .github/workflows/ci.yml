@@ -1,0 +1,91 @@
+name: Engineering checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      LOCAL_INTEGRATION: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.34.6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: foundry-rs/foundry-toolchain@dba66c27052e63476d886f22216e119ba7e615bf # v1
+        with:
+          version: v1.8.1
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Compile contracts and verify generated artifacts
+        run: |
+          pnpm contracts:build
+          git diff --exit-code -- packages/shared/src/generated
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - name: Solidity formatting
+        run: forge fmt --root contracts --check
+      - name: Foundry unit, adversarial, fuzz and invariant tests
+        run: pnpm test:contracts
+      - name: Start local chain and deploy isolated vault
+        run: |
+          anvil --silent > /tmp/prigenfi-anvil.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if cast chain-id --rpc-url http://127.0.0.1:8545 >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          pnpm local:deploy
+      - name: TypeScript, API, SDK and external MCP client integration
+        run: pnpm test
+      - name: Production frontend build
+        run: pnpm build
+      - name: Browser installation
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Desktop, mobile and wallet browser integration
+        run: pnpm test:browser
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.34.6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install pinned static analyzer and compiler
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install slither-analyzer==0.11.6 crytic-compile==0.4.2
+          .venv/bin/solc-select install 0.8.30
+      - name: All Slither detectors with explicit timestamp triage
+        run: python3 scripts/security-scan.py
+      - name: Verified secret scanner
+        run: |
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o /tmp/gitleaks.tar.gz
+          echo '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  /tmp/gitleaks.tar.gz' | sha256sum --check
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          /tmp/gitleaks git . --redact --no-banner

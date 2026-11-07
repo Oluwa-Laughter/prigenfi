@@ -1,0 +1,20 @@
+{
+  "name": "@prigenfi/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/stdio.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "@modelcontextprotocol/core": "2.4.0",
+    "zod": "4.6.7",
+    "@prigenfi/shared": "workspace:*",
+    "@prigenfi/sdk": "workspace:*"
+  }
+}

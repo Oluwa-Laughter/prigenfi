@@ -1,0 +1,16 @@
+.agents
+.claude
+.research
+.local
+node_modules
+pnpm-lock.yaml
+.next
+out
+cache
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+packages/shared/src/generated
+
+.venv

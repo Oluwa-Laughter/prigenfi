@@ -1,0 +1,3 @@
+title = "PrigenFi secret scanning"
+[extend]
+useDefault = true

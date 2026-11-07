@@ -1,0 +1,42 @@
+{
+  "name": "prigenfi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=22.14.0 <27"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @prigenfi/web dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck && tsc -p tsconfig.tools.json --noEmit",
+    "lint": "biome check apps packages services tests scripts --diagnostic-level=error",
+    "lint:fix": "biome check --write apps packages services tests scripts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:contracts": "forge test --root contracts -vv",
+    "contracts:build": "forge build --root contracts && tsx scripts/generate-contracts.ts",
+    "test:browser": "playwright test",
+    "mcp": "pnpm --filter @prigenfi/mcp-server start",
+    "api": "pnpm --filter @prigenfi/api start",
+    "local:deploy": "tsx scripts/local-deploy.ts",
+    "verify:zama": "tsx scripts/verify-zama.ts"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "tsx": "4.23.15",
+    "vitest": "5.1.0",
+    "@types/node": "26.6.6",
+    "@biomejs/biome": "2.6.6",
+    "prettier": "3.9.10",
+    "@playwright/test": "1.65.0",
+    "turbo": "2.11.10",
+    "@openzeppelin/contracts": "5.6.1",
+    "viem": "2.57.16",
+    "zod": "4.6.7",
+    "@modelcontextprotocol/client": "2.4.0",
+    "@zama-fhe/sdk": "3.7.1"
+  }
+}

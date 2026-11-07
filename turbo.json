@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "NEXT_PUBLIC_SEPOLIA_RPC_URL",
+        "NEXT_PUBLIC_VAULT_FACTORY",
+        "NEXT_PUBLIC_LOCAL_RPC_URL"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+---
+name: zama-solidity
+description: Write, review, or debug confidential Solidity on Zama FHEVM — encrypted types and operations, ACL, public decryption, ERC-7984 confidential tokens, @fhevm/solidity, @openzeppelin/confidential-contracts, and Hardhat or Foundry setup. Also covers HCU cost and design of auctions, escrow, swaps and batchers. Load zama-protocol first; use zama-typescript for client code.
+license: BSD-3-Clause-Clear
+---
+
+# Zama Solidity
+
+Load **zama-protocol** first. Open a reference only when the task needs it:
+
+| Task | Read |
+|------|------|
+| Tokens, payments, escrow, wrappers | `references/erc7984.md` |
+| Public reveals, operation limits, tests vs production | `references/fhe-advanced.md` |
+| Design and cost, learning from deployed apps | `references/code-map.md` |
+| Project setup | `references/setups/hardhat.md` or `references/setups/foundry.md` |
+
+Complete, maintained contracts with tests are in the [Zama code examples](https://docs.zama.org/protocol/examples). Start from the closest one, such as the [sealed-bid auction](https://docs.zama.org/protocol/examples/auctions/sealed-bid-auction.md) or the [ERC-7984 to ERC-20 swap](https://docs.zama.org/protocol/examples/openzeppelin-confidential-contracts/erc7984/swaperc7984toerc20.md), and check it against the rules below: examples can lag the current API.
+
+## What good FHEVM code looks like
+
+Ordinary Solidity safety still applies: checks-effects-interactions, `nonReentrant` around token calls, and access control.
+
+### Import an input where it was encrypted, then pass the handle
+
+`FHE.fromExternal(input, proof)` works only in the contract the client encrypted for. To pay with it, call `FHE.allowTransient(amount, address(token))`, then `token.confidentialTransferFrom(msg.sender, address(this), amount)`. Passing the input and proof on to the token fails. Grant the same temporary access before handing a stored handle to another contract.
+
+Credit the amount the transfer returns, never the amount requested: an ERC-7984 transfer the sender cannot pay moves an encrypted zero instead of reverting.
+
+### Choose with `FHE.select`
+
+`if`, `require` and `revert` cannot read an encrypted condition. Compute both values and pick one with `FHE.select(condition, a, b)`. Nothing reverts on the encrypted outcome.
+
+### Grant access to every new handle you keep
+
+Each operation returns a new handle that nobody can use after the transaction. Call `FHE.allowThis` on handles you store and `FHE.allow(handle, user)` for users who should read them. When a function accepts an existing handle as an argument, check `FHE.isSenderAllowed(handle)`.
+
+### Reveal with a proof, once
+
+Mark the handle with `FHE.makePubliclyDecryptable` and store it. Accept the clear value only through `FHE.checkSignatures` against that stored handle, never one the caller passes, and advance a stage so settlement runs once. Reveal only what settlement needs: an auction can reveal the winner and pay the seller the encrypted price. `references/fhe-advanced.md` has the full flow.
+
+### Configure every contract that calls `FHE`
+
+Inherit the config for your chain from `@fhevm/solidity/config/ZamaConfig.sol`, for example `contract Auction is ZamaEthereumConfig`. Proxies and clones skip constructors, so call `FHE.setCoprocessor(ZamaConfig.getEthereumCoprocessorConfig())` in their protected initializer.
+
+### Respect what encrypted operations can do
+
+`FHE.div` and `FHE.rem` need a plaintext divisor. A bounded random value needs a power-of-two bound. Arithmetic wraps on overflow, so bound values where it matters. Use the smallest type that fits and plaintext operands for public values. Check the installed `FHE.sol` or the [function reference](https://docs.zama.org/protocol/solidity-guides/smart-contract/functions.md) for supported overloads.

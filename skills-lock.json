@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "skills": {
+    "differential-review": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/differential-review/skills/differential-review/SKILL.md",
+      "computedHash": "3c330b7d8e2a7a6bba9ff9c7f9971d3b6c17fef84b9382efdd325abdd481371c"
+    },
+    "entry-point-analyzer": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md",
+      "computedHash": "781443b6d6b52b7cf96c9d6771dfbb0fd874620839ff5d101e78f0710036ed74"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
+    },
+    "property-based-testing": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/property-based-testing/skills/property-based-testing/SKILL.md",
+      "computedHash": "c754807c7113dfb2e8c2de64e19a6612f87282b621da8b1e50e2a7137d8bbe8c"
+    },
+    "secure-workflow-guide": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/building-secure-contracts/skills/secure-workflow-guide/SKILL.md",
+      "computedHash": "d3dcf9545cab5a3836196c6245ef4a47d433e9e4f629a04a78f5e1a7ede70b3e"
+    },
+    "shadcn": {
+      "source": "shadcn-ui/ui",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "b864a958765563321f485a96f4d59c0bb6539f4286ab6d8b8b66895b7ebd302d"
+    },
+    "spec-to-code-compliance": {
+      "source": "trailofbits/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/spec-to-code-compliance/skills/spec-to-code-compliance/SKILL.md",
+      "computedHash": "f441bf3d31364d37f27751305904efc83dae0e7f87b70cd619698b687f8899ea"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "f98931159fa9c7fed043bcd18a891a46dcf89ababa38df13a4c5b7b30dc0ce07"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "3219a1944e404ffc14d1d9d6aef6dd2e3855b81387ee0a044ccbfe14d34c2357"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    },
+    "zama-protocol": {
+      "source": "zama-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zama-protocol/SKILL.md",
+      "computedHash": "8fb5535b72c9c9fdd003bdc92d0b955f8e028c5dc90cd849c263be1dd3a1ddcb"
+    },
+    "zama-solidity": {
+      "source": "zama-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zama-solidity/SKILL.md",
+      "computedHash": "127e457b9f1c4ff4e659df0f6528fad0f4029e4a81fca528d07a9e463aa93032"
+    },
+    "zama-typescript": {
+      "source": "zama-ai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zama-typescript/SKILL.md",
+      "computedHash": "0e7c0db493ebc0fd445438a13e367a3b94c633411dbfd2c9cc867b27d4cd0ce1"
+    }
+  }
+}

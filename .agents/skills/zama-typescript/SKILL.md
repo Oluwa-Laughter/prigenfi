@@ -1,0 +1,48 @@
+---
+name: zama-typescript
+description: Build, review, or debug TypeScript or JavaScript clients for Zama FHEVM with @zama-fhe/sdk and @zama-fhe/react-sdk — encrypting inputs, decrypting results, permits, ERC-7984 tokens (shield, unshield, transfer), operators, wagmi/viem/ethers, browser apps and Node services. Load zama-protocol first; use zama-solidity for contracts.
+license: BSD-3-Clause-Clear
+---
+
+# Zama TypeScript
+
+Load **zama-protocol** first. Open `references/patterns.md` for Node services, unshielding, delegated decryption and resource cleanup.
+
+## Use only the high-level SDK
+
+App code imports `@zama-fhe/sdk`, plus `@zama-fhe/react-sdk` for React.
+
+- Do not import `@fhevm/sdk`. It is the SDK's internal backend, and the SDK pins the matching version. Hardhat test tooling may still need it installed.
+- Do not use `@zama-fhe/relayer-sdk`. It is deprecated. Code that calls `createInstance()` comes from it. Migrate such code to `@zama-fhe/sdk`.
+
+## Work from the installed release, not from memory
+
+The SDK API changes between releases, so check every call before writing it.
+
+1. Read the installed version in `node_modules/@zama-fhe/sdk/package.json`.
+2. Open the SDK's generated index for that version: `https://raw.githubusercontent.com/zama-ai/sdk/v<version>/llms.txt`. It lists the official docs, API reference and examples. Its links point at `main`. Replace `main` with `v<version>` to stay on your release. Older releases have no index: upgrade the SDK, or use the [SDK docs](https://docs.zama.org/protocol/sdk).
+3. Check exact signatures in the installed type declarations under `node_modules/@zama-fhe/sdk/dist` and `node_modules/@zama-fhe/react-sdk/dist`.
+
+## Start from an official example
+
+The official examples live in [zama-ai/sdk `examples/`](https://github.com/zama-ai/sdk/tree/main/examples). Open the one for your stack at your version's tag and read its `WALKTHROUGH.md`, or its `README.md` when it has no walkthrough.
+
+| Building | Example |
+|----------|---------|
+| React app with wagmi | `react-wagmi` |
+| React app with viem or ethers | `react-viem`, `react-ethers` |
+| Embedded wallet | `react-turnkey-wallet` |
+| Node.js script or service | `node-viem`, `node-ethers` |
+| Your own contract: encrypt, write, decrypt | the "Encrypt & decrypt" guide in the index |
+
+The React examples show provider setup and the confidential token flows.
+
+## Rules that hold across releases
+
+- **Encrypt for the contract that imports the value.** Pass that contract's address and the user's address, and send the returned encrypted values and proof to it unchanged.
+- **Ask for decryption permission on a click.** Wait for a valid permit before running decrypt queries, so pages never open a wallet prompt on load.
+- **Make the contract an operator first.** A contract that pulls confidential tokens with `confidentialTransferFrom` must be the holder's operator on that token. The expiry is in Unix seconds.
+- **Expect results later.** A mined receipt does not mean results can be decrypted. Show pending and error states, and re-read handles after each transaction.
+- **Use `cleartext()` only on local test chains.** It does not encrypt.
+- **Keep units exact.** Use `bigint` base units and read `decimals()` and `rate()` from the actual wrapper.
+- **Reset private state when the account or chain changes.** Never show a value decrypted for another account, chain or contract.

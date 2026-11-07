@@ -1,0 +1,21 @@
+# Reveals, Operation Limits and Tests
+
+## Public reveals, end to end
+
+1. **Contract:** call `FHE.makePubliclyDecryptable` on the handles to reveal, store them, and move to a reveal stage.
+2. **Off-chain:** fetch the clear values and the decryption proof with `@zama-fhe/sdk` public decryption. In Hardhat tests, the plugin's `decryptPublic*WithSignatures` helpers return the same values and proof.
+3. **Contract:** call `FHE.checkSignatures(handles, abi.encode(values), proof)` with the stored handles, and values in the same order. Advance the stage so settlement runs once.
+
+If a later update changes a value that must still be public, mark the new handle again. The [public decryption guide](https://docs.zama.org/protocol/solidity-guides/smart-contract/oracle.md) explains the contract side, and the [heads-or-tails example](https://docs.zama.org/protocol/examples/basic/decryption/heads-or-tails.md) shows it in a complete contract. Its client code uses the deprecated `relayer-sdk`, so take client calls from `@zama-fhe/sdk` instead.
+
+## Operation limits
+
+- `eaddress` supports equality and selection, not arithmetic. `euint256` supports fewer arithmetic operations than smaller types.
+- Shifts: up to protocol v0.14, an amount at or above the bit width wraps modulo the width. From v0.15 it returns zero. Rotations always wrap. If an amount can reach the width, reduce it yourself so the code behaves the same on both.
+- Array helpers such as `FHE.sum` and `FHE.isIn` exist only in recent library versions. Check the installed `FHE.sol` and their HCU cost before replacing a loop.
+
+## Tests are not production
+
+Mock environments compute in cleartext. They check logic and access, not real ciphertext computation, latency or cost. Their decrypt helpers exist only in tests. Production contracts never get an immediate plaintext.
+
+Test the paths mocks make easy to skip: a transfer that moves zero, access to stored handles in a later transaction, and a reveal with a forged value or a replayed proof.

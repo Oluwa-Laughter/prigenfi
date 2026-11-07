@@ -1,0 +1,20 @@
+[
+  {
+    "target": "AgentVault",
+    "detectors": 102,
+    "findings": 2,
+    "triage": "documented-expiry-and-UTC-budget-timestamps-only"
+  },
+  {
+    "target": "VaultFactory",
+    "detectors": 102,
+    "findings": 2,
+    "triage": "documented-expiry-and-UTC-budget-timestamps-only"
+  },
+  {
+    "target": "MockUSD",
+    "detectors": 102,
+    "findings": 0,
+    "triage": "documented-expiry-and-UTC-budget-timestamps-only"
+  }
+]

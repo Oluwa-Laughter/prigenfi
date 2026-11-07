@@ -1,0 +1,90 @@
+[
+  {
+    "name": "zama-protocol",
+    "source": "zama-ai/skills",
+    "revision": "c3bc1c5c0a675f9f06afcc37aa7cd03b9134ed73",
+    "path": "skills/zama-protocol/SKILL.md",
+    "sha256": "d93d6eec6c820c1b5d893800aa7d2e3ea5b9ce854c0a5b3918f1d91b09103d77",
+    "matchesUpstream": true
+  },
+  {
+    "name": "zama-solidity",
+    "source": "zama-ai/skills",
+    "revision": "c3bc1c5c0a675f9f06afcc37aa7cd03b9134ed73",
+    "path": "skills/zama-solidity/SKILL.md",
+    "sha256": "4e1cd16971e1bb3a151e93bc7d9b2ac6658014b4d23b4b802f54ee072b6a52fc",
+    "matchesUpstream": true
+  },
+  {
+    "name": "zama-typescript",
+    "source": "zama-ai/skills",
+    "revision": "c3bc1c5c0a675f9f06afcc37aa7cd03b9134ed73",
+    "path": "skills/zama-typescript/SKILL.md",
+    "sha256": "d9abe64505688218753c77c4ff3b2308e2e2f916f308c9bbdad87831f11cce02",
+    "matchesUpstream": true
+  },
+  {
+    "name": "frontend-design",
+    "source": "anthropics/skills",
+    "revision": "2c5958ecac7cee2b583967a2c4981d0f4a75c579",
+    "path": "skills/frontend-design/SKILL.md",
+    "sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3",
+    "matchesUpstream": true
+  },
+  {
+    "name": "shadcn",
+    "source": "shadcn-ui/ui",
+    "revision": "42f3bb63b46a69e52a24bd005cdc9ec15ba7a7b9",
+    "path": "skills/shadcn/SKILL.md",
+    "sha256": "93951e5e83f616a3e046491c00d770bd54c0a64164706cd1191822a233d27592",
+    "matchesUpstream": true
+  },
+  {
+    "name": "vercel-react-best-practices",
+    "revision": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+    "sha256": "71ed7794962fa6e803ee83030517b5b93a9f70fbfeb431ec4535c5480a8d8355",
+    "matchesUpstream": true
+  },
+  {
+    "name": "vercel-composition-patterns",
+    "revision": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+    "sha256": "e38e0eaa609316b10423a9a138ed95e35099accd3f735585295c8a8f165c28a3",
+    "matchesUpstream": true
+  },
+  {
+    "name": "web-design-guidelines",
+    "revision": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+    "sha256": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f",
+    "matchesUpstream": true
+  },
+  {
+    "name": "secure-workflow-guide",
+    "revision": "e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff",
+    "sha256": "7c0e7fb45f97c073ec9599cbe0b2acf44f31bbece38636bc5c3fcc9bc7703015",
+    "matchesUpstream": true
+  },
+  {
+    "name": "property-based-testing",
+    "revision": "e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff",
+    "sha256": "9448cacb65c6237a7c22dc59602667177ecae405524079ae9ff92240590b995a",
+    "matchesUpstream": true
+  },
+  {
+    "name": "entry-point-analyzer",
+    "revision": "e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff",
+    "sha256": "167dca47592a8bd248916ca06977103cadc6b9492fe701ad6a6464b38fec0aec",
+    "matchesUpstream": true
+  },
+  {
+    "name": "spec-to-code-compliance",
+    "revision": "e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff",
+    "sha256": "eb0d91b50a9c06f50baf8763d1e23566897b9fa3e7ffcf13134eee4e1ccaefe5",
+    "matchesUpstream": true
+  },
+  {
+    "name": "differential-review",
+    "revision": "e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff",
+    "sha256": "f9af6a8193fc1a9f8ca3c54bb8d19095a5f20c9472ca6d014488bbde50b67da0",
+    "matchesUpstream": true
+  }
+]

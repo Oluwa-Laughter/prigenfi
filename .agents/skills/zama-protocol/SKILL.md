@@ -1,0 +1,47 @@
+---
+name: zama-protocol
+description: Explain or plan Zama FHEVM applications — encrypted state, handles, access control (ACL), decryption, costs, package choice and deployed addresses. Load first for any Zama Solidity or TypeScript work, then load zama-solidity for contracts or zama-typescript for client code.
+license: BSD-3-Clause-Clear
+---
+
+# Zama Protocol
+
+FHEVM lets smart contracts compute on encrypted values. Load this skill first, then **zama-solidity** for contracts or **zama-typescript** for client code. Open a reference only when the task needs it:
+
+- `references/concepts.md`: deciding what to encrypt, what still leaks, cost and latency.
+- `references/addresses.md`: finding deployed protocol and app contracts.
+
+## Use the maintained packages
+
+- Contracts: `@fhevm/solidity` for the `FHE` library and `@openzeppelin/confidential-contracts` for ERC-7984 confidential tokens.
+- Client code: `@zama-fhe/sdk`, plus `@zama-fhe/react-sdk` for React. Do not import `@fhevm/sdk` (the SDK's internal backend) or `@zama-fhe/relayer-sdk` (deprecated).
+
+## How FHEVM works
+
+### Encrypted values are handles, computed later
+
+Contracts store 32-byte handles that point to ciphertexts. Coprocessors compute the ciphertexts off-chain after the transaction. A mined receipt does not mean a result can be decrypted yet, and handle bytes say nothing about the value: two different handles can hold the same number.
+
+### An encrypted input belongs to one contract and one user
+
+The client encrypts a value for a specific contract and sender. That contract imports it with `FHE.fromExternal`. Other contracts receive the resulting handle, never the original proof.
+
+### Access is granted explicitly
+
+Every handle has an access list. A contract grants itself access to keep using a stored value, grants a user access to values that user may decrypt, and grants another contract temporary access before passing it a handle. A user can decrypt only when both the user and the contract are on the list. A signed permit adds no one.
+
+### Encrypted conditions cannot steer control flow
+
+`if`, `require` and `revert` cannot see encrypted values. Compute both outcomes and choose with `FHE.select`. A revert or event that depends on a revealed secret leaks that secret.
+
+### Decryption is asynchronous and proven
+
+Users decrypt their own values off-chain through the SDK. To use a plaintext on-chain, the contract marks the handle publicly decryptable, someone fetches the value with a KMS proof off-chain, and the contract verifies that proof against the handle it stored.
+
+### Values are private, metadata is not
+
+Addresses, timing, which functions run, plaintext deposits and withdrawals, and event contents are public. A plaintext passed to `FHE.asEuint64` (and similar) is public too, so secrets must come from the client already encrypted. Aggregates over a few users can reveal each of them.
+
+## Check before you rely on a version
+
+Packages, protocol releases and deployments change. Read the installed package versions and the [protocol changelog](https://docs.zama.org/protocol/changelog) before using a version-specific behavior, and look up addresses instead of recalling them. To find any docs page, search the index at `https://docs.zama.org/protocol/llms.txt` and open its `.md` links.

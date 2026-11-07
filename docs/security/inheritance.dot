@@ -1,0 +1,9 @@
+digraph "" {
+c545_AgentVault -> c1191_ReentrancyGuard;
+c545_AgentVault[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>AgentVault</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    setPermission(address,address,address,uint128,uint128,uint64)</TD></TR><TR><TD align="left">    revoke(address,address)</TD></TR><TR><TD align="left">    setPaused(bool)</TD></TR><TR><TD align="left">    executeTransfer(address,address,uint128,uint256)</TD></TR><TR><TD align="left">    withdraw(address,address,uint256)</TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    onlyOwner()</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    owner</TD></TR><TR><TD align="left">    paused</TD></TR><TR><TD align="left">    permissions</TD></TR><TR><TD align="left">    nonces</TD></TR></TABLE> >];
+
+c34_VaultFactory[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>VaultFactory</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    createVault()</TD></TR></TABLE> >];
+
+c1191_ReentrancyGuard[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ReentrancyGuard</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _nonReentrantBeforeView()</TD></TR><TR><TD align="left">    _nonReentrantBefore()</TD></TR><TR><TD align="left">    _nonReentrantAfter()</TD></TR><TR><TD align="left">    _reentrancyGuardEntered()</TD></TR><TR><TD align="left">    _reentrancyGuardStorageSlot()</TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    nonReentrant()</TD></TR><TR><TD align="left">    nonReentrantView()</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    REENTRANCY_GUARD_STORAGE</TD></TR><TR><TD align="left">    NOT_ENTERED</TD></TR><TR><TD align="left">    ENTERED</TD></TR></TABLE> >];
+
+}

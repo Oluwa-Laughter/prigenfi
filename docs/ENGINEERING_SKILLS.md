@@ -1,0 +1,25 @@
+# Reviewed engineering skills
+
+Skills are project-local in `.agents/skills`, with `skills-lock.json`. Existing skills were preserved and verified byte-for-byte against upstream at the revisions below. Selected Vercel and Trail of Bits skills were installed with `pnpm dlx skills add ... --skill ... --agent codex -y` after source inspection. No unrelated collection was installed.
+
+| Source                                                                  | Revision inspected                       | Selected skills                                                                                                                                    | License and execution surface                                                                                                                      |
+| ----------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [zama-ai/skills](https://github.com/zama-ai/skills)                     | c3bc1c5c0a675f9f06afcc37aa7cd03b9134ed73 | zama-protocol, zama-solidity, zama-typescript                                                                                                      | BSD-3-Clause-Clear, prose/references, no installer scripts                                                                                         |
+| [shadcn-ui/ui](https://github.com/shadcn-ui/ui)                         | 42f3bb63b46a69e52a24bd005cdc9ec15ba7a7b9 | shadcn                                                                                                                                             | MIT source, skill permits package-runner shadcn CLI; bundled showcase script inspected, not executed                                               |
+| [anthropics/skills](https://github.com/anthropics/skills)               | 2c5958ecac7cee2b583967a2c4981d0f4a75c579 | frontend-design                                                                                                                                    | Supplied LICENSE.txt; design instructions, no scripts or package dependencies                                                                      |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62 | vercel-react-best-practices, vercel-composition-patterns, web-design-guidelines                                                                    | MIT declared for React/composition; web guidelines fetches maintainers' current prose. Selected directories contain no executable scripts          |
+| [trailofbits/skills](https://github.com/trailofbits/skills)             | e4dd0bb5b15535f7c5a0834187dffba6ac37e4ff | secure-workflow-guide (from building-secure-contracts), property-based-testing, entry-point-analyzer, spec-to-code-compliance, differential-review | CC-BY-SA-4.0 repository license; selected skills are prose/references. Suggested Slither/solc tools installed separately, no bundled code executed |
+
+All skills run under the engineer's tools; none receives credentials or external authority. Instructions cannot expand user authorization. The property-based testing skill's optional dependency approval is already covered by the founder's explicit Foundry fuzz/invariant requirement. No delegated agents were needed.
+
+`docs/evidence/skills-verification.json` records file hashes and upstream equality for the five skills already present. The Vercel/security source trees were cloned into ignored `.research` for review; installation content was compared to those trees before finalization. Skill lock hashes are install-tool metadata, not git commit IDs.
+
+## Application in this milestone
+
+- Zama skills: version-specific declarations, high-level orchestration, metadata verification, explicit permits, distinct ACL/operator boundaries, no legacy relayer imports.
+- shadcn: CLI-installed Button, Card, Input, Field, Badge, Alert, Empty and Tabs. Added source was inspected; the CLI emitted incorrect `cn` imports, which were corrected to the project's actual alias. Forms use Field/FieldGroup; wallet errors use Alert.
+- Frontend design: midnight/mint system, light theme, product-specific control diagram, no fake metrics, mobile layouts and screenshot critique. Design rationale is in DECISIONS.
+- Vercel React/composition: heavy FHE tools use dynamic imports, separate provider/query ownership, compound components, account-keyed state resets and no shared private request data in RSC module state.
+- Security: entry-point matrix, mandatory negative tests, whole-input fuzz properties, stateful capital invariant, adversarial token behavior, Slither detectors/printers and a scope-to-code compliance review.
+
+No skill authored here substitutes for these maintained development skills. No cryptographic primitive or wallet core was invented.
