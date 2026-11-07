@@ -91,3 +91,5 @@ See BUILD_STATUS, NEXT_STEPS and DECISIONS before continuing. All project knowle
 ## Concurrency follow-up
 
 Final review reproduced a session-capacity race: 101 simultaneous simulations could insert 101 proposals because capacity was checked only before awaiting RPC. A second check immediately before insertion restores the documented maximum; a concurrent regression verifies exactly 100 acceptances and one SESSION_CAPACITY rejection. This affects process-local resource bounds, not vault spending or transaction execution.
+
+Final code revision: [`24f25a6ba0d8aefbe07678c93650c67a17fec5f4`](https://github.com/Oluwa-Laughter/prigenfi/commit/24f25a6ba0d8aefbe07678c93650c67a17fec5f4). Both verify and security jobs passed in [run 42369083979](https://github.com/Oluwa-Laughter/prigenfi/actions/runs/42369083979). All 22 TypeScript/integration tests, 13 contract tests and three browser tests passed; no required check was skipped. The earlier handoff commit 420482dec32237dce924688f58c267a719d2ee8e also passed CI. The closing documentation/license checkpoint contains no application code changes.
