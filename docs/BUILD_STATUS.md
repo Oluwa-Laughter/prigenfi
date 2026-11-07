@@ -25,7 +25,7 @@ First engineering slice, initialized from an empty GitHub repository. This statu
 - Playwright: all three production-browser tests passed using installed Chromium with CI=true and LOCAL_INTEGRATION=1. Desktop 1440px and mobile 390px, actual Anvil owner authorization/pause/resume/revoke, wallet disconnect, overflow, keyboard skip focus, theme color regression and zero page errors. Seven screenshots are in docs/evidence. A stale locally running server caused an intermediate failure after rebuilding; restarting it resolved missing assets. The contrast assertion now waits for the intentional theme transition.
 - Real Sepolia read-only verification at block 12083183 confirmed wrapper/underlying code, addresses, six-decimal units and rate 1 for both cUSDCMock/cUSDTMock; see `evidence/zama-registry.json`.
 - Slither 0.11.6 direct native-solc analysis passed the explicit triage gate: AgentVault two low timestamp findings, factory import the same two, local MockUSD zero. All 102 detectors enabled; no incomplete parser warnings on authoritative direct-solc runs. Foundry-export analysis initially had reference warnings and is not used as clean evidence.
-- Final typecheck, lint, Prettier check, Solidity formatting and production build passed. Gitleaks 8.30.1 scanned staged repository files with no leaks. GitHub Actions is configured; its remote execution status will be recorded after push. No remote CI success is asserted in advance.
+- Final typecheck, lint, Prettier check, Solidity formatting and production build passed. Gitleaks 8.30.1 scanned staged repository files with no leaks. GitHub Actions run [42368330390](https://github.com/Oluwa-Laughter/prigenfi/actions/runs/42368330390) passed both verify and security jobs for implementation commit 0dbf583bd575405c9e95621ae117cd87ceb7bcaf. All configured checks passed; none was skipped or disabled. See evidence/ci-initial.json.
 
 ## Deployment and external verification
 
@@ -38,3 +38,7 @@ Zama confidential write/decrypt lifecycle is NOT verified. Exact blocker: no fou
 ERC-4337/7579 account/session integration; private API sessions and wallet association; PostgreSQL migrations/tenant persistence; remote MCP HTTP/OAuth; durable proposal/transaction state; reorg-safe indexer/finality; autonomous runtime/market data/strategies; genuine swap/trading venue; confidential agent spending/delegation; durable unshield recovery; Base/Arbitrum deployment/confidentiality.
 
 No fabricated market prices, portfolio balances, PnL, TVL, yields or trading history. Screenshots of a connected local test wallet show explicitly local fixture tokens and real local receipts, never decrypted confidential balances.
+
+## Git delivery
+
+Implementation commit `0dbf583bd575405c9e95621ae117cd87ceb7bcaf` was pushed directly to main. The first push was rejected for missing GitHub workflow scope; the founder approved the authorization refresh and the retry succeeded. No permission workaround or omitted workflow was used. The documentation checkpoint follows this implementation commit.

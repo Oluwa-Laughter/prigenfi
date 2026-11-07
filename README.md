@@ -56,6 +56,7 @@ pnpm verify:zama
 
 ## Documentation
 
+- [Engineering handoff report](docs/ENGINEERING_REPORT.md)
 - [Current build status](docs/BUILD_STATUS.md) and [next steps](docs/NEXT_STEPS.md)
 - [Product](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [decisions](docs/DECISIONS.md)
 - [Development](docs/DEVELOPMENT.md) and [testnet deployment](docs/TESTNET_DEPLOYMENT.md)

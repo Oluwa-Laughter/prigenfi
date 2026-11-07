@@ -1,0 +1,10 @@
+{
+  "conclusion": "success",
+  "headSha": "0dbf583bd575405c9e95621ae117cd87ceb7bcaf",
+  "jobs": [
+    { "conclusion": "success", "name": "security", "status": "completed" },
+    { "conclusion": "success", "name": "verify", "status": "completed" }
+  ],
+  "status": "completed",
+  "url": "https://github.com/Oluwa-Laughter/prigenfi/actions/runs/42368330390"
+}
