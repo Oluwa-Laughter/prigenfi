@@ -209,6 +209,8 @@ export class ProposalSession {
         throw new Error("IDEMPOTENCY_CONFLICT");
       return concurrent;
     }
+    // Concurrent simulations may have filled the session while this request awaited RPC.
+    if (this.proposals.size >= 100) throw new Error("SESSION_CAPACITY");
     const proposal = {
       id,
       intent,

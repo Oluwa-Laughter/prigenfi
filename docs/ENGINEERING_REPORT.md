@@ -54,7 +54,7 @@ trade_quote explicitly returns NO_VERIFIED_TRADING_VENUE. Proposals are ephemera
 | Biome lint                                                    | Passed                                                                                      |
 | Prettier and forge formatting                                 | Passed                                                                                      |
 | Production frontend build                                     | Passed, three application routes                                                            |
-| TypeScript/API/SDK/Zama/MCP tests with LOCAL_INTEGRATION=1    | 21 passed, zero skipped                                                                     |
+| TypeScript/API/SDK/Zama/MCP tests with LOCAL_INTEGRATION=1    | 22 passed, zero skipped                                                                     |
 | Foundry                                                       | 13 passed, zero skipped                                                                     |
 | Fuzz properties                                               | 512 runs each, operation cap and nonce skipping                                             |
 | Stateful capital invariant                                    | 128 runs, 8192 calls                                                                        |
@@ -87,3 +87,7 @@ GitHub authorization and the atomic code/CI push are complete. No GitHub credent
 3. Integrate a vetted ERC-4337/7579 account/session module over independent vault policy, then durable transaction/reorg reconciliation and a verified supported testnet execution adapter.
 
 See BUILD_STATUS, NEXT_STEPS and DECISIONS before continuing. All project knowledge for a subsequent engineer is stored in this repository; no earlier session or sibling project is required.
+
+## Concurrency follow-up
+
+Final review reproduced a session-capacity race: 101 simultaneous simulations could insert 101 proposals because capacity was checked only before awaiting RPC. A second check immediately before insertion restores the documented maximum; a concurrent regression verifies exactly 100 acceptances and one SESSION_CAPACITY rejection. This affects process-local resource bounds, not vault spending or transaction execution.

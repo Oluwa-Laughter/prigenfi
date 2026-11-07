@@ -111,4 +111,20 @@ describe("policy boundary", () => {
     );
     expect(session.get("id")).toBe(null);
   });
+  it("keeps the session bounded under concurrent proposals", async () => {
+    const session = new ProposalSession({
+      simulate: async () => ({ allowed: true, reasons: [] }),
+    });
+    const results = await Promise.allSettled(
+      Array.from({ length: 101 }, (_, i) => session.propose(intent, String(i))),
+    );
+    expect(
+      results.filter((result) => result.status === "fulfilled"),
+    ).toHaveLength(100);
+    const denied = results.filter((result) => result.status === "rejected");
+    expect(denied).toHaveLength(1);
+    expect(denied[0].status === "rejected" && denied[0].reason.message).toBe(
+      "SESSION_CAPACITY",
+    );
+  });
 });

@@ -21,7 +21,7 @@ First engineering slice, initialized from an empty GitHub repository. This statu
 - `pnpm lint` passed after fixing unsupported ARIA use and enabling Tailwind parser syntax.
 - `pnpm build` passed production routes `/`, `/dashboard`, `/docs`.
 - Foundry: 13 passing tests, including two fuzz properties with 512 runs each, adversarial callback/false-return/fee-on-top tests and a stateful invariant with 128 runs / 8192 calls. No skipped contract tests.
-- TypeScript/API/MCP/SDK/Zama guards: 21 tests passed with LOCAL_INTEGRATION=1; no skipped tests. This includes runtime-identity rejection, RPC-chain mismatch, consent denial and actual MCP simulation/proposal checks.
+- TypeScript/API/MCP/SDK/Zama guards: 22 tests passed with LOCAL_INTEGRATION=1; no skipped tests. This includes runtime-identity rejection, RPC-chain mismatch, consent denial and actual MCP simulation/proposal checks.
 - Playwright: all three production-browser tests passed using installed Chromium with CI=true and LOCAL_INTEGRATION=1. Desktop 1440px and mobile 390px, actual Anvil owner authorization/pause/resume/revoke, wallet disconnect, overflow, keyboard skip focus, theme color regression and zero page errors. Seven screenshots are in docs/evidence. A stale locally running server caused an intermediate failure after rebuilding; restarting it resolved missing assets. The contrast assertion now waits for the intentional theme transition.
 - Real Sepolia read-only verification at block 12083183 confirmed wrapper/underlying code, addresses, six-decimal units and rate 1 for both cUSDCMock/cUSDTMock; see `evidence/zama-registry.json`.
 - Slither 0.11.6 direct native-solc analysis passed the explicit triage gate: AgentVault two low timestamp findings, factory import the same two, local MockUSD zero. All 102 detectors enabled; no incomplete parser warnings on authoritative direct-solc runs. Foundry-export analysis initially had reference warnings and is not used as clean evidence.
@@ -42,3 +42,7 @@ No fabricated market prices, portfolio balances, PnL, TVL, yields or trading his
 ## Git delivery
 
 Implementation commit `0dbf583bd575405c9e95621ae117cd87ceb7bcaf` was pushed directly to main. The first push was rejected for missing GitHub workflow scope; the founder approved the authorization refresh and the retry succeeded. No permission workaround or omitted workflow was used. The documentation checkpoint follows this implementation commit.
+
+## Final concurrency hardening
+
+A final review found that simultaneous proposal simulations could all pass the pre-await capacity check. The regression reproduced 101 accepted records against the documented maximum of 100. A second capacity check now runs immediately before insertion. The concurrency regression passes; it changes no on-chain authority or execution behavior. This follow-up requires its own CI result; the initial green run remains evidence for the initial implementation only.

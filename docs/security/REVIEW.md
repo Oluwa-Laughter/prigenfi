@@ -30,7 +30,7 @@ Slither 0.11.6 / crytic-compile 0.4.2 with native solc 0.8.30. The direct solc p
 - SDK event reads were narrowed to the configured agent.
 - Exact amount parsing rejects excess fractional precision rather than silently rounding.
 - Direct transfer actual debit is checked to reject fee-on-top behavior.
-- Concurrent proposal insertion performs a second idempotency check after the awaited simulation.
+- Concurrent proposal insertion performs second idempotency and capacity checks after the awaited simulation. A 101-request regression reproduces the former overflow and verifies exactly 100 acceptances after the fix.
 - The light-theme button link contrast was corrected after visual review.
 
 ## Specification compliance
