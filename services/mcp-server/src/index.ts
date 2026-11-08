@@ -11,6 +11,10 @@ import {
   confidentialCapabilities,
   confidentialMandateSchema,
 } from "@prigenfi/shared/confidential-policy";
+import {
+  agentPlanSubmissionSchema,
+  evaluateAgentResearchPlan,
+} from "@prigenfi/shared/agent-planning";
 
 export function createMcpServer(client?: PrigenFiClient) {
   const server = new McpServer(
@@ -107,6 +111,20 @@ export function createMcpServer(client?: PrigenFiClient) {
       },
     },
     (input) => safe(() => assessConfidentialTrade(input)),
+  );
+  server.registerTool(
+    "agent_plan_evaluate",
+    {
+      description:
+        "Validate a structured AI research proposal against an owner draft and a strict confidential-only, Sepolia-bound policy. No execution, signing, wallet access, amounts or calldata; results never echo private instructions.",
+      inputSchema: agentPlanSubmissionSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: false,
+      },
+    },
+    (input) => safe(() => evaluateAgentResearchPlan(input)),
   );
   read(
     "agent_get_permissions",

@@ -28,7 +28,16 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
-      - uses: foundry-rs/foundry-toolchain@dba66c27052e63476d886f22216e119ba7e615bf # v1
+      # Retry the same attested pinned installer after transient upstream 504s.
+      - name: Install attested Foundry
+        id: foundry_initial
+        uses: foundry-rs/foundry-toolchain@dba66c27052e63476d886f22216e119ba7e615bf # v1
+        continue-on-error: true
+        with:
+          version: v1.8.1
+      - name: Retry attested Foundry installation
+        if: steps.foundry_initial.outcome == 'failure'
+        uses: foundry-rs/foundry-toolchain@dba66c27052e63476d886f22216e119ba7e615bf # v1
         with:
           version: v1.8.1
       - name: Install locked dependencies
@@ -76,6 +85,14 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Validate TypeScript and agent MCP even when Foundry downloads fail.
+      - name: Typed client and agent MCP checks
+        run: |
+          pnpm typecheck
+          pnpm lint
+          pnpm format:check
+          pnpm test
+          pnpm build
       - name: Install pinned static analyzer and compiler
         run: |
           python3 -m venv .venv

@@ -75,3 +75,8 @@ A final review found that simultaneous proposal simulations could all pass the p
 - Added `/privacy` workspace route, real policy status, test asset coverage, confidentiality disclosures and the remaining execution blockers. Refined top-level marketing to present all-round market scope rather than meme-first positioning.
 - All seven testnet wrappers and underlying contracts passed **read-only Sepolia verification** of code, decimals and conversion `rate` at block **12089561**, with details in `docs/evidence/zama-registry.json`. This is not evidence of an FHE swap, confidential wallet write, real trading venue or deployed PrigenFi agent engine.
 - Local results: 30 Vitest tests with Anvil integration enabled, 13 Foundry tests, and 8 Playwright tests including actual local wallet authorization/pause/revoke and viewport no-overflow checks at 320, 360, 390, 430, 768, 1024 and 1440px. Five new responsive tests check all workspace routes. Browser market data is a labeled fixture; production data is a public API feed. Production build, lint and TypeScript checks passed. After pushing, verify fresh GitHub CI separately.
+
+## Typed agent plan boundary — November 8, 2026
+
+- Introduced a strict multi-step research-plan schema and local read-only MCP evaluator checking market scope, supported confidential wrappers, expiry, capital allocation, slippage and private-only rules. No execution, amount disclosure, ciphertext permissions or signing are enabled. No user instructions or token addresses are echoed by the evaluator.
+- Added negative and positive tests, including an external MCP tool exercise. Post-commit GitHub CI evidence must be checked before claiming tests passed.

@@ -9,6 +9,7 @@ const names = [
   "confidential_assets_list",
   "confidential_capabilities_get",
   "confidential_route_check",
+  "agent_plan_evaluate",
   "trade_quote",
   "trade_simulate",
   "trade_propose",
@@ -61,6 +62,44 @@ it("external stdio client discovers tools and reads permitted metadata", async (
       JSON.parse((route.content as { text: string }[])[0].text)
         .executionAllowed,
     ).toBe(false);
+    const validatedPlan = await client.callTool({
+      name: "agent_plan_evaluate",
+      arguments: {
+        mandate: {
+          market: "portfolio",
+          instruction: "Research Ethereum trading opportunities without public execution.",
+          watchAssets: "cUSDC / cUSDT",
+          suggestedCapitalLimit: "50",
+          privacy: "confidential-only",
+        },
+        plan: {
+          planId: "00000000-0000-4000-8000-000000000010",
+          privacy: "confidential-only",
+          chainId: 11155111,
+          expiresAt: Math.floor(Date.now() / 1000) + 300,
+          steps: [
+            {
+              stepId: "spot-1",
+              action: "swap",
+              market: "spot",
+              chainId: 11155111,
+              tokenIn: "0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639",
+              tokenOut: "0x4E7B06D78965594eB5EF5414c357ca21E1554491",
+              allocationBps: 1000,
+              maxSlippageBps: 100,
+            },
+          ],
+        },
+      },
+    });
+    const evaluated = JSON.parse(
+      (validatedPlan.content as { text: string }[])[0].text,
+    );
+    expect(evaluated.acceptedAsResearch).toBe(true);
+    expect(evaluated.executionAllowed).toBe(false);
+    expect(evaluated.reasons).toContain("PUBLIC_FALLBACK_FORBIDDEN");
+    expect(evaluated.walletAuthorization).toBe("none");
+    expect(JSON.stringify(evaluated)).not.toContain("Research Ethereum trading opportunities");
     const denied = await client.callTool({ name: "policy_get", arguments: {} });
     expect(denied.isError).toBe(true);
     expect(JSON.stringify(denied)).toContain("NOT_CONFIGURED");

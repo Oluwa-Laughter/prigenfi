@@ -59,3 +59,7 @@ The shared confidential policy and MCP route-check functions are fail-closed. Pr
 Use Zama's official current Sepolia contract registry, not guessed addresses. The test asset behind **cZAMA is not the real ZAMA token**. Wrapper and underlying decimals differ for some assets; use verified `rate()` and exact bigint units. Confirm actual SDK contract ABI and permissions. Any claim of confidential agent execution requires a cryptographically verified testnet end-to-end trace. Document failures and keep the feature disabled until then.
 
 Run the responsive browser suite at 320, 360, 390, 430, 768, 1024 and 1440px when changing layouts. Keep touch targets, readable headings, horizontal token rails and honest empty/error states.
+
+## Typed agent planning boundary — November 8, 2026
+
+The agent-planning module provides a read-only structured plan validator through a local MCP tool. It accepts no plaintext token amount, calldata, arbitrary venue, wallet key or confidential balance. Never interpret agent instructions as spending permissions. Preserve negative tests for invalid chains, scope, expiry, unregistered assets, missing slippage, budget overflow and privacy downgrade. It MUST report execution disabled until a verified confidential venue and separate owner/account authorization exist.

@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./confidential-policy": "./src/confidential-policy.ts"
+    "./confidential-policy": "./src/confidential-policy.ts",
+    "./agent-planning": "./src/agent-planning.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

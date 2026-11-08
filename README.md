@@ -45,6 +45,10 @@ Agent win rate and realized P&L must come from verified, finalized closed positi
 
 The common schema in `packages/shared/src/confidential-policy.ts` requires `privacy: "confidential-only"` for all research mandates. A market-specific MCP route-check tool reports execution disabled until a compatible FHE venue and real agent authorization are verified. This does **not** encrypt arbitrary market trades or activate autonomous swaps. Public market discovery is still public and can expose searches to its provider. The instruction composer remains a local, copyable draft; AI-model interpretation, authenticated agent sessions and durable execution are not yet implemented.
 
+## Structured agent proposal validation
+
+External agents can submit structured multi-step research proposals through the local stdio MCP tool agent_plan_evaluate. This validates Sepolia confidential wrapper addresses, portfolio market scope, plan expiry, token-pair constraints, total allocation and slippage. Valid research never grants wallet authority or enables a transaction. The engine does not run an LLM or store private instructions. See docs/AGENT_PLANNING_PROTOCOL.md.
+
 ## Run locally
 
 Node.js 22+, pnpm 10.34.6 and Foundry are required.

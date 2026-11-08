@@ -40,3 +40,10 @@ Read AGENTS, PRODUCT, ARCHITECTURE, DECISIONS and BUILD_STATUS. Check GitHub mai
 3. **Enforce private-only execution:** integrate user wallet session permissions and an on-chain/FHE-bound venue gate. No plaintext fallback, unreviewed arbitrary calls or leaked amounts; negative test unsupported tokens, missing ciphertext permissions, stale quotes, market manipulation, revoked agent, wrong signer/chain and expiry.
 4. **Evidence and reconciliation:** execute strictly funded testnet lifecycle after owner approval, persist only privacy-safe audit metadata, track finality and reorgs, then unlock genuine P&L/win-rate charts based on finalized settlements. No guarantee of profits.
 5. **Progressive UX:** expand portfolio and activity from read-only registry to wallet-confirmed confidential balances, private-order statuses, personal risk controls and explainable agent decisions, tested on 320px through desktop.
+
+## From typed research proposals to actual confidential trading
+
+1. Implement authenticated wallet-linked agent sessions and a real LLM runtime without logging or exporting confidential instructions; validate all model output with agentPlanSubmissionSchema.
+2. Independently reproduce one FHE-compatible confidential swap or DeFi venue on Sepolia, including proofs, gas, liquidity and receipt finality; no public fallback.
+3. Implement session-limited smart accounts with enforced spend caps and owner revocation; the planning tool is not an authorization step.
+4. Reconcile finalized encrypted transactions into privacy-safe user records before enabling any realized-PnL or win-rate analytics.
