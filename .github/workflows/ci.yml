@@ -93,6 +93,11 @@ jobs:
           pnpm format:check
           pnpm test
           pnpm build
+      - name: Show exact Prettier corrections on formatting failure
+        if: failure()
+        run: |
+          pnpm exec prettier --write docs/MCP_INTEGRATION.md packages/shared/src/agent-planning.ts tests/agent-planning.test.ts tests/mcp.test.ts
+          git diff -- docs/MCP_INTEGRATION.md packages/shared/src/agent-planning.ts tests/agent-planning.test.ts tests/mcp.test.ts
       - name: Install pinned static analyzer and compiler
         run: |
           python3 -m venv .venv
