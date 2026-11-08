@@ -37,8 +37,8 @@ export default function AgentsPage() {
             alone don't grant capital rights.
           </p>
         </div>
-        <Link href="/vault" className="ws-text-link">
-          Manage vault permissions <ArrowUpRight size={16} />
+        <Link href="/settings" className="ws-text-link">
+          Understand permissions <ArrowUpRight size={16} />
         </Link>
       </div>
       <div className="ws-feature-grid">
@@ -48,12 +48,12 @@ export default function AgentsPage() {
           </div>
           <h3>Your registered agents</h3>
           <p>
-            There is no authenticated agent registry or durable session store in
-            this release. Connect an agent using the local development MCP
-            integration, then authorize its address separately.
+            Your future agents will appear here with the strategies they follow
+            and the permissions you approve. Agent connections are not yet
+            available in this preview.
           </p>
-          <Link href="/docs">
-            Developer MCP instructions <ArrowUpRight size={16} />
+          <Link href="/strategies">
+            Explore agent strategies <ArrowUpRight size={16} />
           </Link>
         </article>
         <article className="ws-feature-panel">
@@ -65,8 +65,8 @@ export default function AgentsPage() {
             The testnet vault checks an agent address, permitted token and
             recipient, transaction cap, daily limit, expiry and revocation.
           </p>
-          <Link href="/vault">
-            Open policy controls <ArrowUpRight size={16} />
+          <Link href="/settings">
+            Review safeguards <ArrowUpRight size={16} />
           </Link>
         </article>
         <article className="ws-feature-panel">

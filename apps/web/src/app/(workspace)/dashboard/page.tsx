@@ -125,11 +125,11 @@ export default function Overview() {
           </div>
           <h3>Separate the capital</h3>
           <p>
-            Start with a user-owned vault and restrict which agent can act and
-            how much it can spend.
+            Set the agent's scope and risk limits. Wallet-based permissions must
+            approve execution independently of the AI's instructions.
           </p>
-          <Link href="/vault">
-            Capital and permissions <ArrowRight size={16} />
+          <Link href="/settings">
+            Explore account safeguards <ArrowRight size={16} />
           </Link>
         </article>
         <article className="ws-guidance">

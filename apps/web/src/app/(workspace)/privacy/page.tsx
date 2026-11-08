@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { confidentialCapabilities } from "@prigenfi/shared/confidential-policy";
 import { PrivateRouteCheck } from "@/components/workspace/private-route-check";
-import { SwapVenueStatus } from "@/components/workspace/swap-venue-status";
 
 export const metadata = { title: "Confidential execution" };
 export default function PrivacyPage() {
@@ -35,13 +34,12 @@ export default function PrivacyPage() {
         <div>
           <strong>Private autonomous trading is not enabled yet</strong>
           <p>
-            Zama wallet asset operations and public market research exist. A
-            verified FHE-compatible trading venue, wallet account permissions
-            and confidential execution worker are still required.
+            You can explore supported assets and research markets. Automated
+            confidential trades will become available only after approved
+            execution routes and wallet permissions are independently verified.
           </p>
         </div>
       </div>
-      <SwapVenueStatus />
       <PrivateRouteCheck />
       <div className="ws-section-row">
         <div>
@@ -70,7 +68,7 @@ export default function PrivacyPage() {
       </div>
       <div className="ws-section-row">
         <div>
-          <p className="ws-kicker">Technical boundaries</p>
+          <p className="ws-kicker">Your privacy and control</p>
           <h2>What stays private, and what doesn't</h2>
           <p>
             Encrypted amounts and public Ethereum metadata are different
@@ -117,10 +115,10 @@ export default function PrivacyPage() {
           <div>
             <h3>What must be verified before private trading</h3>
             <p>
-              A Zama-compatible venue, audited wallet limits, agent-specific
-              permissions, encrypted transaction simulation, settled receipts
-              and independent security review. Until then, confidential trade
-              execution is disabled.
+              Before an agent can trade, PrigenFi must verify confidential
+              execution, enforce your account's limits and revocation rules, and
+              reconcile actual settled transactions. You remain in control; no
+              automatic trading is enabled in this preview.
             </p>
           </div>
         </div>

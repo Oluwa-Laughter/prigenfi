@@ -66,7 +66,7 @@ trade_quote explicitly returns NO_VERIFIED_TRADING_VENUE. Proposals are ephemera
 | Sepolia FHE lifecycle                                         | Not run: dedicated funded signer absent                                                     |
 | GitHub Actions                                                | Both verify and security jobs passed for implementation commit 0dbf583; see run 42368330390 |
 
-Browser evidence includes seven screenshots in `docs/evidence`, keyboard/overflow/theme-color assertions and no page errors in the final run. Wallet tests use an injected provider forwarding to real unlocked Anvil accounts; they are not evidence of MetaMask/WalletConnect/hardware-wallet compatibility or a real Sepolia signature.
+Historical browser runs checked keyboard, overflow, theme contrast and page errors. Screenshot outputs have since been removed from the repository and disabled by policy; current tests retain assertions without image capture. Wallet tests use an injected provider forwarding to real unlocked Anvil accounts; they are not evidence of MetaMask/WalletConnect/hardware-wallet compatibility or a real Sepolia signature.
 
 Intermediate failures were corrected: obsolete Foundry testFail naming, Zod transform signature, unknown error typing, CLI-generated cn imports, Tailwind lint parsing, unsupported ARIA usage, chain-time versus wall-clock proposal freshness, stale production server chunks during a rebuild, and a theme-transition assertion that sampled before animation completion. Initial Slither Foundry-export reference warnings were resolved by using direct-solc analysis, rather than suppressing analyzer failure. No failing test/security check was disabled.
 

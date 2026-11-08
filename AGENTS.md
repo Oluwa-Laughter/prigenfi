@@ -71,3 +71,11 @@ Use `pnpm verify:swap:source` to verify the official byte-identical registry sna
 ## Upstream registry scanner review
 
 The full byte-identical Zama protocol-registry testnet snapshot intentionally preserves public `underlying_token` addresses, which trigger Gitleaks generic-api-key heuristics. Historical, individually reviewed false positives have exact commit/path/rule/line fingerprints in `.gitleaksignore`. Never add a broad file/rule exemption or suppress future scanner failures. Preserve the SHA-256 reproducibility guarantee.
+
+## User-facing product correction — November 8, 2026
+
+PrigenFi's product definition: **"PrigenFi is a privacy-preserving, agent-native DeFi protocol enabling autonomous AI agents to trade, manage assets, and execute financial strategies across EVM chains using Zama FHE, smart accounts, and MCP."** This is our direction, not a blanket claim of existing chain compatibility or returns. Prioritize a user goal, agent instruction, owner permissions and verified activity. Do NOT put RFQ, UUPS/proxy details, contract deployment buttons, test artifacts or engineering diagnostics in the consumer workspace. Existing vault tooling is developer-only and must not be marketed as an agent-managed trading smart account.
+
+Never fabricate user holdings, win rate, P&L, market prices, quotes, liquidity or successful actions. Live market data must show a source and loading/error state; product presets are category instructions only. On unsupported networks or assets, keep execution blocked; no public fallback may masquerade as FHE confidentiality.
+
+**Resource policy:** Do not take Playwright screenshots, generate videos/traces, store screenshots in `docs/` or commit visual test captures. Use DOM/accessibility/layout assertions and test result logs. Previous screenshots were intentionally deleted from the current tree. Never reintroduce screenshot file outputs in tests or agent workflows unless the user explicitly requests them. Keep the UI mark and the favicon identical in shape and palette.

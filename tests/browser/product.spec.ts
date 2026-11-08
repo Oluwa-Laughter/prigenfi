@@ -61,23 +61,12 @@ for (const width of [1440, 390]) {
       const errors: string[] = [];
       page.on("pageerror", (err) => errors.push(err.message));
       await mockMarketApi(page);
-      await page.route("**/api/confidential-venue", (route) =>
-        route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            status: "deployed-proxy",
-            uupsConfirmed: true,
-            chainId: 11155111,
-            blockNumber: "12091125",
-            implementationAddress: "0x93FA553AFd73952105450264620eA08aBa7B52d5",
-            privateTradingEnabled: false,
-            executionAllowed: false,
-            checkedAt: "2026-11-08T14:23:01.891Z",
-          }),
-        }),
-      );
       await page.goto("/");
+      if (width === 1440) {
+        const icon = await page.request.get("/icon.svg");
+        expect(icon.ok()).toBe(true);
+        expect(icon.headers()["content-type"]).toContain("image/svg+xml");
+      }
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Direct the trade.",
       );
@@ -95,11 +84,22 @@ for (const width of [1440, 390]) {
           () => document.documentElement.scrollWidth <= innerWidth,
         ),
       ).toBe(true);
-      await page.screenshot({
-        path: "docs/evidence/home-" + width + ".png",
-        fullPage: true,
-      });
+
       await page.goto("/dashboard");
+      if (width >= 801) {
+        await page.getByRole("button", { name: "Collapse sidebar" }).click();
+        await expect(page.locator(".workspace-layout")).toHaveClass(
+          /ws-collapsed/,
+        );
+        await expect(
+          page.getByRole("link", { name: "My agents" }),
+        ).toBeVisible();
+        await page.getByRole("button", { name: "Expand sidebar" }).click();
+        await expect(page.locator(".workspace-layout")).not.toHaveClass(
+          /ws-collapsed/,
+        );
+      }
+
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Make your agent work for you.",
       );
@@ -118,15 +118,17 @@ for (const width of [1440, 390]) {
           () => document.documentElement.scrollWidth <= innerWidth,
         ),
       ).toBe(true);
-      await page.screenshot({
-        path: "docs/evidence/dashboard-disconnected-" + width + ".png",
-        fullPage: true,
-      });
+
       if (width < 800) {
         await page.getByRole("button", { name: "Open navigation" }).click();
         await expect(
           page.getByRole("navigation", { name: "Platform" }),
         ).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(
+          page.getByRole("button", { name: "Open navigation" }),
+        ).toBeVisible();
+        await page.getByRole("button", { name: "Open navigation" }).click();
         await page
           .getByRole("button", { name: "Close navigation", exact: true })
           .click();
@@ -143,10 +145,7 @@ for (const width of [1440, 390]) {
         page.getByRole("button", { name: "Emerging tokens" }),
       ).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByRole("table").getByText("PEPE")).toBeVisible();
-      await page.screenshot({
-        path: "docs/evidence/markets-" + width + ".png",
-        fullPage: true,
-      });
+
       await page.goto("/strategies");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Different markets.",
@@ -168,14 +167,10 @@ for (const width of [1440, 390]) {
       await expect(page.locator(".brief-preview pre")).toContainText(
         "CONFIDENTIAL ONLY",
       );
-      await page.screenshot({
-        path: "docs/evidence/agents-" + width + ".png",
-        fullPage: true,
-      });
+
       await page.goto("/privacy");
-      await expect(page.getByText("Proxy confirmed")).toBeVisible();
-      await expect(page.getByText("Execution locked")).toBeVisible();
-      await expect(page.getByText("12091125")).toBeVisible();
+      await expect(page.locator("main#main")).not.toContainText("RFQ");
+      await expect(page.locator("main#main")).not.toContainText("proxy");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Privacy is a requirement.",
       );
@@ -185,10 +180,7 @@ for (const width of [1440, 390]) {
       await expect(
         page.getByText("Blocked — no verified private execution venue"),
       ).toBeVisible();
-      await page.screenshot({
-        path: "docs/evidence/privacy-" + width + ".png",
-        fullPage: true,
-      });
+
       await page.goto("/portfolio");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Know what you own.",
@@ -267,6 +259,9 @@ test("wallet controls, simulation, pause and revoke on actual local vault", asyn
   );
   await page.goto("/vault");
   const vault = page.locator(".vault-legacy");
+  await expect(vault.getByRole("button", { name: "Create vault" })).toHaveCount(
+    0,
+  );
   await vault
     .getByRole("button", { name: "Connect wallet", exact: true })
     .click();
@@ -319,10 +314,7 @@ test("wallet controls, simulation, pause and revoke on actual local vault", asyn
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.screenshot({
-    path: "docs/evidence/dashboard-connected-mobile.png",
-    fullPage: true,
-  });
+
   await vault.getByRole("button", { name: "Disconnect wallet" }).click();
   await expect(
     vault.getByText("Connect your wallet to set permissions"),

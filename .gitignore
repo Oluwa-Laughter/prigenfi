@@ -14,3 +14,10 @@ cache/
 broadcast/
 *.tsbuildinfo
 .venv/
+
+# Do not persist or commit browser screenshot / video evidence.
+docs/evidence/*.png
+docs/evidence/*.webp
+docs/evidence/*.jpg
+docs/evidence/*.jpeg
+docs/evidence/*.mp4

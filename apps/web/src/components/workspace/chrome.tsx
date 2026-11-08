@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   useConnection,
   useConnect,
@@ -20,10 +20,11 @@ import {
   FlaskConical,
   LayoutDashboard,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   ShieldCheck,
   LockKeyhole,
   SlidersHorizontal,
-  WalletCards,
   X,
   Zap,
 } from "lucide-react";
@@ -34,12 +35,11 @@ const primaryNav = [
   { href: "/markets", label: "Markets", icon: Compass },
   { href: "/agents", label: "My agents", icon: Bot },
   { href: "/strategies", label: "Strategies", icon: Zap },
-  { href: "/privacy", label: "Confidential trading", icon: LockKeyhole },
+  { href: "/privacy", label: "Privacy", icon: LockKeyhole },
 ];
 const accountNav = [
   { href: "/portfolio", label: "Portfolio", icon: ChartNoAxesCombined },
   { href: "/activity", label: "Activity", icon: Activity },
-  { href: "/vault", label: "Capital & permissions", icon: WalletCards },
   { href: "/settings", label: "Safety & settings", icon: SlidersHorizontal },
 ];
 const labels: Record<string, string> = {
@@ -47,10 +47,10 @@ const labels: Record<string, string> = {
   "/markets": "Explore markets",
   "/agents": "My agents",
   "/strategies": "Strategies",
-  "/privacy": "Confidential trading",
+  "/privacy": "Privacy",
   "/portfolio": "Portfolio",
   "/activity": "Activity",
-  "/vault": "Capital & permissions",
+  "/vault": "Developer sandbox",
   "/settings": "Safety & settings",
 };
 
@@ -72,6 +72,8 @@ function NavGroup({
         <Link
           key={href}
           href={href}
+          aria-label={label}
+          title={label}
           aria-current={pathname === href ? "page" : undefined}
           className={"ws-nav-link " + (pathname === href ? "active" : "")}
           onClick={onNavigate}
@@ -87,14 +89,26 @@ function NavGroup({
 export function WorkspaceChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navCollapsed, setNavCollapsed] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [menuOpen]);
   const { address, chainId, isConnected } = useConnection();
   const connect = useConnect();
   const disconnect = useDisconnect();
   const switchChain = useSwitchChain();
   const short = address ? address.slice(0, 6) + "…" + address.slice(-4) : "";
   return (
-    <div className="workspace-layout">
-      <aside className={"ws-sidebar " + (menuOpen ? "mobile-open" : "")}>
+    <div className={"workspace-layout " + (navCollapsed ? "ws-collapsed" : "")}>
+      <aside
+        id="workspace-sidebar"
+        className={"ws-sidebar " + (menuOpen ? "mobile-open" : "")}
+      >
         <div className="ws-brand">
           <Brand />
           <button
@@ -107,13 +121,13 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
           </button>
         </div>
         <div className="ws-sidebar-scroll">
-          <p className="ws-group-label">Command center</p>
+          <p className="ws-group-label">Explore</p>
           <NavGroup
             items={primaryNav}
             pathname={pathname}
             onNavigate={() => setMenuOpen(false)}
           />
-          <p className="ws-group-label">Your finances</p>
+          <p className="ws-group-label">Your workspace</p>
           <NavGroup
             items={accountNav}
             pathname={pathname}
@@ -125,7 +139,7 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
             <ShieldCheck size={19} />
             <span>Protected by your rules</span>
           </div>
-          <p>Sepolia preview · Financial execution remains restricted.</p>
+          <p>Sepolia preview · Automated trades are not enabled.</p>
           <Link href="/" className="ws-back-link">
             <ArrowLeft size={15} /> Public website
           </Link>
@@ -150,6 +164,21 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
               onClick={() => setMenuOpen(true)}
             >
               <Menu size={22} />
+            </button>
+            <button
+              type="button"
+              className="ws-desktop-toggle"
+              aria-label={navCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={navCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-controls="workspace-sidebar"
+              aria-expanded={!navCollapsed}
+              onClick={() => setNavCollapsed((collapsed) => !collapsed)}
+            >
+              {navCollapsed ? (
+                <PanelLeftOpen size={21} />
+              ) : (
+                <PanelLeftClose size={21} />
+              )}
             </button>
             <span className="ws-topbar-section">Workspace</span>
             <span className="ws-topbar-divider">/</span>

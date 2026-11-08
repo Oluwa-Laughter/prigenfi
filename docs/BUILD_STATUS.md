@@ -93,3 +93,11 @@ A final review found that simultaneous proposal simulations could all pass the p
 
 - First GitHub verification run for the on-chain swap milestone reached the browser suite successfully; Gitleaks flagged 46 public token-address fields in the official SHA-256-verified registry snapshot. All were individually checked to be fields `underlying_token` / `underlying_token_address` holding public EVM addresses, not signing credentials.
 - Added 46 fixed historical commit/path/rule/line fingerprints to `.gitleaksignore`, with the public provenance and exact SHA described in `docs/SECURITY_SCANNER_REVIEW.md`. This is not a blanket or rule-wide exception. Gitleaks remains mandatory and scans all new commits. Final post-triage GitHub CI must be rechecked after pushing the fix.
+
+## User-first product navigation, no screenshots — November 8, 2026
+
+- Clarified **privacy-preserving agent-native DeFi across eligible EVM chains** as the product mission. RFQ, UUPS and proxy inspection remain possible engineering integration mechanisms, never customer tasks. On-screen contract deployment was removed; local contract deployment remains a developer-only script for tests.
+- The dashboard gets a responsive desktop collapsible sidebar, mobile open/close drawer with Escape handling and improved link labels. Favicon mirrors the existing PrigenFi three-bar brand mark; it is an SVG so no raster assets are needed.
+- User-facing privacy page no longer shows the raw RFQ/deployment diagnostics; technical verification stays available to engineers in the read-only API and source/evidence docs. No fabricated market returns, prices or user holdings added.
+- Removed all Playwright screenshot calls, disabled screenshot/video/trace capture and deleted tracked PNG evidence from the working tree. Browser assertions remain in place; history may retain old blobs, but no new screenshot files will be generated or committed. Git ignore excludes future evidence images.
+- Added focused READMEs for the web, shared policy, SDK, Zama adapter, local MCP, API and contract sandbox. Final test and CI status must be verified after pushing.

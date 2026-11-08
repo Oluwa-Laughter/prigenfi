@@ -29,12 +29,13 @@ export default function SettingsPage() {
           <div>
             <h2>Manage agent permissions</h2>
             <p>
-              Review and revoke scoped on-chain test vault policies: agent
-              address, token, recipient, cap and expiry.
+              Agent spending limits, session expiry and revocation will be
+              enforced independently of what an AI agent requests. Private
+              trading permissions are not yet available.
             </p>
           </div>
-          <Link href="/vault">
-            Open controls <ArrowUpRight size={16} />
+          <Link href="/agents">
+            Review agent instructions <ArrowUpRight size={16} />
           </Link>
         </div>
         <div>
@@ -64,8 +65,8 @@ export default function SettingsPage() {
               or signing keys to an agent, the MCP server or this website.
             </p>
           </div>
-          <Link href="/vault">
-            View vault <ArrowUpRight size={16} />
+          <Link href="/privacy">
+            Understand privacy <ArrowUpRight size={16} />
           </Link>
         </div>
       </div>

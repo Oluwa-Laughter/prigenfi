@@ -21,7 +21,6 @@ import {
 } from "viem";
 import {
   agentVaultAbi,
-  agentVaultBytecode,
   exactUnits,
   mockUSDAbi,
   type PolicySnapshot,
@@ -65,10 +64,10 @@ export function Dashboard() {
       <div className="page-heading">
         <div>
           <Badge variant="outline">Testnet wallet authority</Badge>
-          <h1>Control your agent capital.</h1>
+          <h1>Development permission sandbox.</h1>
           <p>
-            Create or load an isolated vault, authorize an agent address, and
-            enforce transfer limits on-chain.
+            Inspect an existing local test vault and its restricted permissions.
+            This is not the customer onboarding or live trading experience.
           </p>
         </div>
         <div>
@@ -311,29 +310,6 @@ function Workspace({
                   >
                     Load vault
                   </Button>
-                  <Button
-                    disabled={busy || !wallet}
-                    onClick={() =>
-                      run(async () => {
-                        if (!wallet) throw new Error();
-                        const r = await mined(
-                          await wallet.deployContract({
-                            abi: agentVaultAbi,
-                            bytecode: agentVaultBytecode,
-                            args: [address],
-                          }),
-                          "Vault created",
-                        );
-                        if (!r.contractAddress) throw new Error();
-                        setVault(r.contractAddress);
-                        setVaultInput(r.contractAddress);
-                        setOwner(address);
-                        setSnapshot(undefined);
-                      })
-                    }
-                  >
-                    Create vault
-                  </Button>
                 </div>
               </FieldGroup>
               {vault ? (
@@ -349,8 +325,9 @@ function Workspace({
               ) : null}
             </CardContent>
             <CardFooter className="muted text-xs">
-              Creation requests a testnet deployment transaction. This is an
-              isolated vault, not an ERC-4337 account.
+              This is an existing development vault, not a trading smart
+              account. Users do not need to deploy contracts to instruct agents.
+              The local test environment provisions vaults separately.
             </CardFooter>
           </Card>
           <Card>

@@ -1,28 +1,45 @@
 # PrigenFi
 
-**Private finance. Powered by agents.**
+**Privacy-preserving DeFi, built for agents and the people who authorize them.**
 
 PrigenFi is building an Ethereum-market agent platform that connects user trading instructions, controlled capital access, DeFi market discovery and privacy-preserving asset infrastructure. Users should be able to direct agents toward any supported Ethereum market—from DeFi and spot markets to staking, stablecoins and emerging tokens—without giving agents unrestricted access to their wallets. **Confidential-only execution is an absolute requirement**, not an optional market feature.
 
 This repository contains a real engineering foundation and a **testnet-only product preview**, not a live autonomous trading service. No mainnet execution, confidential swap venue or investment returns are available.
 
+## What PrigenFi is building
+
+**PrigenFi is a privacy-preserving, agent-native DeFi protocol enabling autonomous AI agents to trade, manage assets, and execute financial strategies across EVM chains using Zama FHE, smart accounts, and MCP.**
+
+A user should be able to **describe a financial goal in plain language, choose the markets and risks they permit, authorize an agent through wallet-controlled rules, and monitor verified outcomes.** An agent should research markets and propose decisions, not require users to deploy Solidity contracts or decipher RFQ terminology. The interface has distinct pages for agents, markets, strategies, portfolio, activity, privacy and settings, with a collapsible desktop sidebar and mobile drawer.
+
+This is the **target product**, not a claim that automated private trading is live today. Private execution is blocked pending actual confidential venue proof, smart-account policy enforcement, user authentication and completed settlement integration. Profit is never guaranteed. **A chain or token being EVM-compatible does not mean Zama FHE supports private trading there.**
+
+## Data and user experience rules
+
+- Public market prices, volumes and liquidity are fetched from a disclosed external source. These are _research signals_, **not** executable private trade quotes; the upstream service can see public search requests.
+- Agent win rate, P&L and portfolio performance must be computed only from authenticated, settled user trades. Until there are verified trades, show an unavailable state—not hardcoded balances, winning percentages or demo profit charts.
+- Market and strategy categories are selectable **instruction templates**, not live trades or positions. SDK fixtures and local tests are never presented as real investments.
+- The consumer UI never requests contract deployments. The isolated public ERC-20 vault is a **developer-only sandbox** reachable from the developer documentation, not the proposed user onboarding or a confidential agent smart account.
+- RFQ may be an internal execution adapter among other vetted confidential venues. No RFQ, proxy/UUPS address or deployment diagnostic is needed in the user experience.
+- **No screenshot files are produced by browser tests or committed to the docs folder.** Existing screenshot files were removed from the repository's current tree. Browser tests still verify navigation, wallet safety and responsive layout without screenshots/traces.
+
 ## Product experience
 
-The public site and app now have separate layouts and navigation:
+The public site and user workspace have separate navigation. The workspace sidebar can be collapsed on desktop and opened as a drawer on mobile:
 
-| Route         | Purpose                                                                                   |
-| ------------- | ----------------------------------------------------------------------------------------- |
-| `/`           | Public marketing: what PrigenFi is and how delegated finance works                        |
-| `/dashboard`  | Financial command center, public-market charts and honestly unavailable agent results     |
-| `/markets`    | Live Ethereum DEX-pair discovery, meme/spot/DeFi/stablecoin research                      |
-| `/agents`     | User-defined agent research mandates, ready to copy, not wallet permissions               |
-| `/strategies` | Research-oriented mandate templates: meme, DEX, lending, staking, stablecoins, perps      |
-| `/portfolio`  | Connected wallet gas balance and Zama-backed confidential test token tools                |
-| `/privacy`    | Confidential-route policy inspection, Zama wrapper coverage and explicit execution limits |
-| `/activity`   | Read actual on-chain scoped vault events on the connected supported test network          |
-| `/vault`      | Isolated testnet vault, agent permissions, simulation, pause/revoke and owner withdrawal  |
-| `/settings`   | Security boundaries and links to wallet controls                                          |
-| `/docs`       | Developer/MCP integration instructions, separate from the customer-facing app             |
+| Route         | Purpose                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| `/`           | Public marketing: what PrigenFi is and how delegated finance works                            |
+| `/dashboard`  | Financial command center, public-market charts and honestly unavailable agent results         |
+| `/markets`    | Live Ethereum DEX-pair discovery, meme/spot/DeFi/stablecoin research                          |
+| `/agents`     | User-defined agent research mandates, ready to copy, not wallet permissions                   |
+| `/strategies` | Research-oriented mandate templates: meme, DEX, lending, staking, stablecoins, perps          |
+| `/portfolio`  | Connected wallet gas balance and Zama-backed confidential test token tools                    |
+| `/privacy`    | User-friendly privacy explanation, supported confidential assets and trade-readiness policy   |
+| `/activity`   | Read actual on-chain scoped vault events on the connected supported test network              |
+| `/vault`      | **Developer sandbox only**: existing local ERC-20 vault, scoped transfer tests and revocation |
+| `/settings`   | Security boundaries and links to wallet controls                                              |
+| `/docs`       | Developer/MCP integration instructions, separate from the customer-facing app                 |
 
 ## Market data and analytics
 
@@ -30,9 +47,9 @@ The app uses DEX Screener's public Ethereum pair-search API through a rate-cache
 
 Agent win rate and realized P&L must come from verified, finalized closed positions with cost basis. The app deliberately displays **no win rate or profits** before such a settlement indexer exists. A tested settlement-summary calculator and conditional chart renderers are in the repository, but no trade journal is yet connected.
 
-## Existing execution foundation
+## Engineering foundation (separate from user workflows)
 
-- Solidity owner-controlled isolated ERC-20 vault with agent/token/recipient scope, per-transfer and daily caps, expiry, pause, revocation and owner withdrawals.
+- Development-only Solidity owner-controlled isolated ERC-20 vault with agent/token/recipient scope, per-transfer and daily caps, expiry, pause, revocation and owner withdrawals. Users do not deploy this from the product UI.
 - Foundry adversarial, fuzz and invariant tests; generated ABIs and verified local Anvil integration.
 - Typed policy SDK and stdio MCP tools for scoped reads, simulation-only proposals, confidential capability discovery and strict confidential route assessment. Unsupported trading venues fail closed, with no public fallback.
 - Zama's official TypeScript/React SDK for wallet-controlled confidential test assets, including shielding, user-authorized decryption and transfers where supported.
@@ -82,7 +99,7 @@ LOCAL_INTEGRATION=1 pnpm test
 LOCAL_INTEGRATION=1 pnpm test:browser
 ```
 
-The local deployment uses unlocked Anvil test identities. Do not use production wallets or commit signing credentials. No public-chain deployment was performed by this frontend refresh.
+The local deployment is strictly developer tooling and uses unlocked Anvil test identities. Do not use production wallets or commit signing credentials. No public-chain deployment was performed by this frontend refresh.
 
 ## Engineering checks
 
@@ -96,7 +113,11 @@ pnpm build
 pnpm test:browser
 ```
 
-Tests involving Anvil are intentionally skipped unless `LOCAL_INTEGRATION=1` and the local chain is provisioned. Browser tests cover the public and application navigation, desktop/mobile layouts, market charts with explicit test-only API fixtures, mandate templates, and the local vault authority flow.
+Tests involving Anvil are intentionally skipped unless `LOCAL_INTEGRATION=1` and the local chain is provisioned. Browser tests cover public and application navigation, desktop sidebar collapse/expand, mobile drawer behavior, responsive layouts, market charts with explicitly isolated test-only fixtures, mandate templates and the local vault authority flow. Screenshots and traces are disabled to conserve data and prevent sensitive UI captures.
+
+## Package READMEs
+
+Engineering packages have independent READMEs: [web app](apps/web/README.md), [shared policy and registries](packages/shared/README.md), [typed SDK](packages/sdk/README.md), [Zama wallet adapter](packages/zama/README.md), [local MCP server](services/mcp-server/README.md), [metadata API](services/api/README.md), and [contracts sandbox](contracts/README.md). They distinguish verified functionality from future product work.
 
 ## Engineering documentation
 

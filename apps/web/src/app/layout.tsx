@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | PrigenFi",
   },
   description:
-    "Explore Ethereum markets, create financial agent mandates and manage restricted wallet permissions. Confidential asset tooling powered by Zama on testnet.",
+    "PrigenFi is building private, agent-native DeFi: direct AI agents, explore EVM markets and keep control of capital with smart-account permissions and Zama FHE.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

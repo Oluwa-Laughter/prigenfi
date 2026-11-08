@@ -4,7 +4,12 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   timeout: 60000,
-  use: { baseURL: "http://127.0.0.1:3000", trace: "retain-on-failure" },
+  use: {
+    baseURL: "http://127.0.0.1:3000",
+    trace: "off",
+    screenshot: "off",
+    video: "off",
+  },
   projects: [
     {
       name: "chromium",
