@@ -67,3 +67,7 @@ The agent-planning module provides a read-only structured plan validator through
 ## Zama ConfidentialSwap read-only integration — November 8, 2026
 
 Use `pnpm verify:swap:source` to verify the official byte-identical registry snapshot with its upstream SHA-256 manifest. `pnpm verify:swap` checks the live Sepolia registered UUPS proxy/implementation without wallet credentials. `GET /api/confidential-venue` is a four-minute-cached public code/status endpoint with **no signing ability**. Do not infer RFQ interface, supported pairs, quote availability, liquidity, ciphertext correctness or private transaction readiness from proxy bytecode alone. Maintain strictly `executionAllowed:false` in the plan/route gates. The deployed proxy's UUPS upgradeability means the implementation code hash may change; recheck on future integration and do not pin a stale ABI to the proxy. Never permit user-specified RPC endpoints on the public status API.
+
+## Upstream registry scanner review
+
+The full byte-identical Zama protocol-registry testnet snapshot intentionally preserves public `underlying_token` addresses, which trigger Gitleaks generic-api-key heuristics. Historical, individually reviewed false positives have exact commit/path/rule/line fingerprints in `.gitleaksignore`. Never add a broad file/rule exemption or suppress future scanner failures. Preserve the SHA-256 reproducibility guarantee.

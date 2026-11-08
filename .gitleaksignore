@@ -8,3 +8,55 @@
 # No file-, rule-, or commit-wide exclusion is granted.
 1ff347d5f36dee604eb1bb7326a7ff582b10628a:tests/mcp.test.ts:generic-api-key:86
 1ff347d5f36dee604eb1bb7326a7ff582b10628a:tests/mcp.test.ts:generic-api-key:87
+
+# Verified immutable official Zama testnet JSON (SHA-256 68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5).
+# Only the following 46 historical generic-api-key false positives are ignored.
+# Every matched line is a public 20-byte EVM underlying-token address in
+# an official registry ("underlying_token" or "underlying_token_address").
+# Commit, path, rule and line are individually fixed; no blanket exclusions.
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:79
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:89
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:190
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:215
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:226
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:237
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:248
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:259
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:269
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:280
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:291
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:302
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:313
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:323
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:334
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:345
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:356
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:367
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:378
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:389
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:400
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:411
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:429
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:439
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:449
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:459
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:469
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:479
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:503
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:520
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:530
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:570
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:595
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:654
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1153
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1178
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1218
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1250
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1275
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1300
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1325
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1407
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1432
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1457
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1482
+43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79:infra/zama-registry/testnet.json:generic-api-key:1507

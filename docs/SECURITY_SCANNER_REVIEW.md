@@ -36,3 +36,9 @@ when its release download is temporarily unavailable. Both variants
 must actually run the scan.
 
 Reference: https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md
+
+## Official Zama registry snapshot false positives — November 8, 2026
+
+The pinned official Zama testnet registry (`infra/zama-registry/testnet.json`) triggered 46 `generic-api-key` heuristic matches in commit `43a5c1c54a9ab4e68a6b1ae245e5f94b02d41f79`. Each finding's field and value format was independently checked: all 46 are public 20-byte contract addresses under `underlying_token` or `underlying_token_address` in the upstream published JSON. The downloaded registry digest independently matched the official manifest: `68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5`. They are **not** API keys, private signing secrets or credentials.
+
+Each historical finding was individually added to `.gitleaksignore` using full commit, exact path, rule and line. We have not excluded the directory, the rule or future changes. Both repository history and subsequent commits continue to be scanned by Gitleaks; every new match remains a failure requiring review. Do not change the upstream snapshot to massage source-code formatting because it breaks the upstream SHA-256.
