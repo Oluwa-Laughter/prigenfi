@@ -36,7 +36,7 @@ export default function Home() {
           </div>
           <p className="hero-disclaimer">Ethereum Sepolia development · Test assets only · Autonomous trading not yet live</p>
         </div>
-        <div className="hero-stage" aria-label="Illustrative agent trading workspace">
+        <div role="group" className="hero-stage" aria-label="Illustrative agent trading workspace">
           <div className="stage-topline">
             <span className="stage-light" /> YOUR AGENT WORKSPACE
             <span className="stage-example">EXAMPLE SETUP</span>
@@ -90,7 +90,7 @@ export default function Home() {
           <p className="privacy-footnote">On Sepolia, cUSD and cUSDT are product-facing labels for unbacked test wrappers. Wallet addresses, timing and public shield/unshield amounts remain visible. Confidential agent-directed swaps are not yet implemented.</p>
           <Button asChild variant="outline" size="lg"><Link href="/dashboard#confidential">Explore private assets <ArrowUpRight size={16} /></Link></Button>
         </div>
-        <div className="asset-showcase" aria-label="Initial asset support">
+        <div role="group" className="asset-showcase" aria-label="Initial asset support">
           <div className="asset-showcase-heading"><span>ASSET UNIVERSE</span><span>DEVELOPMENT</span></div>
           <div className="asset-line"><span className="coin coin-usd">$</span><div><strong>cUSD</strong><small>USDC-based confidential test asset</small></div><span className="asset-status">Sepolia</span></div>
           <div className="asset-line"><span className="coin coin-usdt">₮</span><div><strong>cUSDT</strong><small>USDT-based confidential test asset</small></div><span className="asset-status">Sepolia</span></div>
