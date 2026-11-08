@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/empty";
 import { Wallet, ArrowUpRight, Pause, ShieldCheck } from "lucide-react";
 import { localRpc, sepoliaRpc } from "./providers";
+import { AgentBrief } from "./agent-brief";
 const ConfidentialPanel = dynamic(() => import("./confidential-panel"), {
   ssr: false,
   loading: () => <p>Loading confidential wallet tools…</p>,
@@ -67,13 +68,13 @@ export function Dashboard() {
   const [showConfidential, setShowConfidential] = useState(false);
   const supported = chainId === 31337 || chainId === 11155111;
   return (
-    <main id="main" className="wrap">
+    <main id="main" className="wrap product-dashboard">
       <div className="page-heading">
         <div>
-          <Badge variant="outline">Testnet workspace</Badge>
-          <h1>Your agents. Your boundaries.</h1>
+          <Badge variant="outline">Agent workspace · Ethereum testnets</Badge>
+          <h1>Trade ideas start with you.</h1>
           <p>
-            Allocate deliberately. Authorize explicitly. Review every action.
+            Choose a market, direct your agent and set the permissions that protect your capital.
           </p>
         </div>
         <div>
@@ -94,12 +95,12 @@ export function Dashboard() {
       </div>
       <Alert>
         <ShieldCheck />
-        <AlertTitle>Development release · No real funds</AlertTitle>
+        <AlertTitle>Testnet preview · No live autonomous trading</AlertTitle>
         <AlertDescription>
-          Vault actions are testnet-only. Agent proposals are simulation-only.
-          Confidential assets are wallet-controlled and separate from the vault.
+          Wallet vaults currently support restricted test-token transfers. Agent trading and confidential swaps are not yet available. Zama confidential assets remain wallet-controlled.
         </AlertDescription>
       </Alert>
+      <AgentBrief />
       {connect.error ? (
         <Alert variant="destructive" className="mt-5">
           <AlertTitle>Wallet connection failed</AlertTitle>
@@ -113,11 +114,10 @@ export function Dashboard() {
         <Empty className="my-10 border">
           <EmptyHeader>
             <Wallet />
-            <EmptyTitle>Start with your wallet</EmptyTitle>
+            <EmptyTitle>Connect your wallet to set permissions</EmptyTitle>
             <EmptyDescription>
-              Connect an Ethereum wallet to create an isolated vault, set
-              permissions, and inspect public assets. You’ll approve every
-              wallet action.
+              Connect an Ethereum wallet to own a vault, grant your agent limited
+              testnet permissions, and explore private assets. The brief above does not grant access.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -149,12 +149,12 @@ export function Dashboard() {
       )}
       <section id="confidential" className="feature-section">
         <div className="section-intro">
-          <h2>Confidential assets</h2>
+          <h2>cUSD and cUSDT, privately held.</h2>
           <div>
             <p>
-              Official Sepolia cUSDCMock and cUSDTMock. Balance decryption
-              requires your explicit wallet authorization. Addresses, timing,
-              deposits, and withdrawals stay public.
+              These are unbacked Sepolia test assets using Zama confidential wrappers.
+              You authorize any balance decryption. Public deposits, withdrawals,
+              addresses and transaction timing remain observable.
             </p>
             <div className="actions">
               <Button
@@ -308,7 +308,7 @@ function Workspace({
         <div className="stack">
           <Card>
             <CardHeader>
-              <CardTitle>Your isolated vault</CardTitle>
+              <CardTitle>Your agent capital vault</CardTitle>
               <CardDescription>
                 Only capital transferred to this vault is available to an agent.
                 Your wallet remains the owner.
@@ -390,7 +390,7 @@ function Workspace({
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Agent permissions</CardTitle>
+              <CardTitle>Decide what your agent can do</CardTitle>
               <CardDescription>
                 Authorize a public agent address. Only the selected token and
                 recipient can be used; the function is fixed to ERC-20 transfer.
@@ -588,10 +588,9 @@ function Workspace({
         <div className="stack">
           <Card>
             <CardHeader>
-              <CardTitle>Mock transfer proposal</CardTitle>
+              <CardTitle>Test a proposed action</CardTitle>
               <CardDescription>
-                Simulate against the live vault policy and an eth_call. This is
-                a token transfer, not a trade quote or swap.
+                Check a token-transfer proposal against the actual vault policy before it reaches the chain. This is not yet a market trade or swap.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -677,13 +676,13 @@ function Workspace({
                           s.nonce,
                         ],
                       }),
-                      "Mock transfer included",
+                      "Test transfer included",
                     );
                     await refresh();
                   })
                 }
               >
-                Send mock transfer as agent
+                Send test transfer as agent
               </Button>
               <p className="muted text-xs">
                 Sending requires the authorized agent’s connected wallet. The
@@ -777,11 +776,11 @@ function Workspace({
                   })
                 }
               >
-                Mint local mock USD
+                Get local test tokens
               </Button>
             </CardContent>
             <CardFooter className="muted text-xs">
-              The local faucet requires the MockUSD address from pnpm
+              The local faucet uses the test-token contract from pnpm
               local:deploy. It is disabled on Sepolia.
             </CardFooter>
           </Card>

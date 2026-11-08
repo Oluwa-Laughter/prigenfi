@@ -51,6 +51,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+function assetLabel(symbol: string) {
+  if (symbol.startsWith("cUSDC")) return "cUSD";
+  if (symbol.startsWith("cUSDT")) return "cUSDT";
+  return symbol.replace(/Mock$/, "");
+}
 export default function ConfidentialPanel({ address }: { address: Address }) {
   const [queryClient] = useState(
     () =>
@@ -79,7 +84,7 @@ export default function ConfidentialPanel({ address }: { address: Address }) {
           <TabsList aria-label="Confidential assets">
             {confidentialAssets.map((a) => (
               <TabsTrigger key={a.address} value={a.address}>
-                {a.symbol}
+                {assetLabel(a.symbol)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -181,15 +186,15 @@ function TokenTools({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{asset.symbol}</CardTitle>
+        <CardTitle>{assetLabel(asset.symbol)}</CardTitle>
         <CardDescription>
-          Verified on Sepolia at block {asset.blockNumber}. Plaintext balances
-          stay in this browser session; they are never sent to MCP or an LLM.
+          Unbacked test asset · Wrapper verified on Sepolia at block {asset.blockNumber}.
+          Decrypted balances stay in this browser session, not in MCP or an LLM.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="balance-row">
-          <span>Public mock token balance</span>
+          <span>Public test-token balance</span>
           <span>
             {publicBalance.data !== undefined
               ? formatUnits(publicBalance.data, asset.underlyingDecimals)
@@ -280,7 +285,7 @@ function TokenTools({
                 })
               }
             >
-              Obtain 100 mock tokens
+              Get 100 test tokens
             </Button>
             <Button
               disabled={busy}
@@ -365,7 +370,7 @@ function TokenTools({
           <Alert variant="destructive" className="mt-5">
             <AlertTitle>Confidential operation incomplete</AlertTitle>
             <AlertDescription>
-              Check your wallet, mock balance, gas, RPC, and Zama service
+              Check your wallet, test balance, gas, RPC, and Zama service
               availability. No private values are included in this error. A
               mined unwrap may still need finalization.
             </AlertDescription>

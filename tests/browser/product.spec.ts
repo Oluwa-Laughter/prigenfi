@@ -8,9 +8,8 @@ for (const width of [1440, 390]) {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Private finance.Powered by agents.",
-    );
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Your money.");
+    await expect(page.locator("footer")).not.toContainText("GitHub");
     await page.keyboard.press("Tab");
     await expect(
       page.getByRole("link", { name: "Skip to content" }),
@@ -23,7 +22,7 @@ for (const width of [1440, 390]) {
     await expect
       .poll(() =>
         page
-          .getByRole("link", { name: "Explore the app" })
+          .getByRole("link", { name: "Create your agent brief" })
           .evaluate((el) => getComputedStyle(el).color),
       )
       .toBe("rgb(255, 255, 255)");
@@ -37,14 +36,14 @@ for (const width of [1440, 390]) {
       path: `docs/evidence/home-${width}.png`,
       fullPage: true,
     });
-    await page.getByRole("link", { name: "Build with PrigenFi" }).click();
+    await page.goto("/docs");
     await expect(page).toHaveURL("/docs");
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       "explicit financial boundaries",
     );
     await page.getByRole("link", { name: "Open the testnet app" }).click();
     await expect(page).toHaveURL("/dashboard");
-    await expect(page.getByText("Start with your wallet")).toBeVisible();
+    await expect(page.getByText("Connect your wallet to set permissions")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Open confidential tools" }),
     ).toBeDisabled();
@@ -144,7 +143,7 @@ test("connect, load vault, simulate, authorize, pause and revoke on actual Anvil
     '"simulated":true',
   );
   await expect(
-    page.getByRole("button", { name: "Send mock transfer as agent" }),
+    page.getByRole("button", { name: "Send test transfer as agent" }),
   ).toBeDisabled();
   await page.getByRole("button", { name: "Authorize for 24 hours" }).click();
   await expect(
@@ -178,6 +177,6 @@ test("connect, load vault, simulate, authorize, pause and revoke on actual Anvil
     fullPage: true,
   });
   await page.getByRole("button", { name: "Disconnect wallet" }).click();
-  await expect(page.getByText("Start with your wallet")).toBeVisible();
+  await expect(page.getByText("Connect your wallet to set permissions")).toBeVisible();
   expect(errors).toEqual([]);
 });
