@@ -51,11 +51,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-function assetLabel(symbol: string) {
-  if (symbol.startsWith("cUSDC")) return "cUSD";
-  if (symbol.startsWith("cUSDT")) return "cUSDT";
-  return symbol.replace(/Mock$/, "");
-}
 export default function ConfidentialPanel({ address }: { address: Address }) {
   const [queryClient] = useState(
     () =>
@@ -80,14 +75,29 @@ export default function ConfidentialPanel({ address }: { address: Address }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ZamaProvider config={config}>
-        <Tabs defaultValue={confidentialAssets[0].address}>
-          <TabsList aria-label="Confidential assets">
-            {confidentialAssets.map((a) => (
-              <TabsTrigger key={a.address} value={a.address}>
-                {assetLabel(a.symbol)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <Tabs
+          defaultValue={confidentialAssets[0].address}
+          className="confidential-token-tabs"
+        >
+          <section
+            className="confidential-tabs-scroll"
+            aria-label="Confidential asset selection"
+          >
+            <TabsList
+              aria-label="Confidential assets"
+              className="confidential-tabs-list"
+            >
+              {confidentialAssets.map((a) => (
+                <TabsTrigger
+                  key={a.address}
+                  value={a.address}
+                  className="confidential-tab-trigger"
+                >
+                  {a.displaySymbol}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </section>
           {confidentialAssets.map((asset) => (
             <TabsContent key={asset.address} value={asset.address}>
               <VerifiedToken asset={asset} address={address} />
@@ -186,11 +196,14 @@ function TokenTools({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{assetLabel(asset.symbol)}</CardTitle>
+        <CardTitle>{asset.displaySymbol}</CardTitle>
         <CardDescription>
-          Unbacked test asset · Wrapper verified on Sepolia at block{" "}
+          Unbacked test wrapper · Verified on Sepolia at block{" "}
           {asset.blockNumber}. Decrypted balances stay in this browser session,
-          not in MCP or an LLM.
+          not in MCP or an LLM.{" "}
+          {asset.symbol === "cZAMAMock"
+            ? "The underlying ZAMA test token is not the real Sepolia ZAMA token."
+            : ""}
         </CardDescription>
       </CardHeader>
       <CardContent>

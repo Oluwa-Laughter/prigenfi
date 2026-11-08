@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   Menu,
   ShieldCheck,
+  LockKeyhole,
   SlidersHorizontal,
   WalletCards,
   X,
@@ -33,6 +34,7 @@ const primaryNav = [
   { href: "/markets", label: "Markets", icon: Compass },
   { href: "/agents", label: "My agents", icon: Bot },
   { href: "/strategies", label: "Strategies", icon: Zap },
+  { href: "/privacy", label: "Confidential trading", icon: LockKeyhole },
 ];
 const accountNav = [
   { href: "/portfolio", label: "Portfolio", icon: ChartNoAxesCombined },
@@ -45,6 +47,7 @@ const labels: Record<string, string> = {
   "/markets": "Explore markets",
   "/agents": "My agents",
   "/strategies": "Strategies",
+  "/privacy": "Confidential trading",
   "/portfolio": "Portfolio",
   "/activity": "Activity",
   "/vault": "Capital & permissions",

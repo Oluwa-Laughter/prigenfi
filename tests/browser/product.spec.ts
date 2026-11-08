@@ -70,9 +70,9 @@ for (const width of [1440, 390]) {
       await expect(
         page.getByRole("link", { name: "Skip to content" }),
       ).toBeFocused();
-      await page.getByRole("button", { name: "Meme tokens" }).click();
+      await page.getByRole("button", { name: "Emerging" }).click();
       await expect(
-        page.getByText("Find emerging Ethereum meme pairs", { exact: false }),
+        page.getByText("Inspect contract safety", { exact: false }),
       ).toBeVisible();
       expect(
         await page.evaluate(
@@ -124,7 +124,7 @@ for (const width of [1440, 390]) {
         "Explore Ethereum markets.",
       );
       await expect(
-        page.getByRole("button", { name: "Meme coins" }),
+        page.getByRole("button", { name: "Emerging tokens" }),
       ).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByRole("table").getByText("PEPE")).toBeVisible();
       await page.screenshot({
@@ -136,24 +136,36 @@ for (const width of [1440, 390]) {
         "Different markets.",
       );
       await page.getByRole("link", { name: "Create mandate" }).first().click();
-      await expect(page).toHaveURL(/\/agents\?strategy=meme/);
+      await expect(page).toHaveURL(/\/agents\?strategy=all/);
       await expect(
-        page.getByRole("heading", { name: "What should your agent work on?" }),
+        page.getByRole("heading", {
+          name: "Tell your agent what you want to achieve.",
+        }),
       ).toBeVisible();
-      await expect(page.getByLabel("Market to research")).toHaveValue(
-        "Meme tokens",
+      await expect(page.getByLabel("Market scope")).toHaveValue(
+        "All Ethereum markets",
       );
-      await page.getByText("Preview complete agent instructions").click();
+      await page.getByText("Preview the complete confidential mandate").click();
       await expect(page.locator(".brief-preview pre")).toContainText(
-        "Meme tokens",
+        "All Ethereum markets",
       );
       await expect(page.locator(".brief-preview pre")).toContainText(
-        "not an on-chain approval",
+        "CONFIDENTIAL ONLY",
       );
       await page.screenshot({
         path: "docs/evidence/agents-" + width + ".png",
         fullPage: true,
       });
+      await page.goto("/privacy");
+      await expect(page.getByRole("heading", { level: 1 })).toContainText(
+        "Privacy is a requirement.",
+      );
+      await expect(
+        page.locator(".privacy-asset").getByText("cZAMA", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Blocked — no verified private execution venue"),
+      ).toBeVisible();
       await page.goto("/portfolio");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Know what you own.",

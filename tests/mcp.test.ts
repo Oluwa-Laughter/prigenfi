@@ -7,6 +7,8 @@ const names = [
   "agent_get_permissions",
   "portfolio_get",
   "confidential_assets_list",
+  "confidential_capabilities_get",
+  "confidential_route_check",
   "trade_quote",
   "trade_simulate",
   "trade_propose",
@@ -32,6 +34,33 @@ it("external stdio client discovers tools and reads permitted metadata", async (
       arguments: {},
     });
     expect(JSON.stringify(assets)).toContain("cUSDCMock");
+    expect(JSON.stringify(assets)).toContain("cZAMAMock");
+    const caps = await client.callTool({
+      name: "confidential_capabilities_get",
+      arguments: {},
+    });
+    expect(
+      JSON.parse((caps.content as { text: string }[])[0].text)
+        .privateAgentExecution,
+    ).toBe(false);
+    const route = await client.callTool({
+      name: "confidential_route_check",
+      arguments: {
+        market: "defi",
+        instruction:
+          "Analyze Ethereum lending markets with confidential execution only.",
+        watchAssets: "cUSDC / cZAMA",
+        suggestedCapitalLimit: "50",
+        privacy: "confidential-only",
+      },
+    });
+    expect(
+      JSON.parse((route.content as { text: string }[])[0].text).reasons,
+    ).toContain("PUBLIC_FALLBACK_FORBIDDEN");
+    expect(
+      JSON.parse((route.content as { text: string }[])[0].text)
+        .executionAllowed,
+    ).toBe(false);
     const denied = await client.callTool({ name: "policy_get", arguments: {} });
     expect(denied.isError).toBe(true);
     expect(JSON.stringify(denied)).toContain("NOT_CONFIGURED");

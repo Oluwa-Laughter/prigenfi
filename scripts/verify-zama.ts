@@ -19,11 +19,17 @@ const results = await Promise.all(
 await mkdir("docs/evidence", { recursive: true });
 await writeFile(
   "docs/evidence/zama-registry.json",
-  publicJson({
-    source:
-      "https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md",
-    chainId: 11155111,
-    results,
-  }),
+  JSON.stringify(
+    JSON.parse(
+      publicJson({
+        source:
+          "https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md",
+        chainId: 11155111,
+        results,
+      }),
+    ),
+    null,
+    2,
+  ) + "\n",
 );
 console.log(publicJson(results));

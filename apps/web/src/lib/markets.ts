@@ -24,24 +24,23 @@ export const marketCategories = [
     description: "ETH and ERC-20 pairs across Ethereum decentralized exchanges",
   },
   {
-    id: "meme",
-    label: "Meme coins",
-    query: "PEPE",
-    description:
-      "Meme-token pair discovery — verify token contracts and liquidity independently",
-  },
-  {
     id: "defi",
     label: "DeFi tokens",
     query: "UNI",
-    description: "DEX governance, lending and protocol tokens",
+    description: "Lending, governance and protocol token markets",
   },
   {
     id: "stable",
     label: "Stablecoins",
     query: "USDC",
+    description: "Public stablecoin pool research, not confidential trading",
+  },
+  {
+    id: "meme",
+    label: "Emerging tokens",
+    query: "PEPE",
     description:
-      "Public stablecoin pairs, separate from Zama confidential test assets",
+      "Emerging and meme-token discovery — verify contract and liquidity risks",
   },
 ] as const;
 export type MarketCategory = (typeof marketCategories)[number]["id"];

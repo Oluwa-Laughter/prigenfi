@@ -11,30 +11,39 @@ import {
 } from "lucide-react";
 const modes = [
   {
-    id: "memes",
-    label: "Meme tokens",
-    title: "Scout meme momentum",
+    id: "all",
+    label: "All markets",
+    title: "Direct an agent",
     mandate:
-      "Find emerging Ethereum meme pairs with meaningful liquidity. Flag honeypot risks, concentration and sharp price moves before proposing anything.",
-    assets: "New ETH pairs",
-    mode: "Research only",
-  },
-  {
-    id: "spot",
-    label: "Spot DEX",
-    title: "Watch spot liquidity",
-    mandate:
-      "Track ETH/ERC-20 liquidity across DEX pools. Compare routing, depth and slippage. Only prepare a trade if the wallet policy permits it.",
-    assets: "ETH / ERC-20",
-    mode: "Research only",
+      "Research Ethereum markets on my behalf. Compare opportunities across DeFi, spot, staking and tokens. Require a verified confidential route before any trade.",
+    assets: "Ethereum ecosystem",
+    mode: "Private execution required",
   },
   {
     id: "defi",
     label: "DeFi",
-    title: "Compare DeFi positions",
+    title: "Study DeFi",
     mandate:
-      "Research lending and liquid staking opportunities. Report protocol and liquidation risks, then propose a bounded allocation.",
-    assets: "Lending & staking",
+      "Compare collateral, protocol and liquidity risks across lending, liquid staking and DeFi strategies. Do not use a public fallback.",
+    assets: "Lending & pools",
+    mode: "Research only",
+  },
+  {
+    id: "spot",
+    label: "Spot",
+    title: "Spot liquidity",
+    mandate:
+      "Compare Ethereum pairs, execution quality and slippage. Only propose a confidential swap after it is verified.",
+    assets: "ETH / ERC-20",
+    mode: "Research only",
+  },
+  {
+    id: "meme",
+    label: "Emerging",
+    title: "Token research",
+    mandate:
+      "Inspect contract safety, holders, liquidity and volatility of emerging tokens. Never claim a public swap is confidential.",
+    assets: "Emerging tokens",
     mode: "Research only",
   },
 ];

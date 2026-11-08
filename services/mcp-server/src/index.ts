@@ -6,6 +6,11 @@ import {
   transferSchema,
 } from "@prigenfi/shared";
 import { ProposalSession, type PrigenFiClient } from "@prigenfi/sdk";
+import {
+  assessConfidentialTrade,
+  confidentialCapabilities,
+  confidentialMandateSchema,
+} from "@prigenfi/shared/confidential-policy";
 
 export function createMcpServer(client?: PrigenFiClient) {
   const server = new McpServer(
@@ -83,6 +88,25 @@ export function createMcpServer(client?: PrigenFiClient) {
       source:
         "https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md",
     }),
+  );
+  read(
+    "confidential_capabilities_get",
+    "Read supported Zama Sepolia wallet tokens and strict private-execution readiness. No balances or user mandates are read.",
+    () => confidentialCapabilities,
+  );
+  server.registerTool(
+    "confidential_route_check",
+    {
+      description:
+        "Validate an owner-authored confidential-only research mandate without storing instructions, decrypting data, or suggesting a public swap. Private execution stays disabled until verified.",
+      inputSchema: confidentialMandateSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: false,
+      },
+    },
+    (input) => safe(() => assessConfidentialTrade(input)),
   );
   read(
     "agent_get_permissions",

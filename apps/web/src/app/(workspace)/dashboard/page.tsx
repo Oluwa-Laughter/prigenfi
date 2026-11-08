@@ -35,11 +35,11 @@ export default function Overview() {
           <span className="ws-command-pill">
             <Sparkles size={15} /> Start here
           </span>
-          <h2>What market should your agent watch next?</h2>
+          <h2>What should your agent do next?</h2>
           <p>
-            Find opportunities in Ethereum spot markets, meme tokens, DeFi,
-            lending and stablecoins. Your agent can research the plan; you
-            authorize what actually happens.
+            Direct a strategy across Ethereum: DeFi, spot markets, confidential
+            assets and emerging tokens. Privacy is a mandatory execution
+            condition; you control the capital.
           </p>
           <div className="ws-command-links">
             <Link className="ws-command-primary" href="/agents">
@@ -54,9 +54,9 @@ export default function Overview() {
           <span className="orbit-center">
             <Bot size={39} />
           </span>
-          <span className="orbit-node orbit-one">MEME</span>
-          <span className="orbit-node orbit-two">DEX</span>
-          <span className="orbit-node orbit-three">DeFi</span>
+          <span className="orbit-node orbit-one">DeFi</span>
+          <span className="orbit-node orbit-two">Spot</span>
+          <span className="orbit-node orbit-three">FHE</span>
           <span className="orbit-node orbit-four">ETH</span>
         </div>
       </section>
@@ -87,7 +87,7 @@ export default function Overview() {
             <ShieldCheck size={18} /> Execution policy
           </span>
           <strong>Testnet</strong>
-          <small>Only restricted ERC-20 transfers currently enabled</small>
+          <small>Confidential agent swaps remain disabled</small>
         </article>
       </div>
       <div className="ws-section-row">
@@ -138,8 +138,8 @@ export default function Overview() {
           </div>
           <h3>Confidential by design</h3>
           <p>
-            Explore cUSD and cUSDT through Zama wallet tools on Sepolia—not
-            public-market privacy claims.
+            Explore cUSDC, cUSDT and cZAMA through Zama wallet tools on
+            Sepolia—not public-market privacy claims.
           </p>
           <Link href="/portfolio">
             See confidential assets <ArrowRight size={16} />

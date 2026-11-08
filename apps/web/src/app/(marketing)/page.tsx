@@ -14,31 +14,32 @@ import { MarketLens } from "@/components/market-lens";
 const categories = [
   {
     number: "01",
-    title: "Meme & emerging tokens",
-    detail: "Scan new Ethereum pairs, changing liquidity and token risk.",
-    tone: "meme",
-    slug: "meme",
+    title: "DeFi & yield",
+    detail: "Research lending, liquid staking, pools and protocol exposure.",
+    tone: "defi",
+    slug: "defi",
   },
   {
     number: "02",
     title: "DEX spot markets",
-    detail: "Research ETH and ERC-20 pairs across on-chain liquidity.",
+    detail: "Study ETH and ERC-20 pairs across on-chain liquidity.",
     tone: "spot",
     slug: "spot",
   },
   {
     number: "03",
-    title: "DeFi & yield",
-    detail: "Compare lending, staking, pools and protocol exposure.",
-    tone: "defi",
-    slug: "defi",
+    title: "Confidential assets",
+    detail:
+      "Plan around cUSDC, cUSDT, cZAMA, cWETH and more on supported private rails.",
+    tone: "stable",
+    slug: "stable",
   },
   {
     number: "04",
-    title: "Stablecoin strategies",
-    detail: "Design cUSD and cUSDT instructions for supported private rails.",
-    tone: "stable",
-    slug: "stable",
+    title: "Emerging tokens",
+    detail: "Investigate new and meme-token markets with strict risk checks.",
+    tone: "meme",
+    slug: "meme",
   },
 ];
 
@@ -58,8 +59,9 @@ export default function Home() {
             click.
           </h1>
           <p className="m-hero-lead">
-            From meme coins to DeFi, tell your agent what to investigate. Choose
-            the markets, set the limits, and keep ownership of your capital.
+            Across the Ethereum ecosystem, tell your agent what you want to
+            achieve. Choose your markets, set limits and require confidentiality
+            at every future execution step.
           </p>
           <div className="m-hero-actions">
             <Link className="m-primary-cta" href="/agents">
@@ -80,10 +82,10 @@ export default function Home() {
       <div className="m-category-rail">
         <div className="marketing-container m-rail-inner">
           <span>One mandate.</span>
-          <span>Meme markets</span>
-          <span>DEX liquidity</span>
           <span>DeFi positions</span>
-          <span>Private stablecoins</span>
+          <span>DEX liquidity</span>
+          <span>Private token markets</span>
+          <span>Emerging assets</span>
           <span>Owner-controlled risk</span>
         </div>
       </div>
@@ -149,8 +151,8 @@ export default function Home() {
               <div>
                 <h3>Describe your edge</h3>
                 <p>
-                  Choose meme coins, spot pairs, lending or stablecoins, then
-                  write your strategy in plain language.
+                  Describe any Ethereum trading goal in plain language, from
+                  portfolio strategies to spot, lending and emerging tokens.
                 </p>
               </div>
               <Sparkles size={24} />
@@ -201,7 +203,7 @@ export default function Home() {
           </p>
           <div className="m-privacy-checks">
             <span>
-              <Check size={17} /> cUSD and cUSDT testnet tools
+              <Check size={17} /> cUSDC, cUSDT and cZAMA testnet tools
             </span>
             <span>
               <Check size={17} /> Wallet-authorized decryption
@@ -210,7 +212,7 @@ export default function Home() {
               <Check size={17} /> Transparent privacy limits
             </span>
           </div>
-          <Link className="m-inline-link" href="/portfolio">
+          <Link className="m-inline-link" href="/privacy">
             Explore private assets <ArrowUpRight size={16} />
           </Link>
         </div>
@@ -230,8 +232,8 @@ export default function Home() {
           Enter the workspace <ArrowUpRight size={19} />
         </Link>
         <div className="m-end-notice">
-          <Radio size={17} /> Developer preview. No autonomous trading, private
-          meme swaps or real-fund execution is live.
+          <Radio size={17} /> Developer preview. No autonomous or private
+          strategy execution or real-fund trading is live.
         </div>
       </section>
     </main>

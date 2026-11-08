@@ -11,6 +11,7 @@ import {
   EyeOff,
   LockKeyhole,
   WalletCards,
+  ShieldCheck,
 } from "lucide-react";
 const ConfidentialPanel = dynamic(
   () => import("@/components/confidential-panel"),
@@ -61,7 +62,7 @@ export default function PortfolioPage() {
         </div>
         <div className="portfolio-metric">
           <span>
-            <EyeOff size={18} /> cUSD
+            <EyeOff size={18} /> cUSDC
           </span>
           <strong>Hidden</strong>
           <small>Unbacked Sepolia confidential test asset</small>
@@ -72,6 +73,13 @@ export default function PortfolioPage() {
           </span>
           <strong>Hidden</strong>
           <small>Only you can authorize decryption</small>
+        </div>
+        <div className="portfolio-metric">
+          <span>
+            <ShieldCheck size={18} /> cZAMA
+          </span>
+          <strong>Not revealed</strong>
+          <small>Unbacked Zama test wrapper; not real ZAMA</small>
         </div>
       </div>
       <div className="ws-section-row">
@@ -130,10 +138,10 @@ export default function PortfolioPage() {
       <div className="ws-security-note">
         <WalletCards size={18} />
         <p>
-          cUSD and cUSDT are interface labels for Zama's unbacked cUSDCMock and
-          cUSDTMock Sepolia contracts. They are not dollar-backed or redeemable.
-          Shield/unshield amounts, addresses and transaction timing remain
-          public.
+          cUSDC, cUSDT, cZAMA, cWETH, cBRON, cXAUt and ctGBP are display labels
+          for unbacked Sepolia test wrappers. The cZAMA test underlying is not
+          the real Sepolia ZAMA token. Wrapping deposits, withdrawals, addresses
+          and timing remain public.
         </p>
       </div>
     </div>

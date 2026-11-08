@@ -4,7 +4,7 @@ it("serves metadata only and exposes no private or execution routes", async () =
   const app = await buildApi();
   try {
     expect((await app.inject("/health")).json().execution).toBe("disabled");
-    expect((await app.inject("/v1/assets")).json().assets).toHaveLength(2);
+    expect((await app.inject("/v1/assets")).json().assets).toHaveLength(7);
     expect((await app.inject("/v1/portfolio?address=0x1")).statusCode).toBe(
       404,
     );

@@ -70,18 +70,73 @@ export const chains = {
     capabilities: ["erc20-transfer"],
   },
 } as const;
+/** Official Zama Sepolia wrapper registry, unbacked test assets only.
+ * Public addresses are not a claim that an encrypted swap venue exists.
+ * Source: https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md
+ */
 export const confidentialAssets = [
   {
     symbol: "cUSDCMock",
+    displaySymbol: "cUSDC",
+    category: "Stablecoin",
     address: getAddress("0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639"),
     underlying: getAddress("0x9b5Cd13b8eFbB58Dc25A05CF411D8056058aDFfF"),
     chainId: 11155111,
+    isTestAsset: true,
   },
   {
     symbol: "cUSDTMock",
+    displaySymbol: "cUSDT",
+    category: "Stablecoin",
     address: getAddress("0x4E7B06D78965594eB5EF5414c357ca21E1554491"),
     underlying: getAddress("0xa7dA08FafDC9097Cc0E7D4f113A61e31d7e8e9b0"),
     chainId: 11155111,
+    isTestAsset: true,
+  },
+  {
+    symbol: "cZAMAMock",
+    displaySymbol: "cZAMA",
+    category: "Protocol token",
+    address: getAddress("0xf2D628d2598aF4eAF94CB76a437Ff86CA78FfbFB"),
+    underlying: getAddress("0x75355a85c6FB9df5f0C80FF54e8747EEe9a0BF57"),
+    chainId: 11155111,
+    isTestAsset: true,
+  },
+  {
+    symbol: "cWETHMock",
+    displaySymbol: "cWETH",
+    category: "Wrapped ETH",
+    address: getAddress("0x46208622DA27d91db4f0393733C8BA082ed83158"),
+    underlying: getAddress("0xff54739b16576FA5402F211D0b938469Ab9A5f3F"),
+    chainId: 11155111,
+    isTestAsset: true,
+  },
+  {
+    symbol: "cBRONMock",
+    displaySymbol: "cBRON",
+    category: "Token",
+    address: getAddress("0xaa5612FA27c927a0c7961f5AEFEE5ba3A0F9C891"),
+    underlying: getAddress("0xFf021fB13cA64e5354c62c954b949a88cfDEb25E"),
+    chainId: 11155111,
+    isTestAsset: true,
+  },
+  {
+    symbol: "cXAUtMock",
+    displaySymbol: "cXAUt",
+    category: "Gold-linked test token",
+    address: getAddress("0xe4FcF848739845BC81Dee1d5352cf3844F0a60C7"),
+    underlying: getAddress("0x24377AE4AA0C45ecEe71225007f17c5D423dd940"),
+    chainId: 11155111,
+    isTestAsset: true,
+  },
+  {
+    symbol: "ctGBPMock",
+    displaySymbol: "ctGBP",
+    category: "FX-linked test token",
+    address: getAddress("0xfCE5c7069c5525eF6c8C2b2E35A745bA20a2F7CC"),
+    underlying: getAddress("0x93c931278A2aad1916783F952f94276eA5111442"),
+    chainId: 11155111,
+    isTestAsset: true,
   },
 ] as const;
 export const serverEnvSchema = z.object({

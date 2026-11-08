@@ -4,12 +4,19 @@
 
 Official registry: https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md
 
-Read-only verification is recorded in `docs/evidence/zama-registry.json`. On Ethereum Sepolia, chain 11155111, block 12083183, both wrapper and underlying contract code existed; wrapper `underlying()`, `decimals()` and `rate()` matched:
+Read-only verification is recorded in `docs/evidence/zama-registry.json`. At Ethereum Sepolia block **12089561**, all seven official test wrappers and their underlying contracts had deployed bytecode, matching `underlying()`, `decimals()` and `rate()`. They are **unbacked, test-only assets**, not production or redeemable tokens.
 
-| Asset     | Wrapper                                    | Underlying                                 | Public/confidential decimals | Rate |
-| --------- | ------------------------------------------ | ------------------------------------------ | ---------------------------- | ---- |
-| cUSDCMock | 0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639 | 0x9b5Cd13b8eFbB58Dc25A05CF411D8056058aDFfF | 6 / 6                        | 1    |
-| cUSDTMock | 0x4E7B06D78965594eB5EF5414c357ca21E1554491 | 0xa7dA08FafDC9097Cc0E7D4f113A61e31d7e8e9b0 | 6 / 6                        | 1    |
+| Product name | Official test wrapper symbol | Wrapper address                              | Underlying decimals / wrapper decimals | Rate          |
+| ------------ | ---------------------------- | -------------------------------------------- | -------------------------------------- | ------------- |
+| cUSDC        | `cUSDCMock`                  | `0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639` | 6 / 6                                  | 1             |
+| cUSDT        | `cUSDTMock`                  | `0x4E7B06D78965594eB5EF5414c357ca21E1554491` | 6 / 6                                  | 1             |
+| cZAMA        | `cZAMAMock`                  | `0xf2D628d2598aF4eAF94CB76a437Ff86CA78FfbFB` | 18 / 6                                 | 1000000000000 |
+| cWETH        | `cWETHMock`                  | `0x46208622DA27d91db4f0393733C8BA082ed83158` | 18 / 6                                 | 1000000000000 |
+| cBRON        | `cBRONMock`                  | `0xaa5612FA27c927a0c7961f5AEFEE5ba3A0F9C891` | 18 / 6                                 | 1000000000000 |
+| cXAUt        | `cXAUtMock`                  | `0xe4FcF848739845BC81Dee1d5352cf3844F0a60C7` | 6 / 6                                  | 1             |
+| ctGBP        | `ctGBPMock`                  | `0xfCE5c7069c5525eF6c8C2b2E35A745bA20a2F7CC` | 18 / 6                                 | 1000000000000 |
+
+The test wrapper `cZAMAMock` uses a publicly mintable test underlying **distinct** from the real Sepolia ZAMA token. The verified rates matter: cZAMA, cWETH and several others use 18-decimal underlying tokens and 6-decimal confidential wrappers. Never reinterpret a decimal value as wallet units without reading both `decimals()` and `rate()`.
 
 The UI repeats verification before enabling operations. This proves deployed metadata compatibility, not real FHE execution, implementation audit, availability SLA or token value.
 

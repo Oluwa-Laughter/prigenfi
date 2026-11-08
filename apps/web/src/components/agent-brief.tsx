@@ -7,70 +7,94 @@ import {
   Check,
   ClipboardCopy,
   LockKeyhole,
+  ShieldAlert,
+  Sparkles,
 } from "lucide-react";
+import {
+  assessConfidentialTrade,
+  confidentialMandateSchema,
+  type ConfidentialMandate,
+} from "@prigenfi/shared/confidential-policy";
 
 type Market =
-  | "Meme tokens"
+  | "All Ethereum markets"
   | "DEX spot"
   | "DeFi lending"
   | "Staking & liquidity"
   | "Stablecoins"
+  | "Meme tokens"
   | "Perpetuals";
 const templates: Record<
   string,
   { market: Market; assets: string; instruction: string }
 > = {
-  meme: {
-    market: "Meme tokens",
-    assets: "PEPE / ETH and emerging tokens",
+  all: {
+    market: "All Ethereum markets",
+    assets: "ETH, ERC-20, cUSDC, cUSDT, cZAMA and eligible markets",
     instruction:
-      "Research Ethereum meme-token momentum. Inspect contract risk, liquidity depth, concentrated holders and slippage. Prepare an evidence-based proposal; do not trade.",
+      "Research the Ethereum ecosystem for risk-adjusted opportunities across decentralized exchanges, DeFi and token markets. Explain trade-offs and propose only strategies that can preserve confidential execution. Never route a transaction publicly.",
   },
   spot: {
     market: "DEX spot",
-    assets: "ETH / ERC-20",
+    assets: "ETH / ERC-20 / cWETH",
     instruction:
-      "Compare Ethereum DEX spot pairs and liquidity. Estimate price impact, slippage, route safety and transaction cost before proposing any execution.",
+      "Research ETH and ERC-20 spot liquidity, expected slippage and venue risk. Report only routes with verified confidential execution; otherwise explain why a private trade is unavailable.",
   },
   defi: {
     market: "DeFi lending",
-    assets: "AAVE / ETH / USDC",
+    assets: "cUSDC / cUSDT / ETH markets",
     instruction:
-      "Study collateral, utilization, borrower risk and lending protocol exposure. Report risks and propose a bounded strategy.",
-  },
-  stable: {
-    market: "Stablecoins",
-    assets: "cUSD / cUSDT",
-    instruction:
-      "Study stablecoin market spreads and available confidentiality routes. Do not imply an executable private swap unless a Zama-compatible venue has been verified.",
+      "Compare lending collateral, borrow rates, liquidation risk and protocol dependency. Propose only strategies compatible with enforced confidential execution.",
   },
   staking: {
     market: "Staking & liquidity",
-    assets: "ETH / liquid staking / LP",
+    assets: "cZAMA / cWETH and staking markets",
     instruction:
-      "Analyze staking yields, liquidity exit risk, impermanent loss and protocol dependencies. Submit a research report before any allocation.",
+      "Examine staking and liquidity pools, yields, impermanent loss and withdrawal conditions. Do not offer a public trade as a private option.",
+  },
+  stable: {
+    market: "Stablecoins",
+    assets: "cUSDC / cUSDT",
+    instruction:
+      "Monitor stablecoin liquidity, depeg risk and opportunities. Only propose a transaction if a confidential venue and strict wallet policy have been verified.",
+  },
+  meme: {
+    market: "Meme tokens",
+    assets: "Ethereum emerging tokens",
+    instruction:
+      "Research token contracts, holder concentration, pool liquidity and safety risks. Report any unsupported privacy guarantees and do not trade publicly.",
   },
   perps: {
     market: "Perpetuals",
-    assets: "ETH / ERC-20 perps",
+    assets: "ETH and eligible derivatives",
     instruction:
-      "Research funding rates, volatility, margin and liquidation risk. Leveraged execution is not supported; do not place trades.",
+      "Research funding, volatility, margin and liquidation risk. Leverage and derivatives execution are unavailable; do not submit orders.",
   },
 };
+const marketDomain: Record<Market, ConfidentialMandate["market"]> = {
+  "All Ethereum markets": "portfolio",
+  "DEX spot": "spot",
+  "DeFi lending": "defi",
+  "Staking & liquidity": "staking",
+  Stablecoins: "stablecoins",
+  "Meme tokens": "emerging-tokens",
+  Perpetuals: "derivatives",
+};
 const markets: Market[] = [
-  "Meme tokens",
+  "All Ethereum markets",
   "DEX spot",
   "DeFi lending",
   "Staking & liquidity",
   "Stablecoins",
+  "Meme tokens",
   "Perpetuals",
 ];
 export function AgentBrief() {
-  const [market, setMarket] = useState<Market>("DEX spot");
-  const [assets, setAssets] = useState("ETH / ERC-20");
+  const [market, setMarket] = useState<Market>("All Ethereum markets");
+  const [assets, setAssets] = useState(templates.all.assets);
   const [limit, setLimit] = useState("100");
-  const [instruction, setInstruction] = useState(templates.spot.instruction);
-  const [status, setStatus] = useState("");
+  const [instruction, setInstruction] = useState(templates.all.instruction);
+  const [feedback, setFeedback] = useState("");
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("strategy");
     const template = id ? templates[id] : undefined;
@@ -80,36 +104,40 @@ export function AgentBrief() {
       setInstruction(template.instruction);
     }
   }, []);
-  const valid =
-    Number.isFinite(Number(limit)) &&
-    Number(limit) > 0 &&
-    Number(limit) <= 1000000000 &&
-    assets.trim().length > 0 &&
-    instruction.trim().length >= 12;
+  const draft = {
+    market: marketDomain[market],
+    instruction,
+    watchAssets: assets,
+    suggestedCapitalLimit: limit,
+    privacy: "confidential-only" as const,
+  };
+  const valid = confidentialMandateSchema.safeParse(draft).success;
+  const readiness = assessConfidentialTrade(draft);
   const mandate = [
-    "PRIGENFI — AGENT RESEARCH MANDATE (DRAFT)",
-    "Market research scope: Ethereum ecosystem",
-    "Execution environment: Ethereum Sepolia testnet only",
-    "Market: " + market,
-    "Watch assets: " + assets.trim(),
-    "Proposed capital ceiling: " +
+    "PRIGENFI — CONFIDENTIAL AGENT MANDATE / RESEARCH DRAFT",
+    "Ecosystem: Ethereum; testnet execution only",
+    "Strategy universe: " + market,
+    "Watch assets or venues: " + assets.trim(),
+    "Owner-suggested maximum exposure: " +
       limit +
-      " test units (not an on-chain approval)",
-    "User instruction: " + instruction.trim(),
-    "Agent requirements: cite price, liquidity and token-risk evidence. Do not infer approvals from this text.",
-    "Execution: research and proposal only. No signing, swaps, bridging or decryption through this mandate.",
-    "Owner must separately authorize the exact asset, target, amount and expiry in a verified on-chain policy.",
+      " test units (NOT an on-chain permission)",
+    "Execution privacy: CONFIDENTIAL ONLY — NEVER fall back to a public trade or route.",
+    "Owner instruction: " + instruction.trim(),
+    "Required: validate protocol/venue support, account authorization, token mapping, price data, liquidity, contract and slippage risks before any proposed action.",
+    "Current readiness: NO VERIFIED CONFIDENTIAL SWAP VENUE; execution prohibited.",
+    "No spending, signing, decryption, bridging or private order submission is authorized by these instructions.",
+    "This text remains in your browser until you explicitly copy it. A copied draft is not an active agent.",
   ].join("\n");
   async function copy() {
     if (!valid) return;
     try {
       await navigator.clipboard.writeText(mandate);
-      setStatus(
-        "Mandate copied. This did not register an agent or grant wallet permissions.",
+      setFeedback(
+        "Private-only research mandate copied. No permissions were granted and no trading agent was started.",
       );
     } catch {
-      setStatus(
-        "Clipboard access is blocked. Open the preview below and copy the text manually.",
+      setFeedback(
+        "Clipboard access is blocked. Expand the preview to copy the mandate.",
       );
     }
   }
@@ -121,50 +149,54 @@ export function AgentBrief() {
     >
       <div className="agent-brief-header">
         <div>
-          <span className="ws-kicker">
-            <Bot size={15} /> Mission builder
-          </span>
-          <h2 id="agent-brief-title">What should your agent work on?</h2>
+          <p className="ws-kicker">
+            <Bot size={15} /> Agent instructions
+          </p>
+          <h2 id="agent-brief-title">
+            Tell your agent what you want to achieve.
+          </h2>
           <p>
-            Choose the market, set a suggested ceiling and describe the research
-            you want. You remain the signer and rule-maker.
+            Use plain language. Your agent's scope can cover the whole Ethereum
+            ecosystem, not just a single type of trade.
           </p>
         </div>
-        <span className="brief-chip">Draft only · No trade</span>
+        <span className="brief-chip">
+          <LockKeyhole size={14} /> Privacy required
+        </span>
       </div>
       <div className="brief-form-grid">
         <label className="brief-field">
-          <span>Market to research</span>
+          <span>Market scope</span>
           <select
             value={market}
             onChange={(e) => {
-              const v = e.target.value as Market;
-              const choice = Object.values(templates).find(
-                (x) => x.market === v,
+              const next = e.target.value as Market;
+              const template = Object.values(templates).find(
+                (t) => t.market === next,
               );
-              setMarket(v);
-              if (choice) {
-                setAssets(choice.assets);
-                setInstruction(choice.instruction);
+              setMarket(next);
+              if (template) {
+                setAssets(template.assets);
+                setInstruction(template.instruction);
               }
-              setStatus("");
+              setFeedback("");
             }}
           >
             {markets.map((m) => (
-              <option value={m} key={m}>
+              <option key={m} value={m}>
                 {m}
               </option>
             ))}
           </select>
         </label>
         <label className="brief-field">
-          <span>Token / pair / venue</span>
+          <span>Tokens or venues to research</span>
           <input
             value={assets}
             maxLength={90}
             onChange={(e) => {
               setAssets(e.target.value);
-              setStatus("");
+              setFeedback("");
             }}
           />
         </label>
@@ -172,60 +204,76 @@ export function AgentBrief() {
           <span>Suggested capital ceiling (test units)</span>
           <input
             type="number"
+            inputMode="decimal"
             min="0.01"
-            max="1000000000"
             step="0.01"
+            max="1000000000"
             value={limit}
             onChange={(e) => {
               setLimit(e.target.value);
-              setStatus("");
+              setFeedback("");
             }}
           />
         </label>
         <label className="brief-field brief-span">
-          <span>Your instruction to the agent</span>
+          <span>Describe your goal in your own words</span>
           <textarea
             value={instruction}
             maxLength={1200}
             onChange={(e) => {
               setInstruction(e.target.value);
-              setStatus("");
+              setFeedback("");
             }}
+            placeholder="Research opportunities across Ethereum. Only propose confidential strategies that respect my limits and explain the risks…"
           />
         </label>
       </div>
+      <div className="privacy-readiness" role="status">
+        <ShieldAlert size={20} />
+        <div>
+          <strong>
+            {valid && readiness.acceptedAsResearch
+              ? "Research mandate ready. Confidential execution is not yet available."
+              : "Complete the mandate to check its research scope."}
+          </strong>
+          <p>
+            Private-only is mandatory. No verified confidential trading venue or
+            unattended execution is connected. A standard DEX swap must never be
+            used as a fallback.
+          </p>
+        </div>
+      </div>
       <div className="brief-bottom">
         <p>
-          <LockKeyhole size={16} /> A market instruction is not wallet
-          authority. Private swaps and autonomous execution aren't available in
-          this release.
+          <Sparkles size={17} /> This form drafts instructions on your device;
+          it does not yet invoke an AI model or persist a trading session.
         </p>
         <div className="brief-actions">
-          <Link href="/vault">
-            Manage wallet limits <ArrowUpRight size={16} />
+          <Link href="/privacy">
+            See privacy guarantees <ArrowUpRight size={15} />
           </Link>
           <button
             type="button"
-            disabled={!valid}
             className="ws-pill-button"
+            disabled={!valid}
             onClick={copy}
           >
-            {status.startsWith("Mandate copied") ? (
-              <Check size={17} />
+            {feedback.startsWith("Private-only") ? (
+              <Check size={16} />
             ) : (
-              <ClipboardCopy size={17} />
+              <ClipboardCopy size={16} />
             )}{" "}
-            Copy mandate
+            Copy private mandate
           </button>
         </div>
       </div>
-      {status && (
-        <p role="status" className="brief-alert">
-          {status}
+      {feedback && (
+        <p className="brief-alert" role="status">
+          {feedback}
         </p>
       )}
       <details className="brief-preview">
-        <summary>Preview complete agent instructions</summary>
+        <summary>Preview the complete confidential mandate</summary>
         <pre>{mandate}</pre>
       </details>
     </section>
