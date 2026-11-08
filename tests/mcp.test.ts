@@ -1,3 +1,4 @@
+import { confidentialAssets } from "../packages/shared/src";
 import { it, expect } from "vitest";
 import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
@@ -84,8 +85,8 @@ it("external stdio client discovers tools and reads permitted metadata", async (
               action: "swap",
               market: "spot",
               chainId: 11155111,
-              tokenIn: "0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639",
-              tokenOut: "0x4E7B06D78965594eB5EF5414c357ca21E1554491",
+              tokenIn: confidentialAssets[0].address,
+              tokenOut: confidentialAssets[1].address,
               allocationBps: 1000,
               maxSlippageBps: 100,
             },

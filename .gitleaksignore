@@ -1,0 +1,10 @@
+# False-positive review, November 8, 2026
+# Only these two historical generic-api-key matches are ignored.
+# Both matches were independently checked at tests/mcp.test.ts:86-87 in
+# commit 1ff347d5f36dee604eb1bb7326a7ff582b10628a:
+# They are published, unbacked Ethereum Sepolia Zama *contract addresses*
+# copied from the official public registry, not signing credentials.
+# The current test uses centrally defined registry entries instead.
+# No file-, rule-, or commit-wide exclusion is granted.
+1ff347d5f36dee604eb1bb7326a7ff582b10628a:tests/mcp.test.ts:generic-api-key:86
+1ff347d5f36dee604eb1bb7326a7ff582b10628a:tests/mcp.test.ts:generic-api-key:87
