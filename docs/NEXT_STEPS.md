@@ -15,3 +15,11 @@ Select an established ERC-4337 account and audited ERC-7579-compatible session m
 ## Before continuing
 
 Read AGENTS, PRODUCT, ARCHITECTURE, DECISIONS and BUILD_STATUS. Check GitHub main/CI and local git state. Implementation commit 0dbf583 passed run 42368330390; capacity-hardening commit 24f25a6 passed both verify and security in run 42369083979. Do not assume later commits passed without checking their own status. Verify installed versions and official SDK docs rather than importing old session assumptions. Run the local deployment/integration tests from a fresh Anvil state. Do not disable security checks, introduce fake metrics, or expose local services remotely.
+
+## Product milestones following the November 8 UX refresh
+
+1. Make the mandate a durable owner-authorized workflow: authenticated user session, agent registration, per-user scoped market selection and policy mapping. The current copy-only mandate is a UI draft, not a working trading agent.
+2. Integrate a vetted ERC-4337/7579 session model and policy-enforced adapter that separates research/proposals from executable orders. Build negative tests for unsafe agent calls, cross-chain execution and revocation.
+3. Verify a supported Sepolia confidential trading venue and integrate Zama cUSD/cUSDT test assets with real FHE proof flows, without exposing decrypted values to MCP. If no compatible venue exists, report the blocker and keep swap execution disabled.
+4. Add a trustworthy market-data source, risk accounting, audited execution state machine and real receipts to support ETH/ERC-20 markets across approved EVM chains without claiming confidentiality where unavailable.
+5. Replace copy-only agent brief with authenticated MCP submission once authorization and execution safety exist; deliver monitoring, reporting and self-service permissions in the dashboard.

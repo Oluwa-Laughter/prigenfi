@@ -8,7 +8,9 @@ for (const width of [1440, 390]) {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Your money.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Your money.",
+    );
     await expect(page.locator("footer")).not.toContainText("GitHub");
     await page.keyboard.press("Tab");
     await expect(
@@ -43,7 +45,26 @@ for (const width of [1440, 390]) {
     );
     await page.getByRole("link", { name: "Open the testnet app" }).click();
     await expect(page).toHaveURL("/dashboard");
-    await expect(page.getByText("Connect your wallet to set permissions")).toBeVisible();
+    await expect(
+      page.getByText("Connect your wallet to set permissions"),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "What should your agent work on?" }),
+    ).toBeVisible();
+    await page.getByLabel("Market to explore").selectOption("ETH & ERC-20");
+    await page.getByLabel("Asset or market pair").fill("ETH / USDC");
+    await page.getByLabel("Capital boundary (test units)").fill("25");
+    await page.getByText("Preview the full mandate").click();
+    await expect(page.locator(".brief-preview pre")).toContainText(
+      "Market: ETH & ERC-20",
+    );
+    await expect(page.locator(".brief-preview pre")).toContainText(
+      "Assets or pair of interest: ETH / USDC",
+    );
+    await expect(page.locator(".brief-preview pre")).toContainText(
+      "Suggested maximum capital allocation: 25 test asset units",
+    );
+
     await expect(
       page.getByRole("button", { name: "Open confidential tools" }),
     ).toBeDisabled();
@@ -177,6 +198,8 @@ test("connect, load vault, simulate, authorize, pause and revoke on actual Anvil
     fullPage: true,
   });
   await page.getByRole("button", { name: "Disconnect wallet" }).click();
-  await expect(page.getByText("Connect your wallet to set permissions")).toBeVisible();
+  await expect(
+    page.getByText("Connect your wallet to set permissions"),
+  ).toBeVisible();
   expect(errors).toEqual([]);
 });

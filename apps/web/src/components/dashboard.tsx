@@ -74,7 +74,8 @@ export function Dashboard() {
           <Badge variant="outline">Agent workspace · Ethereum testnets</Badge>
           <h1>Trade ideas start with you.</h1>
           <p>
-            Choose a market, direct your agent and set the permissions that protect your capital.
+            Choose a market, direct your agent and set the permissions that
+            protect your capital.
           </p>
         </div>
         <div>
@@ -97,7 +98,9 @@ export function Dashboard() {
         <ShieldCheck />
         <AlertTitle>Testnet preview · No live autonomous trading</AlertTitle>
         <AlertDescription>
-          Wallet vaults currently support restricted test-token transfers. Agent trading and confidential swaps are not yet available. Zama confidential assets remain wallet-controlled.
+          Wallet vaults currently support restricted test-token transfers. Agent
+          trading and confidential swaps are not yet available. Zama
+          confidential assets remain wallet-controlled.
         </AlertDescription>
       </Alert>
       <AgentBrief />
@@ -116,8 +119,9 @@ export function Dashboard() {
             <Wallet />
             <EmptyTitle>Connect your wallet to set permissions</EmptyTitle>
             <EmptyDescription>
-              Connect an Ethereum wallet to own a vault, grant your agent limited
-              testnet permissions, and explore private assets. The brief above does not grant access.
+              Connect an Ethereum wallet to own a vault, grant your agent
+              limited testnet permissions, and explore private assets. The brief
+              above does not grant access.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -152,9 +156,9 @@ export function Dashboard() {
           <h2>cUSD and cUSDT, privately held.</h2>
           <div>
             <p>
-              These are unbacked Sepolia test assets using Zama confidential wrappers.
-              You authorize any balance decryption. Public deposits, withdrawals,
-              addresses and transaction timing remain observable.
+              These are unbacked Sepolia test assets using Zama confidential
+              wrappers. You authorize any balance decryption. Public deposits,
+              withdrawals, addresses and transaction timing remain observable.
             </p>
             <div className="actions">
               <Button
@@ -590,7 +594,9 @@ function Workspace({
             <CardHeader>
               <CardTitle>Test a proposed action</CardTitle>
               <CardDescription>
-                Check a token-transfer proposal against the actual vault policy before it reaches the chain. This is not yet a market trade or swap.
+                Check a token-transfer proposal against the actual vault policy
+                before it reaches the chain. This is not yet a market trade or
+                swap.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -33,3 +33,11 @@ Use only this session, this repository, its instructions, and official external 
 ## Verification and handoff
 
 Update BUILD_STATUS and NEXT_STEPS with evidence, failures and skipped checks. Run meaningful negative tests for every permission boundary. Test actual browser wallet flows against Anvil; mocked wallet transport is not evidence of a real Sepolia wallet or FHE operation. Preserve SDK version-specific APIs and verify official registry code/metadata before enabling confidential assets. No public deployment without the authorized wallet.
+
+## Product UX direction — 2026-11-08
+
+PrigenFi is a consumer financial product **and** an agent MCP protocol. The primary journey must be **choose market → tell an agent what to research → set wallet-controlled capital permissions → inspect private assets → review proposals and activity**. Lead with the user's financial objective, not deploying a contract, technical guides, or developer tools. Preserve the existing PrigenFi mark and use a wide, responsive, accessible interface. Do not feature GitHub in the customer-facing site footer.
+
+In the application, show the confidential test asset labels **cUSD** (USDC-based) and **cUSDT** (USDT-based) without the suffix `Mock`. Internally and in integration/developer documentation preserve the correct official `cUSDCMock`/`cUSDTMock` contract identifiers; prominently disclose the assets are unbacked Sepolia test tokens, not redeemable real stablecoins. Never relabel a real chain token or pretend testnet wallets contain funds.
+
+Market mandates are user-defined instructions, **not** on-chain permissions. Do not show an instruction composer as an operational trading agent until authenticated MCP dispatch, policy-aware trade execution, confidential venue integration, and durable activity states exist. No fake gains, market data, trade history, or implied active trades.

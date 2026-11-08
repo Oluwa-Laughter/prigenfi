@@ -13,7 +13,9 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <a className="skip-link" href="#main">Skip to content</a>
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
         <Header />
         {children}
         <footer className="site-footer">
@@ -28,7 +30,10 @@ export default function Layout({ children }: { children: ReactNode }) {
               <Link href="/#agent-mcp">Agent MCP</Link>
               <Link href="/dashboard">Workspace</Link>
             </nav>
-            <small>Ethereum Sepolia development · Test assets only · No live autonomous trades</small>
+            <small>
+              Ethereum Sepolia development · Test assets only · No live
+              autonomous trades
+            </small>
           </div>
         </footer>
       </body>

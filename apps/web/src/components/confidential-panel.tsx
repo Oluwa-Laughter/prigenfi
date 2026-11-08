@@ -188,8 +188,9 @@ function TokenTools({
       <CardHeader>
         <CardTitle>{assetLabel(asset.symbol)}</CardTitle>
         <CardDescription>
-          Unbacked test asset · Wrapper verified on Sepolia at block {asset.blockNumber}.
-          Decrypted balances stay in this browser session, not in MCP or an LLM.
+          Unbacked test asset · Wrapper verified on Sepolia at block{" "}
+          {asset.blockNumber}. Decrypted balances stay in this browser session,
+          not in MCP or an LLM.
         </CardDescription>
       </CardHeader>
       <CardContent>
