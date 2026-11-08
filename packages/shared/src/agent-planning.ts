@@ -136,8 +136,11 @@ export function evaluateAgentResearchPlan(
 
     if (step.action === "swap" || step.action === "rebalance") {
       if (!step.tokenOut) issues.push("OUTPUT_ASSET_REQUIRED");
-      if (step.tokenIn && step.tokenOut &&
-          step.tokenIn.toLowerCase() === step.tokenOut.toLowerCase()) {
+      if (
+        step.tokenIn &&
+        step.tokenOut &&
+        step.tokenIn.toLowerCase() === step.tokenOut.toLowerCase()
+      ) {
         issues.push("IDENTICAL_ASSETS");
       }
       if (step.maxSlippageBps === undefined) {

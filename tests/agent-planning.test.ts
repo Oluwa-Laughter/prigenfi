@@ -86,13 +86,18 @@ describe("agent plan boundary", () => {
 
   it("rejects an unregistered ERC-20 even on Sepolia", () => {
     const input = make();
-    const result = evaluateAgentResearchPlan({
-      ...input,
-      plan: {
-        ...input.plan,
-        steps: [{ ...step, tokenOut: "0x0000000000000000000000000000000000000001" }],
+    const result = evaluateAgentResearchPlan(
+      {
+        ...input,
+        plan: {
+          ...input.plan,
+          steps: [
+            { ...step, tokenOut: "0x0000000000000000000000000000000000000001" },
+          ],
+        },
       },
-    }, now);
+      now,
+    );
     expect(result.steps[0].reasons).toContain(
       "UNSUPPORTED_CONFIDENTIAL_OUTPUT",
     );
@@ -101,17 +106,20 @@ describe("agent plan boundary", () => {
 
   it("rejects mismatched market scopes and over-allocation", () => {
     const input = make();
-    const result = evaluateAgentResearchPlan({
-      ...input,
-      mandate: { ...mandate, market: "defi" },
-      plan: {
-        ...input.plan,
-        steps: [
-          { ...step, allocationBps: 6000 },
-          { ...step, stepId: "swap-2", tokenOut: zama, allocationBps: 5000 },
-        ],
+    const result = evaluateAgentResearchPlan(
+      {
+        ...input,
+        mandate: { ...mandate, market: "defi" },
+        plan: {
+          ...input.plan,
+          steps: [
+            { ...step, allocationBps: 6000 },
+            { ...step, stepId: "swap-2", tokenOut: zama, allocationBps: 5000 },
+          ],
+        },
       },
-    }, now);
+      now,
+    );
     expect(result.acceptedAsResearch).toBe(false);
     expect(result.reasons).toContain("ALLOCATION_EXCEEDS_100_PERCENT");
     expect(result.steps[0].reasons).toContain("MARKET_OUTSIDE_MANDATE");
@@ -120,10 +128,13 @@ describe("agent plan boundary", () => {
   it("rejects stale and far-future plans even if all assets are valid", () => {
     const input = make();
     for (const expiresAt of [now - 1, now, now + 3601]) {
-      const result = evaluateAgentResearchPlan({
-        ...input,
-        plan: { ...input.plan, expiresAt },
-      }, now);
+      const result = evaluateAgentResearchPlan(
+        {
+          ...input,
+          plan: { ...input.plan, expiresAt },
+        },
+        now,
+      );
       expect(result.reasons).toContain("PLAN_EXPIRY_INVALID");
       expect(result.executionAllowed).toBe(false);
     }
@@ -131,43 +142,50 @@ describe("agent plan boundary", () => {
 
   it("rejects duplicate steps, monitoring allocations and missing bounds", () => {
     const input = make();
-    const result = evaluateAgentResearchPlan({
-      ...input,
-      plan: {
-        ...input.plan,
-        steps: [
-          step,
-          {
-            ...step,
-            action: "monitor",
-            allocationBps: 100,
-          },
-        ],
+    const result = evaluateAgentResearchPlan(
+      {
+        ...input,
+        plan: {
+          ...input.plan,
+          steps: [
+            step,
+            {
+              ...step,
+              action: "monitor",
+              allocationBps: 100,
+            },
+          ],
+        },
       },
-    }, now);
+      now,
+    );
     expect(result.steps[1].reasons).toContain("DUPLICATE_STEP");
     expect(result.steps[1].reasons).toContain(
       "MONITOR_MUST_NOT_ALLOCATE_CAPITAL",
     );
-    const missingBound = evaluateAgentResearchPlan({
-      ...input,
-      plan: {
-        ...input.plan,
-        steps: [{ ...step, maxSlippageBps: undefined }],
+    const missingBound = evaluateAgentResearchPlan(
+      {
+        ...input,
+        plan: {
+          ...input.plan,
+          steps: [{ ...step, maxSlippageBps: undefined }],
+        },
       },
-    }, now);
-    expect(missingBound.steps[0].reasons).toContain(
-      "SLIPPAGE_BOUND_REQUIRED",
+      now,
     );
+    expect(missingBound.steps[0].reasons).toContain("SLIPPAGE_BOUND_REQUIRED");
   });
 
   it("rejects self-swaps, missing output and zero investment allocation", () => {
     const input = make();
     const check = (patch: Record<string, unknown>, reason: string) => {
-      const result = evaluateAgentResearchPlan({
-        ...input,
-        plan: { ...input.plan, steps: [{ ...step, ...patch }] },
-      }, now);
+      const result = evaluateAgentResearchPlan(
+        {
+          ...input,
+          plan: { ...input.plan, steps: [{ ...step, ...patch }] },
+        },
+        now,
+      );
       expect(result.steps[0].reasons).toContain(reason);
     };
     check({ tokenOut: usdc }, "IDENTICAL_ASSETS");
@@ -184,10 +202,15 @@ describe("agent plan boundary", () => {
       { ...input.plan, steps: [{ ...step, venue: "0x123" }] },
       { ...input.plan, steps: new Array(9).fill(step) },
     ]) {
-      expect(evaluateAgentResearchPlan({
-        ...input,
-        plan: changed,
-      }, now)).toMatchObject({
+      expect(
+        evaluateAgentResearchPlan(
+          {
+            ...input,
+            plan: changed,
+          },
+          now,
+        ),
+      ).toMatchObject({
         acceptedAsResearch: false,
         executionAllowed: false,
         reasons: ["INVALID_AGENT_PLAN"],

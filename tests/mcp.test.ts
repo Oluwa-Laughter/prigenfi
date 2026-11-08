@@ -67,7 +67,8 @@ it("external stdio client discovers tools and reads permitted metadata", async (
       arguments: {
         mandate: {
           market: "portfolio",
-          instruction: "Research Ethereum trading opportunities without public execution.",
+          instruction:
+            "Research Ethereum trading opportunities without public execution.",
           watchAssets: "cUSDC / cUSDT",
           suggestedCapitalLimit: "50",
           privacy: "confidential-only",
@@ -99,7 +100,9 @@ it("external stdio client discovers tools and reads permitted metadata", async (
     expect(evaluated.executionAllowed).toBe(false);
     expect(evaluated.reasons).toContain("PUBLIC_FALLBACK_FORBIDDEN");
     expect(evaluated.walletAuthorization).toBe("none");
-    expect(JSON.stringify(evaluated)).not.toContain("Research Ethereum trading opportunities");
+    expect(JSON.stringify(evaluated)).not.toContain(
+      "Research Ethereum trading opportunities",
+    );
     const denied = await client.callTool({ name: "policy_get", arguments: {} });
     expect(denied.isError).toBe(true);
     expect(JSON.stringify(denied)).toContain("NOT_CONFIGURED");

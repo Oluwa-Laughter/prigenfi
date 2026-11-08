@@ -21,7 +21,7 @@ A developer host can launch `pnpm exec tsx services/mcp-server/src/stdio.ts` fro
 | confidential_assets_list      | Official registry wrapper constants and source                                                                                                      |
 | confidential_capabilities_get | Supported Sepolia test wrappers, capabilities and private-trading readiness; no private balances                                                    |
 | confidential_route_check      | Validates typed **confidential-only** research mandate; always refuses execution without a verified private venue; never falls back to public swaps |
-| agent_plan_evaluate | Validate a bounded, typed agent research plan against confidential-only asset, chain, expiry, allocation and market policy; never execute |
+| agent_plan_evaluate           | Validate a bounded, typed agent research plan against confidential-only asset, chain, expiry, allocation and market policy; never execute           |
 | trade_quote                   | Explicit NO_VERIFIED_TRADING_VENUE availability result, no fabricated quote                                                                         |
 | trade_simulate                | Strict transfer schema, independent on-chain policy reads and eth_call                                                                              |
 | trade_propose                 | Allowed simulation in bounded ephemeral session; idempotency conflict detection                                                                     |
