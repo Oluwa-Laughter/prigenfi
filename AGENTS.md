@@ -41,3 +41,11 @@ PrigenFi is a consumer financial product **and** an agent MCP protocol. The prim
 In the application, show the confidential test asset labels **cUSD** (USDC-based) and **cUSDT** (USDT-based) without the suffix `Mock`. Internally and in integration/developer documentation preserve the correct official `cUSDCMock`/`cUSDTMock` contract identifiers; prominently disclose the assets are unbacked Sepolia test tokens, not redeemable real stablecoins. Never relabel a real chain token or pretend testnet wallets contain funds.
 
 Market mandates are user-defined instructions, **not** on-chain permissions. Do not show an instruction composer as an operational trading agent until authenticated MCP dispatch, policy-aware trade execution, confidential venue integration, and durable activity states exist. No fake gains, market data, trade history, or implied active trades.
+
+## Ethereum-market expansion and design contract — 2026-11-08
+
+PrigenFi is **not** restricted to ETH as an asset: the Ethereum ecosystem includes permissionless ERC-20/DEX spot markets, meme tokens, lending, DeFi, liquidity pools, liquid staking, stablecoins, and derivatives where appropriate. Build research and eventual execution adapters per market, not a misleading universal swap API. External public trade paths cannot claim FHE privacy by association.
+
+Use separate public marketing and customer workspace navigation. Keep app routes distinct: `/dashboard`, `/markets`, `/agents`, `/strategies`, `/portfolio`, `/activity`, `/vault`, `/settings`; `/docs` is developer-oriented. Do not revert to a single-page contract-dApp experience. Keep PrigenFi logo, the editorial indigo/lavender/coral/blue design palette, responsive wide layouts, intentional/reduced-motion-aware interaction, and real data-derived charts.
+
+Market research APIs are public, untrusted and may leak query terms to upstream market providers. Never use external price/volume data as proof of a safe execution or guaranteed profit. Agent win rates and P&L must derive exclusively from verified finalized closed positions and cost-basis accounting; display unavailable metrics until that system exists. The current `AgentPerformanceCharts` receives an empty verified trade dataset intentionally; do not fill the app with fake outcomes.

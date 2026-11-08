@@ -23,3 +23,12 @@ Read AGENTS, PRODUCT, ARCHITECTURE, DECISIONS and BUILD_STATUS. Check GitHub mai
 3. Verify a supported Sepolia confidential trading venue and integrate Zama cUSD/cUSDT test assets with real FHE proof flows, without exposing decrypted values to MCP. If no compatible venue exists, report the blocker and keep swap execution disabled.
 4. Add a trustworthy market-data source, risk accounting, audited execution state machine and real receipts to support ETH/ERC-20 markets across approved EVM chains without claiming confidentiality where unavailable.
 5. Replace copy-only agent brief with authenticated MCP submission once authorization and execution safety exist; deliver monitoring, reporting and self-service permissions in the dashboard.
+
+## Priorities after market/product expansion
+
+1. **Real user agent lifecycle:** SIWE-backed tenancy, agent identity registry, durable mandates and a secure MCP authorization boundary between natural-language intent and on-chain wallet policies.
+2. **Market venue integrations:** validate Ethereum DEX aggregators, token risk checks, liquidity/price-oracle sources and quote freshness; start with one supported testnet spot route. Research meme markets and DeFi protocols without claiming all assets are supported for execution.
+3. **Real confidential trade proof:** independently verify a Zama-compatible confidential swap/venue on Sepolia, FHE integration, token approval/operator risks, slippage/finality and permissions. If no venue exists, retain disabled execution and document the blocker.
+4. **Verified performance and history:** persist signed intents, receipts, fills, cost basis, gas/fees, position closes and agent identity under an indexer; backfill/reorg reconciliation and feed the chart interface only with finalized records.
+5. **Wallet experience:** audited modular smart-account/session keys, constrained financial risk policies and safe revocation independent of agent text; integrate the account workflow into the new app navigation.
+6. **Product hardening:** persistent onboarding, user accounts, signed wallet connection, exact live market source handling, accessibility review, external testnet wallet acceptance, security review and user research before enabling real funds.

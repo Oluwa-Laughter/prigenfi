@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
-import { ArrowUpRight, Moon, Sun } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 export function Brand() {
   return (
@@ -16,39 +15,42 @@ export function Brand() {
     </Link>
   );
 }
+
 export function Header() {
-  const [light, setLight] = useState(false);
+  const [open, setOpen] = useState(false);
   return (
-    <header className="site-nav">
-      <div className="wrap nav">
+    <header className="marketing-header">
+      <div className="marketing-container marketing-header-inner">
         <Brand />
-        <nav className="nav-links" aria-label="Main navigation">
-          <Link href="/#how-it-works">How it works</Link>
-          <Link href="/#privacy" className="optional">
+        <nav
+          className={"marketing-nav " + (open ? "is-open" : "")}
+          aria-label="Public navigation"
+        >
+          <Link onClick={() => setOpen(false)} href="/#how-it-works">
+            How it works
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/#markets">
+            Explore markets
+          </Link>
+          <Link onClick={() => setOpen(false)} href="/#privacy">
             Privacy
           </Link>
-          <Link href="/#agent-mcp" className="optional">
-            Agent MCP
+          <Link onClick={() => setOpen(false)} href="/docs">
+            For developers
           </Link>
         </nav>
-        <div className="nav-actions">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={light ? "Use dark theme" : "Use light theme"}
-            onClick={() => {
-              setLight(!light);
-              document.documentElement.classList.toggle("light", !light);
-            }}
-          >
-            {light ? <Moon /> : <Sun />}
-          </Button>
-          <Button asChild className="nav-launch">
-            <Link href="/dashboard">
-              Launch app <ArrowUpRight size={15} />
-            </Link>
-          </Button>
-        </div>
+        <Link className="marketing-launch" href="/dashboard">
+          Open platform <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
+        <button
+          className="marketing-menu-button"
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
       </div>
     </header>
   );

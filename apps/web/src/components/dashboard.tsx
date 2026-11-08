@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import {
   useConnection,
   useConnect,
@@ -55,27 +54,21 @@ import {
 } from "@/components/ui/empty";
 import { Wallet, ArrowUpRight, Pause, ShieldCheck } from "lucide-react";
 import { localRpc, sepoliaRpc } from "./providers";
-import { AgentBrief } from "./agent-brief";
-const ConfidentialPanel = dynamic(() => import("./confidential-panel"), {
-  ssr: false,
-  loading: () => <p>Loading confidential wallet tools…</p>,
-});
 export function Dashboard() {
   const { address, chainId, isConnected } = useConnection();
   const connect = useConnect();
   const disconnect = useDisconnect();
   const switchChain = useSwitchChain();
-  const [showConfidential, setShowConfidential] = useState(false);
   const supported = chainId === 31337 || chainId === 11155111;
   return (
-    <main id="main" className="wrap product-dashboard">
+    <div className="vault-legacy product-dashboard">
       <div className="page-heading">
         <div>
-          <Badge variant="outline">Agent workspace · Ethereum testnets</Badge>
-          <h1>Trade ideas start with you.</h1>
+          <Badge variant="outline">Testnet wallet authority</Badge>
+          <h1>Control your agent capital.</h1>
           <p>
-            Choose a market, direct your agent and set the permissions that
-            protect your capital.
+            Create or load an isolated vault, authorize an agent address, and
+            enforce transfer limits on-chain.
           </p>
         </div>
         <div>
@@ -103,7 +96,6 @@ export function Dashboard() {
           confidential assets remain wallet-controlled.
         </AlertDescription>
       </Alert>
-      <AgentBrief />
       {connect.error ? (
         <Alert variant="destructive" className="mt-5">
           <AlertTitle>Wallet connection failed</AlertTitle>
@@ -120,8 +112,8 @@ export function Dashboard() {
             <EmptyTitle>Connect your wallet to set permissions</EmptyTitle>
             <EmptyDescription>
               Connect an Ethereum wallet to own a vault, grant your agent
-              limited testnet permissions, and explore private assets. The brief
-              above does not grant access.
+              limited testnet permissions. Draft mandates on the My Agents page
+              do not grant access.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -151,38 +143,7 @@ export function Dashboard() {
           chainId={chainId}
         />
       )}
-      <section id="confidential" className="feature-section">
-        <div className="section-intro">
-          <h2>cUSD and cUSDT, privately held.</h2>
-          <div>
-            <p>
-              These are unbacked Sepolia test assets using Zama confidential
-              wrappers. You authorize any balance decryption. Public deposits,
-              withdrawals, addresses and transaction timing remain observable.
-            </p>
-            <div className="actions">
-              <Button
-                variant="outline"
-                disabled={!isConnected || chainId !== 11155111}
-                onClick={() => setShowConfidential((v) => !v)}
-              >
-                {showConfidential
-                  ? "Close confidential tools"
-                  : "Open confidential tools"}
-              </Button>
-            </div>
-            {!isConnected || chainId !== 11155111 ? (
-              <p className="small-note">
-                Connect on Ethereum Sepolia to use these tools.
-              </p>
-            ) : null}
-          </div>
-        </div>
-        {showConfidential && address && chainId === 11155111 ? (
-          <ConfidentialPanel key={`${address}:${chainId}`} address={address} />
-        ) : null}
-      </section>
-    </main>
+    </div>
   );
 }
 function Workspace({

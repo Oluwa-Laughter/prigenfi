@@ -70,7 +70,7 @@ export default function Docs() {
         </ul>
         <div className="actions">
           <Button asChild>
-            <Link href="/dashboard">Open the testnet app</Link>
+            <Link href="/vault">Manage testnet vault</Link>
           </Button>
           <Button asChild variant="outline">
             <a href="https://github.com/Oluwa-Laughter/prigenfi/tree/main/docs">

@@ -1,30 +1,44 @@
-# PrigenFi — Product direction
+# PrigenFi — product direction
 
 **Private finance. Powered by agents.**
 
-PrigenFi is building a user-facing, agent-native DeFi platform and MCP execution protocol. The end-user story starts with a financial instruction, not with deploying a contract.
+PrigenFi is an agent-native Ethereum finance platform: users choose markets and express trading objectives; agents research and propose actions; user-owned wallets grant narrowly restricted financial authority. The eventual product must execute strategies through verified venues and maintain an auditable portfolio and outcome history, with privacy when the underlying supported protocol actually provides it.
 
-## The product journey
+## Core user journey
 
-1. **Tell the agent what to do.** A user chooses a market (stablecoins, ETH/other ERC-20 assets or a supported DeFi venue), an asset pair and an objective. This is a market mandate, not an execution authorization.
-2. **Define a limited capital budget.** The user creates or connects a wallet-controlled isolated vault and allocates only the assets they intend the agent to use.
-3. **Grant restricted authority.** A separate on-chain permission controls who the agent is, permitted token/recipient, operation cap, daily spend, expiry and pause/revocation. No prompts override on-chain policy.
-4. **Let the agent work.** Compatible external agents eventually use authenticated MCP tools to research, propose and simulate trades against supported venues. Actual trading connectors, policy-aware confidential execution and autonomous scheduling remain to be built.
-5. **Review, monitor and intervene.** The user receives honest transaction status, permission state and confidential wallet asset access without fabricated PnL or balances. They can pause and revoke access.
+1. **Discover:** explore Ethereum market structure and pairs: ETH/ERC-20 spot markets, meme coins, lending, liquidity, liquid staking, stablecoin exposure and riskier derivatives where integrations can be verified.
+2. **Direct:** select a research mandate, token universe, capital ceiling and natural-language instructions. Mandates do not grant signing or spending privileges.
+3. **Authorize:** isolate funds and approve specific account/agent permissions with on-chain limits, allowed destinations and expiry.
+4. **Execute when safe:** authenticated MCP proposes trade intents; the execution engine independently verifies policy, liquidity/quote freshness, venue support and finality. Public trading is never mislabeled as confidential.
+5. **Monitor:** display authenticated positions, reconciled fills, verified settled profits/losses and true win-rate statistics. Allow pause and revocation throughout.
 
-The landing page and dashboard must prioritize these user jobs; protocol and developer documentation exists to support the MCP/SDK integrations but should not dominate the consumer experience.
+The current app is an evolving **testnet preview** of this journey. It must not be described as a working autonomous confidential trading platform until actual end-to-end private venue execution is proven.
 
-## Asset naming and testnet honesty
+## Separation of surfaces
 
-- Consumer-facing labels are **cUSD** (USDC-based) and **cUSDT** (USDT-based).
-- Sepolia contracts are Zama's **unbacked test wrappers**, with technical symbols cUSDCMock/cUSDTMock. Preserve those identifiers in internal registries and developer documentation when required to be precise.
-- Never imply cUSD or cUSDT test tokens are redeemable stablecoins. Display the testnet/unbacked status prominently in wallet tools.
-- Zama protects eligible confidential values, not all transaction metadata or public swap paths.
+The public website (`/`) explains the product and links to exploration. The platform (`/dashboard`) has its own navigation across Markets, My Agents, Strategies, Portfolio, Activity, Capital & Permissions and Safety. Documentation (`/docs`) primarily serves external agent developers and MCP integrations, not ordinary customers.
 
-## Visual and interaction direction
+The frontend style is a distinctive editorial finance language using ink indigo, lavender, coral and blue, not an interchangeable green crypto dashboard. Keep the existing PrigenFi logo, responsive full-width design, interactive market-mode illustration and purposeful motion that respects reduced-motion preferences.
 
-Full-width premium financial experience, existing PrigenFi mark, refined dark/light theme, distinct market mandate and wallet-authority journeys, real connected state, helpful empty states and accessible responsive design. No fake balances, strategy profits, pricing, trades or enabled-market indicators.
+## Data truth and analytics
 
-## Verified development boundary (November 2026)
+- Research feeds are sourced from public DEX APIs, tagged with network/source/timestamp. Querying public feeds may reveal search terms to upstream providers. Provider listings are not security, liquidity or execution assurances.
+- Market volume and liquidity graphs reflect external returned pairs; a test fixture is used only inside browser tests.
+- Agent win rate is wins divided by wins plus losses from **verified finalized closed positions**; flat outcomes are excluded from its denominator. P&L requires normalized cost basis and settlement events. An ERC-20 transfer, simulation or open position is **not** a winning trade.
+- No hard-coded user balances, trades, yield, TVL or profit figures belong in production UI.
 
-The current repo supports isolated ERC-20 vaults with scoped transfer permissions; local testnet transfer and proposal simulation; stdio MCP read/proposal tools; wallet-controlled Zama confidential token workflows wired through official SDKs. This does **not** constitute an autonomous trading platform, private swaps or real-fund settlement. ERC-4337, strategy runtime, real execution venues, secure remote MCP authorization and live confidential trading are pending. Mainnet execution stays disabled.
+## Confidentiality limits
+
+Product-facing Sepolia labels **cUSD** and **cUSDT** correspond to official unbacked Zama test wrappers with technical identifiers `cUSDCMock` and `cUSDTMock`. Preserve real chain contract identities internally and label test assets honestly. They are not redeemable dollar-backed assets.
+
+Zama can encrypt supported confidential token balances and amounts. Public shielding/unshielding deposits, transaction metadata, addresses, and ordinary Ethereum market transactions remain observable. Real confidential agent-directed swaps are pending a verified compatible venue and policy model. Never infer multi-chain privacy from the Ethereum implementation.
+
+## Current engineering reality
+
+- Restricted ERC-20 transfer vault + wallet permissions: implemented on local Anvil / eligible testnet, with tests.
+- Public market discovery feed and live data visualization: implemented using DEX Screener; not an execution route.
+- User mandates and research templates: interactive draft and copy tools; not authenticated agent orchestration.
+- Local stdio MCP + policy simulation: implemented; production remote OAuth, active agent registry, durable intents and execution not implemented.
+- Zama SDK wallet tools: integrated, but actual Sepolia FHE write lifecycle not independently verified with a founder-approved funded wallet.
+- Verified agent trade analytics: calculator and conditional UI exist; no closed-trade data source or realized P&L records yet.
+- No mainnet deployment or autonomous financial execution is authorized.

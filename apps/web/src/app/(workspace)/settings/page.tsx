@@ -1,0 +1,86 @@
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  EyeOff,
+  KeyRound,
+  LockKeyhole,
+  ShieldAlert,
+  WalletCards,
+} from "lucide-react";
+export const metadata = { title: "Safety & Settings" };
+export default function SettingsPage() {
+  return (
+    <div className="workspace-page">
+      <div className="ws-page-heading">
+        <div>
+          <p className="ws-kicker">Your boundaries</p>
+          <h1>Safety is the product.</h1>
+          <p className="ws-page-subtitle">
+            Agent autonomy does not mean surrendering wallet authority. Review
+            the capabilities that exist today.
+          </p>
+        </div>
+      </div>
+      <div className="settings-list">
+        <div>
+          <span className="ws-guidance-icon purple">
+            <KeyRound size={23} />
+          </span>
+          <div>
+            <h2>Manage agent permissions</h2>
+            <p>
+              Review and revoke scoped on-chain test vault policies: agent
+              address, token, recipient, cap and expiry.
+            </p>
+          </div>
+          <Link href="/vault">
+            Open controls <ArrowUpRight size={16} />
+          </Link>
+        </div>
+        <div>
+          <span className="ws-guidance-icon blue">
+            <EyeOff size={23} />
+          </span>
+          <div>
+            <h2>Confidential balance access</h2>
+            <p>
+              Wallet-owner permits authorize confidential balance decryption on
+              Zama-supported test wrappers. Private values are not shared with
+              MCP tools.
+            </p>
+          </div>
+          <Link href="/portfolio">
+            Open assets <ArrowUpRight size={16} />
+          </Link>
+        </div>
+        <div>
+          <span className="ws-guidance-icon peach">
+            <WalletCards size={23} />
+          </span>
+          <div>
+            <h2>Wallet security</h2>
+            <p>
+              Use a dedicated funded testnet wallet. Never provide seed phrases
+              or signing keys to an agent, the MCP server or this website.
+            </p>
+          </div>
+          <Link href="/vault">
+            View vault <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </div>
+      <div className="settings-warning">
+        <ShieldAlert size={23} />
+        <div>
+          <h2>Execution boundaries</h2>
+          <p>
+            PrigenFi has no authenticated remote MCP, no unattended swap engine
+            and no verified confidential trading venue yet. P&L and win rates
+            require reconciled fills and closed positions. Mainnet trading is
+            disabled.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
