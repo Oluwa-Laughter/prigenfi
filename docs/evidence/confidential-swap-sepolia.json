@@ -1,0 +1,40 @@
+{
+  "measuredAt": "2026-11-08T14:23:01.891Z",
+  "chainId": 11155111,
+  "source": "zama-ai/protocol-registry / testnet.json",
+  "officialSnapshot": {
+    "sourceSHA256": "68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5",
+    "sourceCommit": "93283992cc39442fa9019c1474ef69331429e71a",
+    "manifestGeneratedAt": "2026-10-13T11:54:07.706Z",
+    "registryEntry": {
+      "address": "0xab86445f72A64A99C8d248dcE004915B45C88e20",
+      "admin_role": "0xca4AAcE42e1B0D846E2564C910A1DE78Cea7Ad26",
+      "chain": "ethereum_sepolia",
+      "deployment_block": 11687343,
+      "note": "ConfidentialSwap (UUPS proxy), the RFQ protocol for swaps between confidential tokens.",
+      "type": "confidential_swap"
+    }
+  },
+  "observation": {
+    "source": "Sepolia JSON-RPC",
+    "chainId": 11155111,
+    "blockNumber": "12091125",
+    "proxyAddress": "0xab86445f72A64A99C8d248dcE004915B45C88e20",
+    "proxyCodeHash": "0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6",
+    "implementationAddress": "0x93FA553AFd73952105450264620eA08aBa7B52d5",
+    "implementationCodeHash": "0x9814915edd2e296962367eeeba9d9d798dc45bbd13988040713e15fa7a0f003e",
+    "uupsConfirmed": true,
+    "status": "deployed-proxy",
+    "privateTradingEnabled": false,
+    "executionAllowed": false,
+    "permissionedTradingEnabled": false,
+    "blockers": [
+      "RFQ_INTERFACE_UNVERIFIED",
+      "PAIR_LIQUIDITY_UNVERIFIED",
+      "AGENT_WALLET_PERMISSION_MISSING",
+      "ENCRYPTED_SETTLEMENT_NOT_TESTED",
+      "PUBLIC_FALLBACK_FORBIDDEN"
+    ]
+  },
+  "qualification": "Read-only proxy/UUPS proof only. No supported pair, RFQ ABI, liquidity, ciphertext, user authority, or confidential execution has been verified."
+}

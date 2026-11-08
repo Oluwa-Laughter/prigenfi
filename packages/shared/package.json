@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./confidential-policy": "./src/confidential-policy.ts",
-    "./agent-planning": "./src/agent-planning.ts"
+    "./agent-planning": "./src/agent-planning.ts",
+    "./swap-venue": "./src/swap-venue.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

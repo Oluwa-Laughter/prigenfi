@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { confidentialCapabilities } from "@prigenfi/shared/confidential-policy";
 import { PrivateRouteCheck } from "@/components/workspace/private-route-check";
+import { SwapVenueStatus } from "@/components/workspace/swap-venue-status";
 
 export const metadata = { title: "Confidential execution" };
 export default function PrivacyPage() {
@@ -40,6 +41,7 @@ export default function PrivacyPage() {
           </p>
         </div>
       </div>
+      <SwapVenueStatus />
       <PrivateRouteCheck />
       <div className="ws-section-row">
         <div>

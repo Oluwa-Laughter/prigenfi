@@ -47,3 +47,7 @@ Read AGENTS, PRODUCT, ARCHITECTURE, DECISIONS and BUILD_STATUS. Check GitHub mai
 2. Independently reproduce one FHE-compatible confidential swap or DeFi venue on Sepolia, including proofs, gas, liquidity and receipt finality; no public fallback.
 3. Implement session-limited smart accounts with enforced spend caps and owner revocation; the planning tool is not an authorization step.
 4. Reconcile finalized encrypted transactions into privacy-safe user records before enabling any realized-PnL or win-rate analytics.
+
+## From deployed swap proxy to an actual confidential trade
+
+The official Sepolia ConfidentialSwap RFQ proxy now has a reproducible on-chain evidence snapshot and UUPS implementation check. Next: (1) obtain official verified implementation source and pinned RFQ ABI, (2) identify and independently query any public supported-token and whitelist views, (3) reproduce confidential order input encryption and RFQ settlement with signed testnet consent, (4) integrate restricted smart-account/session authority that separately enforces target, selector, pair, token spend, expiration and revocation, (5) persist only privacy-safe settlement records and test refunds, failed fills and reorgs. Do not assume the mainnet pair list applies to Sepolia. The live proxy inspector MUST remain read-only and the execution feature MUST remain disabled through these steps.

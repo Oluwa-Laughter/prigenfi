@@ -6,9 +6,19 @@ The generated [Zama Sepolia registry](https://github.com/zama-ai/protocol-regist
 
 Zama describes an on-chain blind RFQ auction for confidential-token pairs at [Confidential Swap](https://www.zama.org/confidential-swap). This is an existing protocol candidate, not an integrated PrigenFi exchange.
 
-## Verification status
+## Verified technical status — November 8, 2026
 
-Official registry discovery only. We have **not** independently verified proxy implementation code, contract ABI, supported Sepolia pairs, active liquidity, token operators, FHE proofs, order/quote lifecycle, user eligibility, transaction settlement or refund mechanisms. Existing code therefore keeps all private-agent trade execution disabled.
+The official Zama **testnet.json** snapshot and **manifest.json** were pinned byte-for-byte from `zama-ai/protocol-registry`. Their SHA-256 matched. The testnet registry source commit is `93283992cc39442fa9019c1474ef69331429e71a`, and the full JSON checksum is `68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5`. The exact contract entry identifies chain ID 11155111 and deployment block 11687343. Evidence is under `infra/zama-registry/`.
+
+A read-only Sepolia JSON-RPC observation at block **12091125** confirmed:
+
+- The proxy has deployed bytecode, with Keccak-256 code hash `0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6`.
+- ERC-1967 implementation storage points to `0x93FA553AFd73952105450264620eA08aBa7B52d5`, which also has deployed bytecode (hash `0x9814915edd2e296962367eeeba9d9d798dc45bbd13988040713e15fa7a0f003e`).
+- Direct `proxiableUUID()` on the implementation returns the EIP-1967 implementation slot, consistent with UUPS.
+
+These findings establish only that a registry-listed UUPS proxy and implementation are deployed at the observed block. No swap ABI, pair listing, encrypted lifecycle, quote maker eligibility, upgrade authority, access control, liquidity, user consent or end-to-end confidential transaction has yet been independently verified. The execution gate stays closed.
+
+`pnpm verify:swap:source` is a deterministic offline registry integrity test; `pnpm verify:swap` rechecks the live chain and records a new public observation. The workspace `/privacy` panel uses an isolated, cached read-only API and reports failures honestly. Tests cover wrong-chain responses, missing implementation, malformed storage, invalid UUID and absent bytecode.
 
 ## Engineering checklist
 

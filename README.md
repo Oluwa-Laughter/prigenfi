@@ -49,6 +49,19 @@ The common schema in `packages/shared/src/confidential-policy.ts` requires `priv
 
 External agents can submit structured multi-step research proposals through the local stdio MCP tool agent_plan_evaluate. This validates Sepolia confidential wrapper addresses, portfolio market scope, plan expiry, token-pair constraints, total allocation and slippage. Valid research never grants wallet authority or enables a transaction. The engine does not run an LLM or store private instructions. See docs/AGENT_PLANNING_PROTOCOL.md.
 
+## On-chain confidential venue verification
+
+PrigenFi now has a **read-only inspection** of the official Zama ConfidentialSwap RFQ proxy on Ethereum Sepolia. The registry snapshot at `infra/zama-registry/` is preserved byte-for-byte and checked against Zama's published SHA-256 manifest. The `pnpm verify:swap` command then checks the real chain ID, proxy bytecode, ERC-1967 implementation storage, implementation bytecode and UUPS UUID at a single block, saving a public nonsecret receipt under `docs/evidence/confidential-swap-sepolia.json`. It **does not** create an order, authorize an agent, verify liquidity or enable confidential trading.
+
+The workspace `/privacy` page shows the cached public chain status from a read-only `GET /api/confidential-venue`. It has no user-supplied RPC URL or write route. Even a confirmed proxy is **not** permission to trade: all private execution is disabled until the official RFQ ABI, supported pairs, quote lifecycle, owner permissions, encrypted order proof and settlement are independently verified. The API can return an unavailable state when the public RPC fails.
+
+```sh
+pnpm verify:swap:source  # offline, deterministic SHA-256 integrity
+pnpm verify:swap         # read-only Sepolia RPC query; no key required
+```
+
+See [swap feasibility and next steps](docs/CONFIDENTIAL_SWAP_FEASIBILITY.md).
+
 ## Run locally
 
 Node.js 22+, pnpm 10.34.6 and Foundry are required.

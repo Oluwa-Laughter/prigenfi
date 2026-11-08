@@ -43,6 +43,22 @@ for (const width of [320, 360, 430, 768, 1024]) {
           body: JSON.stringify(marketData),
         }),
       );
+      await page.route("**/api/confidential-venue", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            status: "deployed-proxy",
+            uupsConfirmed: true,
+            chainId: 11155111,
+            blockNumber: "12091125",
+            implementationAddress: "0x93FA553AFd73952105450264620eA08aBa7B52d5",
+            privateTradingEnabled: false,
+            executionAllowed: false,
+            checkedAt: "2026-11-08T14:23:01.891Z",
+          }),
+        }),
+      );
       for (const url of pages) {
         await page.goto(url);
         await expect(page.locator("main#main")).toBeVisible();

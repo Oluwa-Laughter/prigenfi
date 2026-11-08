@@ -1,0 +1,15 @@
+{
+  "git_source_commit": "93283992cc39442fa9019c1474ef69331429e71a",
+  "generated_at": "2026-10-13T11:54:07.706Z",
+  "files_sha256sum": {
+    "files_gb/.gitbook.yaml": "0f5addf71643ef2ff35baa101f32fd26e259ee9e643dc626906780f3ec90199c",
+    "files_gb/mainnet.md": "05dc9e16622fc8879cb1fdbd684cf5bae978e03d8fc2b6a6426c147a830cd370",
+    "files_gb/README.md": "a93259349c817c42ee1636cba822da98aae987fb579c361a4b199b98d0905f30",
+    "files_gb/SUMMARY.md": "dd639f94f6c258ef33c4ddb84f42c8ef0b28b7f78d651e41361c0212b2156d65",
+    "files_gb/testnet.md": "00a75260715ad5cd45d655d0cb438632bc6a6d05034603a53eacd9cfdc6ec10c",
+    "mainnet.json": "201998acf6c3af4176ba5e47da7fdbed5113e37a852cb3e9f6aebb05cb8ea480",
+    "mainnet.md": "05dc9e16622fc8879cb1fdbd684cf5bae978e03d8fc2b6a6426c147a830cd370",
+    "testnet.json": "68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5",
+    "testnet.md": "00a75260715ad5cd45d655d0cb438632bc6a6d05034603a53eacd9cfdc6ec10c"
+  }
+}

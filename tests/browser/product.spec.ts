@@ -61,6 +61,22 @@ for (const width of [1440, 390]) {
       const errors: string[] = [];
       page.on("pageerror", (err) => errors.push(err.message));
       await mockMarketApi(page);
+      await page.route("**/api/confidential-venue", (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            status: "deployed-proxy",
+            uupsConfirmed: true,
+            chainId: 11155111,
+            blockNumber: "12091125",
+            implementationAddress: "0x93FA553AFd73952105450264620eA08aBa7B52d5",
+            privateTradingEnabled: false,
+            executionAllowed: false,
+            checkedAt: "2026-11-08T14:23:01.891Z",
+          }),
+        }),
+      );
       await page.goto("/");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Direct the trade.",
@@ -157,6 +173,9 @@ for (const width of [1440, 390]) {
         fullPage: true,
       });
       await page.goto("/privacy");
+      await expect(page.getByText("Proxy confirmed")).toBeVisible();
+      await expect(page.getByText("Execution locked")).toBeVisible();
+      await expect(page.getByText("12091125")).toBeVisible();
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Privacy is a requirement.",
       );
@@ -166,6 +185,10 @@ for (const width of [1440, 390]) {
       await expect(
         page.getByText("Blocked — no verified private execution venue"),
       ).toBeVisible();
+      await page.screenshot({
+        path: "docs/evidence/privacy-" + width + ".png",
+        fullPage: true,
+      });
       await page.goto("/portfolio");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Know what you own.",

@@ -22,7 +22,9 @@
     "mcp": "pnpm --filter @prigenfi/mcp-server start",
     "api": "pnpm --filter @prigenfi/api start",
     "local:deploy": "tsx scripts/local-deploy.ts",
-    "verify:zama": "tsx scripts/verify-zama.ts"
+    "verify:zama": "tsx scripts/verify-zama.ts",
+    "verify:swap:source": "tsx scripts/verify-confidential-swap.ts --source-only",
+    "verify:swap": "tsx scripts/verify-confidential-swap.ts"
   },
   "devDependencies": {
     "typescript": "7.0.2",
