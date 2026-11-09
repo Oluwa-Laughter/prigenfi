@@ -101,3 +101,20 @@ A final review found that simultaneous proposal simulations could all pass the p
 - User-facing privacy page no longer shows the raw RFQ/deployment diagnostics; technical verification stays available to engineers in the read-only API and source/evidence docs. No fabricated market returns, prices or user holdings added.
 - Removed all Playwright screenshot calls, disabled screenshot/video/trace capture and deleted tracked PNG evidence from the working tree. Browser assertions remain in place; history may retain old blobs, but no new screenshot files will be generated or committed. Git ignore excludes future evidence images.
 - Added focused READMEs for the web, shared policy, SDK, Zama adapter, local MCP, API and contract sandbox. Final test and CI status must be verified after pushing.
+
+## Real EVM market research and safer agent MCP — November 9, 2026
+
+- Added one bounded provider adapter for public Ethereum, Base, Arbitrum, Optimism, Polygon and BNB Chain research, shared by the dashboard and local MCP. It validates source records, chain identity and token addresses and never invents quotes, prices, liquidity, wins or user portfolios. A contract-address search queries the real chain-scoped API; a symbol search is explicitly a provider-limited global search.
+- Manually called the live API with published USDC token contract addresses: **17 actual Ethereum pools and 23 actual Base pools** were returned at the observation time. These are **public market results only**, not evidence of private execution or profitability. No captured screenshots or real user-sensitive data were saved.
+- Added `market_search`, `market_pair_lookup`, `agent_market_research_check`, and the `interpret_private_defi_goal` host-facing MCP prompt. Agent intent checks enforce caller-declared network/market/expiry boundaries and limited public token search terms; cannot authenticate the caller or authorize trades. Local Anvil simulated transfer tools are conditionally exposed only to configured chain 31337 and now have clearly dev-only names.
+- The user instruction page now starts without fabricated capital or prefilled user instructions; users explicitly supply their own goal and choose EVM market scope. All private execution remains blocked while smart-account and FHE venue integration is unverified.
+- Source-code checks and CI post-push verification are recorded separately when complete; local test fixture values are isolated to automated tests and are never served to real users.
+
+### Final verified results for the November 9 market/agent milestone
+
+- **57/57 Vitest tests passed** with actual local Anvil integration. This includes MCP external-client discovery, host interpretation prompt, independent research-policy checks, and real local vault test policy reads/simulations (developer-only).
+- **13/13 Foundry tests passed**, including access controls, replay/nonce denial, fuzzing and capital-boundary invariants. These are test vault properties, not verified FHE swap security.
+- **8/8 Playwright tests passed** across desktop/mobile routes and local wallet lifecycle with test API fixtures kept strictly inside test code. Screenshot/video/trace capture remains disabled; zero PNGs were produced under docs/evidence.
+- Workspace typechecking, Biome, Prettier, Next.js production build and Zama official registry source integrity all passed.
+- A separate live external MCP client called `market_search` for a published Base USDC contract: **23 real DEX Screener pools**, source/time metadata present, `privateTradingAvailable:false`. Separately the shared provider returned 17 Ethereum/23 Base USDC pools in live read-only observations. No financial transaction, user balance or wallet signature was involved.
+- Actual autonomous private trading **remains disabled**; no EVM mainnet confidential swap or multi-chain FHE execution has been proven. GitHub Actions CI to be rechecked after this commit.

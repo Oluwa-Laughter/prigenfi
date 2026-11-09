@@ -7,7 +7,9 @@
     ".": "./src/index.ts",
     "./confidential-policy": "./src/confidential-policy.ts",
     "./agent-planning": "./src/agent-planning.ts",
-    "./swap-venue": "./src/swap-venue.ts"
+    "./swap-venue": "./src/swap-venue.ts",
+    "./market-research": "./src/market-research.ts",
+    "./agent-research-scope": "./src/agent-research-scope.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

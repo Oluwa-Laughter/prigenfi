@@ -1,7 +1,7 @@
 import { MarketFeedView } from "@/components/workspace/market-feed";
 import { marketCategories, type MarketCategory } from "@/lib/markets";
 
-export const metadata = { title: "Ethereum Markets" };
+export const metadata = { title: "EVM Market Research" };
 export default async function MarketsPage({
   searchParams,
 }: {
@@ -18,18 +18,20 @@ export default async function MarketsPage({
       <div className="ws-page-heading">
         <div>
           <p className="ws-kicker">Real on-chain market data</p>
-          <h1>Explore Ethereum markets.</h1>
+          <h1>Explore EVM markets.</h1>
           <p className="ws-page-subtitle">
-            From DEX spot pairs and meme tokens to DeFi and stablecoins.
-            Discover pools first, decide what agents may do later.
+            Research live public pools across selected EVM networks—spot, DeFi,
+            stablecoins and emerging tokens. Agent trading permissions remain
+            separate.
           </p>
         </div>
         <span className="ws-source-mark">Public feed · DEX Screener</span>
       </div>
       <div className="market-intro-notice">
-        Market listings are public Ethereum mainnet observations, not verified
-        safe tokens or private executable markets. Verify addresses, contract
-        risk, liquidity and venues independently. Trading remains disabled.
+        These are externally sourced public market observations, not verified
+        safe tokens or executable confidential routes. Verify contract risk,
+        liquidity, token addresses and venues independently. Private trading
+        remains disabled across all listed networks.
       </div>
       <MarketFeedView initialCategory={category} />
     </div>

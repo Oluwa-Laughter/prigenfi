@@ -1,27 +1,11 @@
-export type MarketPair = {
-  pairAddress: string;
-  base: string;
-  quote: string;
-  baseName: string;
-  dex: string;
-  priceUsd: string | null;
-  change24h: number | null;
-  liquidityUsd: number | null;
-  volume24hUsd: number | null;
-};
-export type MarketFeed = {
-  source: "DEX Screener";
-  network: string;
-  fetchedAt: string;
-  query: string;
-  pairs: MarketPair[];
-};
+import type { MarketFeed, MarketPair } from "@prigenfi/shared/market-research";
+export type { MarketFeed, MarketPair } from "@prigenfi/shared/market-research";
 export const marketCategories = [
   {
     id: "spot",
     label: "DEX & spot",
     query: "ETH",
-    description: "ETH and ERC-20 pairs across Ethereum decentralized exchanges",
+    description: "ETH and ERC-20 pairs across selected EVM networks",
   },
   {
     id: "defi",

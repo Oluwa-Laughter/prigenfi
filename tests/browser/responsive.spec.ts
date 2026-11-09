@@ -14,7 +14,12 @@ const pages = [
 ];
 const marketData = {
   source: "DEX Screener",
-  network: "Ethereum mainnet",
+  dataClass: "public-market-research",
+  network: "Ethereum",
+  chain: "ethereum",
+  evmChainId: 1,
+  privateTradingAvailable: false,
+  searchMethod: "global-symbol",
   query: "ETH",
   fetchedAt: "2026-11-08T08:00:00Z",
   pairs: [

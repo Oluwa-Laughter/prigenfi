@@ -2,7 +2,7 @@
 
 **Privacy-preserving DeFi, built for agents and the people who authorize them.**
 
-PrigenFi is building an Ethereum-market agent platform that connects user trading instructions, controlled capital access, DeFi market discovery and privacy-preserving asset infrastructure. Users should be able to direct agents toward any supported Ethereum market—from DeFi and spot markets to staking, stablecoins and emerging tokens—without giving agents unrestricted access to their wallets. **Confidential-only execution is an absolute requirement**, not an optional market feature.
+PrigenFi is building an EVM-market agent platform that connects user trading instructions, controlled capital access, DeFi market discovery and privacy-preserving asset infrastructure. Users should be able to direct agents toward any supported Ethereum market—from DeFi and spot markets to staking, stablecoins and emerging tokens—without giving agents unrestricted access to their wallets. **Confidential-only execution is an absolute requirement**, not an optional market feature.
 
 This repository contains a real engineering foundation and a **testnet-only product preview**, not a live autonomous trading service. No mainnet execution, confidential swap venue or investment returns are available.
 
@@ -31,7 +31,7 @@ The public site and user workspace have separate navigation. The workspace sideb
 | ------------- | --------------------------------------------------------------------------------------------- |
 | `/`           | Public marketing: what PrigenFi is and how delegated finance works                            |
 | `/dashboard`  | Financial command center, public-market charts and honestly unavailable agent results         |
-| `/markets`    | Live Ethereum DEX-pair discovery, meme/spot/DeFi/stablecoin research                          |
+| `/markets`    | Live, source-labeled research across selected EVM networks; never a private-trading quote     |
 | `/agents`     | User-defined agent research mandates, ready to copy, not wallet permissions                   |
 | `/strategies` | Research-oriented mandate templates: meme, DEX, lending, staking, stablecoins, perps          |
 | `/portfolio`  | Connected wallet gas balance and Zama-backed confidential test token tools                    |
@@ -41,9 +41,15 @@ The public site and user workspace have separate navigation. The workspace sideb
 | `/settings`   | Security boundaries and links to wallet controls                                              |
 | `/docs`       | Developer/MCP integration instructions, separate from the customer-facing app                 |
 
+## Agent integration and source boundaries
+
+`pnpm mcp` starts an existing local stdio MCP server. A connected agent host can retrieve the `interpret_private_defi_goal` prompt, provide its own model reasoning, verify scope with `agent_market_research_check`, search public network data using `market_search`, inspect a specific pool with `market_pair_lookup`, and submit model-authored research plans to fail-closed validators. No model provider API keys or hosting secrets are bundled into this repo. **Do not assume merely connecting MCP enables a signed trade.** Local Anvil-only public ERC-20 vault simulation tools are hidden from ordinary MCP sessions and cannot be mistaken for actual trading. See [MCP integration](docs/MCP_INTEGRATION.md).
+
+An owner has **not** signed an authenticated session or authorized fund movement through these research tools. Private agent strategies, smart account restrictions, on-chain FHE transactions and realized returns remain upcoming engineering work. Users can lose capital when those capabilities eventually become available; PrigenFi does not promise profit.
+
 ## Market data and analytics
 
-The app uses DEX Screener's public Ethereum pair-search API through a rate-cached Next.js route (`/api/markets`). Public market charts summarize 24h pool volume and liquidity **from provider responses**, with explicit timestamps, error states and source links. This feed does not quote executable private trades, and user searches are not confidential.
+The app and local MCP server use the **same bounded DEX Screener public-data adapter**. The `/api/markets` endpoint accepts only an allowlisted `chain` and token symbol/pair or EVM token contract address. Public **Ethereum, Base, Arbitrum, Optimism, Polygon and BNB Chain** research is available; contract-address queries use the actual chain-specific provider endpoint instead of inventing missing symbol results. Pair addresses, prices and metrics come only from current provider responses, each with network, source and observation time; invalid values are dropped. No balances, user instruction text or private keys are sent. A public symbol search can return no results because the provider returns a limited global slice. These observations are **not** trade quotes, wallet balances, token safety attestations or confidentiality guarantees.
 
 Agent win rate and realized P&L must come from verified, finalized closed positions with cost basis. The app deliberately displays **no win rate or profits** before such a settlement indexer exists. A tested settlement-summary calculator and conditional chart renderers are in the repository, but no trade journal is yet connected.
 
@@ -60,7 +66,7 @@ Agent win rate and realized P&L must come from verified, finalized closed positi
 
 ## Confidential market boundary
 
-The common schema in `packages/shared/src/confidential-policy.ts` requires `privacy: "confidential-only"` for all research mandates. A market-specific MCP route-check tool reports execution disabled until a compatible FHE venue and real agent authorization are verified. This does **not** encrypt arbitrary market trades or activate autonomous swaps. Public market discovery is still public and can expose searches to its provider. The instruction composer remains a local, copyable draft; AI-model interpretation, authenticated agent sessions and durable execution are not yet implemented.
+The common schema in `packages/shared/src/confidential-policy.ts` requires `privacy: "confidential-only"` for all research mandates. The MCP server now offers the `interpret_private_defi_goal` prompt to a **connected external AI host** (that host—not PrigenFi's website—uses an LLM to interpret text the user explicitly shares). It can call `agent_market_research_check` to constrain network, market and symbol query before `market_search` / `market_pair_lookup` returns real public observations. The separate `agent_plan_evaluate` checks typed Sepolia confidential-wrapper research steps. Tool outputs never grant owner authority. Private execution, authenticated sessions and durable agent positions are still not implemented; no LLM prompt can bypass that restriction.
 
 ## Structured agent proposal validation
 
@@ -70,7 +76,7 @@ External agents can submit structured multi-step research proposals through the 
 
 PrigenFi now has a **read-only inspection** of the official Zama ConfidentialSwap RFQ proxy on Ethereum Sepolia. The registry snapshot at `infra/zama-registry/` is preserved byte-for-byte and checked against Zama's published SHA-256 manifest. The `pnpm verify:swap` command then checks the real chain ID, proxy bytecode, ERC-1967 implementation storage, implementation bytecode and UUPS UUID at a single block, saving a public nonsecret receipt under `docs/evidence/confidential-swap-sepolia.json`. It **does not** create an order, authorize an agent, verify liquidity or enable confidential trading.
 
-The workspace `/privacy` page shows the cached public chain status from a read-only `GET /api/confidential-venue`. It has no user-supplied RPC URL or write route. Even a confirmed proxy is **not** permission to trade: all private execution is disabled until the official RFQ ABI, supported pairs, quote lifecycle, owner permissions, encrypted order proof and settlement are independently verified. The API can return an unavailable state when the public RPC fails.
+The developer-only read-only `GET /api/confidential-venue` API can inspect public chain status; the customer `/privacy` page intentionally does **not** display RFQ, contract deployment or proxy diagnostics. It has no user-supplied RPC URL or write route. Even a confirmed proxy is **not** permission to trade: all private execution is disabled until the official RFQ ABI, supported pairs, quote lifecycle, owner permissions, encrypted order proof and settlement are independently verified. The API can return an unavailable state when the public RPC fails.
 
 ```sh
 pnpm verify:swap:source  # offline, deterministic SHA-256 integrity

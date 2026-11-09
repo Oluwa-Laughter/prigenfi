@@ -15,3 +15,9 @@ From the repository root: `pnpm dev`, `pnpm typecheck`, `pnpm lint`, `pnpm build
 Only engineers use `/docs` and the unlisted `/vault` local ERC-20 sandbox. No customer-facing page requests smart-contract deployment. API and RPC errors must fail closed; balances must come from a connected wallet, and performance must come from settled verified positions.
 
 **Resource policy:** Browser tests make DOM, accessibility and responsive-layout assertions. Screenshots, recordings and trace generation are disabled; never write test images to `docs/evidence`.
+
+## Actual multi-chain public-data research (November 9, 2026)
+
+The `/markets` selector supports Ethereum, Base, Arbitrum, Optimism, Polygon and BNB Chain through a single source-validated, fail-closed `@prigenfi/shared/market-research` adapter. Symbols use the provider's limited global result slice; an exact 42-character token address uses the provider's chain-scoped `token-pairs` API. No hardcoded production prices, trading wins, balances, liquidity or synthetic quote fallbacks exist. These are public observations, not supported confidential execution venues.
+
+`/agents` starts with an **empty**, user-authored goal, token list and research capital ceiling. It can select public research scope and copy a confidential-only draft. A connected external MCP AI host may interpret that explicitly shared goal; this web page has no LLM session, trade capability or private-instruction upload.

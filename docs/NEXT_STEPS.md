@@ -51,3 +51,10 @@ Read AGENTS, PRODUCT, ARCHITECTURE, DECISIONS and BUILD_STATUS. Check GitHub mai
 ## From deployed swap proxy to an actual confidential trade
 
 The official Sepolia ConfidentialSwap RFQ proxy now has a reproducible on-chain evidence snapshot and UUPS implementation check. Next: (1) obtain official verified implementation source and pinned RFQ ABI, (2) identify and independently query any public supported-token and whitelist views, (3) reproduce confidential order input encryption and RFQ settlement with signed testnet consent, (4) integrate restricted smart-account/session authority that separately enforces target, selector, pair, token spend, expiration and revocation, (5) persist only privacy-safe settlement records and test refunds, failed fills and reorgs. Do not assume the mainnet pair list applies to Sepolia. The live proxy inspector MUST remain read-only and the execution feature MUST remain disabled through these steps.
+
+## Priority after live multichain market research — November 9, 2026
+
+1. Implement real user authentication (EIP-4361 SIWE, ERC-1271 smart-account verification), session persistence, tenant-scoped agent identities, revocation and safe private-instruction storage. A connected wallet or MCP host alone is not authenticated authorization.
+2. Select and independently verify an actual Zama-compatible confidential execution adapter on its documented chain and supported asset pairs. Reproduce an encrypted order, consented session policy, final settlement and recovery on a funded Sepolia test wallet. **No public DEX fallback** and no universal cross-chain FHE claims.
+3. Build a durable agent workflow: user goal → host-model structured research → source-stamped market evidence → validated private route → explicit wallet policy approval → scoped execution → verified receipts. Use actual data and idempotency boundaries; never advertise guaranteed profit.
+4. Add a privacy-aware journal and cost-basis reconciliation before win rate, P&L, or portfolio performance is displayed. Resist manipulated market metadata, chain forks and cancelled fills.

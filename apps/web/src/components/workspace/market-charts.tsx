@@ -22,7 +22,13 @@ const palette = [
   "#a3a8cd",
 ];
 
-export function MarketCharts({ pairs }: { pairs: MarketPair[] }) {
+export function MarketCharts({
+  pairs,
+  network,
+}: {
+  pairs: MarketPair[];
+  network: string;
+}) {
   const valid = pairs.filter(
     (p) => (p.liquidityUsd ?? 0) > 0 && (p.volume24hUsd ?? 0) > 0,
   );
@@ -44,7 +50,7 @@ export function MarketCharts({ pairs }: { pairs: MarketPair[] }) {
   if (!bars.length)
     return (
       <div className="insight-empty">
-        No usable Ethereum pool volume and liquidity data was returned for this
+        No usable public pool volume and liquidity data was returned for this
         search.
       </div>
     );
@@ -54,7 +60,7 @@ export function MarketCharts({ pairs }: { pairs: MarketPair[] }) {
         <div className="chart-heading">
           <div>
             <h3>24h market volume</h3>
-            <p>Selected Ethereum pools · USD</p>
+            <p>Selected {network} pools · USD</p>
           </div>
           <span className="chart-source">Public market feed</span>
         </div>

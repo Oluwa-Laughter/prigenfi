@@ -10,6 +10,10 @@ import {
   type MarketFeed,
   type MarketPair,
 } from "@/lib/markets";
+import {
+  publicMarketNetworks,
+  marketQuerySchema,
+} from "@prigenfi/shared/market-research";
 import { MarketCharts } from "./market-charts";
 
 function changeText(n: number | null) {
@@ -27,6 +31,8 @@ export function MarketFeedView({
     marketCategories.find((c) => c.id === initialCategory) ??
     marketCategories[0];
   const [category, setCategory] = useState<MarketCategory>(first.id);
+  const [chain, setChain] =
+    useState<(typeof publicMarketNetworks)[number]["id"]>("ethereum");
   const [query, setQuery] = useState<string>(first.query);
   const [submitted, setSubmitted] = useState<string>(first.query);
   const [feed, setFeed] = useState<MarketFeed | null>(null);
@@ -40,9 +46,12 @@ export function MarketFeedView({
     const controller = new AbortController();
     setLoading(true);
     setError("");
-    fetch("/api/markets?q=" + encodeURIComponent(submitted), {
-      signal: controller.signal,
-    })
+    fetch(
+      "/api/markets?chain=" + chain + "&q=" + encodeURIComponent(submitted),
+      {
+        signal: controller.signal,
+      },
+    )
       .then(async (r) => {
         const data: unknown = await r.json();
         if (!r.ok) throw new Error("Market feed unavailable");
@@ -50,6 +59,12 @@ export function MarketFeedView({
       })
       .then((data) => {
         if (!controller.signal.aborted) {
+          if (
+            data.chain !== chain ||
+            data.dataClass !== "public-market-research"
+          ) {
+            throw new Error("Mismatched market response");
+          }
           setFeed(data);
           setLoading(false);
         }
@@ -58,13 +73,13 @@ export function MarketFeedView({
         if (!controller.signal.aborted) {
           setFeed(null);
           setError(
-            "Live Ethereum pair data is temporarily unavailable. Try again.",
+            "Public market data for this network is temporarily unavailable. Try again.",
           );
           setLoading(false);
         }
       });
     return () => controller.abort();
-  }, [submitted, version]);
+  }, [chain, submitted, version]);
 
   function selectCategory(id: MarketCategory) {
     const next =
@@ -75,7 +90,7 @@ export function MarketFeedView({
   }
   function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (query.trim().length >= 2 && query.trim().length <= 45)
+    if (marketQuerySchema.safeParse(query.trim()).success)
       setSubmitted(query.trim());
   }
   const data = feed?.pairs ?? [];
@@ -99,19 +114,44 @@ export function MarketFeedView({
           <p className="market-category-summary">
             {marketCategories.find((c) => c.id === category)?.description}
           </p>
+          <label className="market-network-select">
+            <span>Public market network</span>
+            <select
+              aria-label="Public market network"
+              value={chain}
+              onChange={(event) => {
+                setChain(event.target.value as typeof chain);
+                setFeed(null);
+                setError("");
+              }}
+            >
+              {publicMarketNetworks.map((network) => (
+                <option key={network.id} value={network.id}>
+                  {network.name}
+                </option>
+              ))}
+            </select>
+            <small>
+              Research only · This does not enable private trading on the
+              selected network
+            </small>
+          </label>
           <form className="market-search" onSubmit={submit}>
             <Search size={19} aria-hidden="true" />
             <label className="sr-only" htmlFor="market-search-term">
-              Search Ethereum token or pair
+              Search token symbol, pair, or EVM contract address
             </label>
             <input
               id="market-search-term"
               maxLength={45}
-              placeholder="Search token or pair, e.g. ETH, PEPE, UNI"
+              placeholder="ETH, USDC/ETH, or a token contract address"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button type="submit" disabled={query.trim().length < 2}>
+            <button
+              type="submit"
+              disabled={!marketQuerySchema.safeParse(query.trim()).success}
+            >
               Search markets
             </button>
           </form>
@@ -119,7 +159,7 @@ export function MarketFeedView({
       )}
       {loading ? (
         <div className="insight-empty" role="status">
-          Loading public Ethereum market quotes…
+          Loading public market data from DEX Screener…
         </div>
       ) : error ? (
         <div className="insight-empty">
@@ -131,8 +171,9 @@ export function MarketFeedView({
         </div>
       ) : !data.length ? (
         <div className="insight-empty">
-          No Ethereum pairs found for “{submitted}”. Try a different token or
-          pair.
+          No public {publicMarketNetworks.find((n) => n.id === chain)?.name}{" "}
+          pairs found for “{submitted}”. Try an exact token contract address for
+          chain-specific discovery.
         </div>
       ) : (
         <>
@@ -160,7 +201,9 @@ export function MarketFeedView({
                           <strong>
                             {p.base} <span>/ {p.quote}</span>
                           </strong>
-                          <small>{p.dex} · Ethereum</small>
+                          <small>
+                            {p.dex} · {feed?.network}
+                          </small>
                         </div>
                       </div>
                     </td>
@@ -191,7 +234,10 @@ export function MarketFeedView({
                       <a
                         className="market-source-link"
                         href={
-                          "https://dexscreener.com/ethereum/" + p.pairAddress
+                          "https://dexscreener.com/" +
+                          chain +
+                          "/" +
+                          p.pairAddress
                         }
                         target="_blank"
                         rel="noreferrer"
@@ -209,18 +255,24 @@ export function MarketFeedView({
           </div>
           {compact && (
             <Link className="market-more" href="/markets">
-              View Ethereum markets <ArrowUpRight size={16} />
+              View EVM markets <ArrowUpRight size={16} />
             </Link>
           )}
           <div className="market-footnote">
-            Public DEX Screener snapshot
+            Public DEX Screener snapshot ·{" "}
+            {feed?.network ?? "Selected EVM network"}
             {feed?.fetchedAt
               ? " · " + new Date(feed.fetchedAt).toLocaleString()
               : ""}
-            . Pair data may be delayed or manipulated. Research only; no trades
-            or private execution are performed from this table.
+            . Symbol searches use a globally limited provider result set;
+            contract-address searches query your selected network directly. Data
+            may be delayed or manipulated. Research only; no trades or private
+            execution are performed from this table.
           </div>
-          <MarketCharts pairs={data} />
+          <MarketCharts
+            pairs={data}
+            network={feed?.network ?? "Selected EVM network"}
+          />
         </>
       )}
     </section>

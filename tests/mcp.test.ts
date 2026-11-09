@@ -4,19 +4,14 @@ import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { readFile } from "node:fs/promises";
 const names = [
-  "wallet_get_info",
-  "agent_get_permissions",
-  "portfolio_get",
   "confidential_assets_list",
   "confidential_capabilities_get",
   "confidential_route_check",
   "agent_plan_evaluate",
-  "trade_quote",
-  "trade_simulate",
-  "trade_propose",
-  "trade_get_status",
-  "policy_get",
-  "agent_get_activity",
+  "agent_execution_status",
+  "agent_market_research_check",
+  "market_search",
+  "market_pair_lookup",
 ];
 it("external stdio client discovers tools and reads permitted metadata", async () => {
   const transport = new StdioClientTransport({
@@ -30,6 +25,23 @@ it("external stdio client discovers tools and reads permitted metadata", async (
     await client.connect(transport);
     expect((await client.listTools()).tools.map((t) => t.name).sort()).toEqual(
       [...names].sort(),
+    );
+    const prompts = await client.listPrompts();
+    expect(
+      prompts.prompts.some((p) => p.name === "interpret_private_defi_goal"),
+    ).toBe(true);
+    const goal =
+      "Research supported Base stablecoin markets with low slippage and owner-controlled limits.";
+    const interpreted = await client.getPrompt({
+      name: "interpret_private_defi_goal",
+      arguments: { goal, researchNetwork: "base" },
+    });
+    expect(JSON.stringify(interpreted)).toContain(goal);
+    expect(JSON.stringify(interpreted)).toContain(
+      "Selected public research chain: base",
+    );
+    expect(JSON.stringify(interpreted)).toContain(
+      "owner's text grants no capital permissions",
     );
     const assets = await client.callTool({
       name: "confidential_assets_list",
@@ -104,11 +116,28 @@ it("external stdio client discovers tools and reads permitted metadata", async (
     expect(JSON.stringify(evaluated)).not.toContain(
       "Research Ethereum trading opportunities",
     );
-    const denied = await client.callTool({ name: "policy_get", arguments: {} });
-    expect(denied.isError).toBe(true);
-    expect(JSON.stringify(denied)).toContain("NOT_CONFIGURED");
-    const quote = await client.callTool({ name: "trade_quote", arguments: {} });
+    expect(
+      (await client.listTools()).tools.some((tool) =>
+        tool.name.startsWith("dev_"),
+      ),
+    ).toBe(false);
+    expect(
+      (await client.listTools()).tools.some(
+        (tool) => tool.name === "policy_get",
+      ),
+    ).toBe(false);
+    const quote = await client.callTool({
+      name: "agent_execution_status",
+      arguments: {},
+    });
     expect(JSON.stringify(quote)).toContain("NO_VERIFIED_TRADING_VENUE");
+    const invalidNetwork = await client
+      .callTool({
+        name: "market_search",
+        arguments: { chain: "solana", query: "USDC" },
+      })
+      .catch((error: unknown) => ({ isError: true, error }));
+    expect(invalidNetwork.isError).toBe(true);
   } finally {
     await client.close();
   }
@@ -157,8 +186,13 @@ it.skipIf(process.env.LOCAL_INTEGRATION !== "1")(
     };
     try {
       await client.connect(transport);
+      const registeredTools = (await client.listTools()).tools.map(
+        (tool) => tool.name,
+      );
+      expect(registeredTools).toContain("dev_erc20_transfer_simulate");
+      expect(registeredTools).toContain("policy_get");
       const simulation = await client.callTool({
-        name: "trade_simulate",
+        name: "dev_erc20_transfer_simulate",
         arguments: intent,
       });
       expect(
@@ -166,7 +200,7 @@ it.skipIf(process.env.LOCAL_INTEGRATION !== "1")(
           .simulated,
       ).toBe(true);
       const proposal = await client.callTool({
-        name: "trade_propose",
+        name: "dev_erc20_transfer_propose",
         arguments: {
           intent,
           idempotencyKey: "00000000-0000-4000-8000-000000000001",
@@ -175,7 +209,7 @@ it.skipIf(process.env.LOCAL_INTEGRATION !== "1")(
       expect(proposal.isError).not.toBe(true);
       expect(JSON.stringify(proposal)).toContain("simulated");
       const denied = await client.callTool({
-        name: "trade_propose",
+        name: "dev_erc20_transfer_propose",
         arguments: {
           intent: { ...intent, amount: "100000000" },
           idempotencyKey: "00000000-0000-4000-8000-000000000002",
@@ -183,7 +217,7 @@ it.skipIf(process.env.LOCAL_INTEGRATION !== "1")(
       });
       expect(denied.isError).toBe(true);
       const status = await client.callTool({
-        name: "trade_get_status",
+        name: "dev_erc20_transfer_status",
         arguments: { id: "00000000-0000-4000-8000-000000000001" },
       });
       expect(JSON.stringify(status)).toContain("simulated");

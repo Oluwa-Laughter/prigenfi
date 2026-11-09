@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
+import { publicMarketNetworks } from "@prigenfi/shared/market-research";
 import {
   assessConfidentialTrade,
   confidentialMandateSchema,
@@ -91,9 +92,10 @@ const markets: Market[] = [
 ];
 export function AgentBrief() {
   const [market, setMarket] = useState<Market>("All Ethereum markets");
-  const [assets, setAssets] = useState(templates.all.assets);
-  const [limit, setLimit] = useState("100");
-  const [instruction, setInstruction] = useState(templates.all.instruction);
+  const [assets, setAssets] = useState("");
+  const [limit, setLimit] = useState("");
+  const [instruction, setInstruction] = useState("");
+  const [researchNetwork, setResearchNetwork] = useState("all");
   const [feedback, setFeedback] = useState("");
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("strategy");
@@ -115,7 +117,12 @@ export function AgentBrief() {
   const readiness = assessConfidentialTrade(draft);
   const mandate = [
     "PRIGENFI — CONFIDENTIAL AGENT MANDATE / RESEARCH DRAFT",
-    "Ecosystem: Ethereum; testnet execution only",
+    "Public research scope: " +
+      (researchNetwork === "all"
+        ? publicMarketNetworks.map((network) => network.name).join(", ")
+        : publicMarketNetworks.find((network) => network.id === researchNetwork)
+            ?.name),
+    "Real private agent execution: NOT AVAILABLE; supported Sepolia testnet wallet assets only",
     "Strategy universe: " + market,
     "Watch assets or venues: " + assets.trim(),
     "Owner-suggested maximum exposure: " +
@@ -156,8 +163,9 @@ export function AgentBrief() {
             Tell your agent what you want to achieve.
           </h2>
           <p>
-            Use plain language. Your agent's scope can cover the whole Ethereum
-            ecosystem, not just a single type of trade.
+            Write your own objective and choose the ecosystems to study. Your
+            agent host can interpret the goal through MCP, but no model can
+            grant itself access to your money.
           </p>
         </div>
         <span className="brief-chip">
@@ -190,9 +198,24 @@ export function AgentBrief() {
           </select>
         </label>
         <label className="brief-field">
+          <span>Public research networks</span>
+          <select
+            value={researchNetwork}
+            onChange={(event) => setResearchNetwork(event.target.value)}
+          >
+            <option value="all">All listed EVM markets (research)</option>
+            {publicMarketNetworks.map((network) => (
+              <option key={network.id} value={network.id}>
+                {network.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="brief-field">
           <span>Tokens or venues to research</span>
           <input
             value={assets}
+            placeholder="Specify assets, tokens or addresses to research"
             maxLength={90}
             onChange={(e) => {
               setAssets(e.target.value);
@@ -201,7 +224,9 @@ export function AgentBrief() {
           />
         </label>
         <label className="brief-field">
-          <span>Suggested capital ceiling (test units)</span>
+          <span>
+            Owner's research capital ceiling (test units; never an allowance)
+          </span>
           <input
             type="number"
             inputMode="decimal"
@@ -209,6 +234,7 @@ export function AgentBrief() {
             step="0.01"
             max="1000000000"
             value={limit}
+            placeholder="Enter your own limit"
             onChange={(e) => {
               setLimit(e.target.value);
               setFeedback("");
@@ -245,8 +271,10 @@ export function AgentBrief() {
       </div>
       <div className="brief-bottom">
         <p>
-          <Sparkles size={17} /> This form drafts instructions on your device;
-          it does not yet invoke an AI model or persist a trading session.
+          <Sparkles size={17} /> Your goal stays on this device until you copy
+          it. A connected MCP-enabled agent host can interpret the goal you
+          voluntarily share; this page does not run an AI model or save trading
+          sessions.
         </p>
         <div className="brief-actions">
           <Link href="/privacy">

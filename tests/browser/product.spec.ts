@@ -3,7 +3,12 @@ import { readFile } from "node:fs/promises";
 
 const marketFixture = {
   source: "DEX Screener",
-  network: "Ethereum mainnet",
+  dataClass: "public-market-research",
+  network: "Ethereum",
+  chain: "ethereum",
+  evmChainId: 1,
+  privateTradingAvailable: false,
+  searchMethod: "global-symbol",
   query: "ETH",
   fetchedAt: "2026-11-08T09:00:00.000Z",
   pairs: [
@@ -43,13 +48,25 @@ const marketFixture = {
   ],
 };
 async function mockMarketApi(page: import("@playwright/test").Page) {
-  await page.route("**/api/markets*", async (route) =>
-    route.fulfill({
+  await page.route("**/api/markets*", async (route) => {
+    const chain =
+      new URL(route.request().url()).searchParams.get("chain") ?? "ethereum";
+    const current =
+      chain === "base"
+        ? {
+            ...marketFixture,
+            chain: "base",
+            network: "Base",
+            evmChainId: 8453,
+            pairs: [],
+          }
+        : marketFixture;
+    await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify(marketFixture),
-    }),
-  );
+      body: JSON.stringify(current),
+    });
+  });
 }
 for (const width of [1440, 390]) {
   test(
@@ -139,12 +156,21 @@ for (const width of [1440, 390]) {
       }
       await page.goto("/markets?category=meme");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
-        "Explore Ethereum markets.",
+        "Explore EVM markets.",
       );
       await expect(
         page.getByRole("button", { name: "Emerging tokens" }),
       ).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByRole("table").getByText("PEPE")).toBeVisible();
+      await page
+        .getByRole("combobox", { name: "Public market network" })
+        .selectOption("base");
+      await expect(
+        page.getByRole("combobox", { name: "Public market network" }),
+      ).toHaveValue("base");
+      await expect(
+        page.getByText("No public Base pairs found", { exact: false }),
+      ).toBeVisible();
 
       await page.goto("/strategies");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
@@ -159,6 +185,9 @@ for (const width of [1440, 390]) {
       ).toBeVisible();
       await expect(page.getByLabel("Market scope")).toHaveValue(
         "All Ethereum markets",
+      );
+      await expect(page.getByLabel("Public research networks")).toHaveValue(
+        "all",
       );
       await page.getByText("Preview the complete confidential mandate").click();
       await expect(page.locator(".brief-preview pre")).toContainText(
