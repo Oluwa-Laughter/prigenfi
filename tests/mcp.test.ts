@@ -16,9 +16,16 @@ const names = [
 it("external stdio client discovers tools and reads permitted metadata", async () => {
   const transport = new StdioClientTransport({
     command: "pnpm",
-    args: ["exec", "tsx", "services/mcp-server/src/stdio.ts"],
+    args: ["exec", "tsx", "services/mcp-server/src/research-stdio.ts"],
     stderr: "pipe",
-    env: { PATH: process.env.PATH ?? "" },
+    env: {
+      PATH: process.env.PATH ?? "",
+      RPC_URL: "http://127.0.0.1:8545",
+      VAULT_ADDRESS: "0x1111111111111111111111111111111111111111",
+      TOKEN_ADDRESS: "0x2222222222222222222222222222222222222222",
+      AGENT_ADDRESS: "0x3333333333333333333333333333333333333333",
+      CHAIN_ID: "31337",
+    },
   });
   const client = new Client({ name: "prigenfi-smoke", version: "0.1.0" });
   try {
@@ -47,8 +54,21 @@ it("external stdio client discovers tools and reads permitted metadata", async (
       name: "confidential_assets_list",
       arguments: {},
     });
-    expect(JSON.stringify(assets)).toContain("cUSDCMock");
-    expect(JSON.stringify(assets)).toContain("cZAMAMock");
+    const assetResult = JSON.parse(
+      (assets.content as { text: string }[])[0].text,
+    );
+    expect(
+      assetResult.assets.map((asset: { symbol: string }) => asset.symbol),
+    ).toContain("cUSDC");
+    expect(
+      assetResult.assets.map((asset: { symbol: string }) => asset.symbol),
+    ).toContain("cZAMA");
+    expect(
+      assetResult.assets.every(
+        (asset: { testOnly: boolean }) => asset.testOnly,
+      ),
+    ).toBe(true);
+    expect(JSON.stringify(assetResult)).not.toContain("cUSDCMock");
     const caps = await client.callTool({
       name: "confidential_capabilities_get",
       arguments: {},

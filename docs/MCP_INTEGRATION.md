@@ -8,10 +8,12 @@ export CHAIN_ID=31337
 export VAULT_ADDRESS=YOUR_DEPLOYED_VAULT
 export AGENT_ADDRESS=YOUR_AGENT
 export TOKEN_ADDRESS=YOUR_PUBLIC_TOKEN
-pnpm mcp
+pnpm mcp:dev  # developer-only local Anvil vault; NOT the normal agent server
 ```
 
-A developer host can launch `pnpm exec tsx services/mcp-server/src/stdio.ts` from the repo root. Startup environment is operator-controlled scope, not a client-supplied authorization token. Without configured scope, asset discovery and availability tools work; private/configured reads return NOT_CONFIGURED.
+**Normal agent hosts use `pnpm mcp`**, which runs the dedicated research-only `research-stdio.ts` endpoint and cannot instantiate a development vault client, even if a host inherits vault environment variables. For Codex and Claude Desktop use the verified absolute-path config from `pnpm agent:connect --print codex` / `--print claude`, or generate ignored local files with `pnpm agent:connect --write`. The doctor `--check` performs a real isolated MCP client handshake and verifies execution is locked, but does not register a user agent, authenticate a wallet or connect to an already running host. See [agent connection](AGENT_CONNECTION.md).
+
+`pnpm mcp:dev` is a **separate local Anvil-only** entry point; developer wallet metadata and ERC-20 simulation tools require an explicitly configured test vault on chain 31337. No host can change startup-configured scope via tool arguments.
 
 | Default MCP tool                | Real capability                                                                                                                          |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -60,3 +62,7 @@ The local stdio tool agent_plan_evaluate accepts an owner-authored confidential-
 The local MCP now exposes the same live adapter used by the web app. `market_search` accepts a required `chain` (`ethereum`, `base`, `arbitrum`, `optimism`, `polygon` or `bsc`) and a short public token symbol, pair or EVM contract address. Unknown networks and arbitrary instructions/URLs are rejected; sensitive owner instructions MUST NOT be passed as token queries. Exact addresses use DEX Screener's chain-specific token-pairs route; a symbol query uses the provider's bounded global search and may return no pools for a chosen chain. Only actual returned pairs have prices, source timestamps and liquidity; malformed or wrong-network records are removed.
 
 `market_pair_lookup` accepts an exact chain and pool address and returns a real source observation or a null pair. `agent_market_research_check` validates a host model's proposed chain, market, token query and expiry against caller-declared constraints. This does not cryptographically authenticate the owner or authorize investments. `interpret_private_defi_goal` is an MCP prompt to be consumed by the **host's AI model** and is never a server-side substitute for a real LLM. Use owner-approved wallet sessions, on-chain smart-account policy and independently verified FHE-compatible settlement for any later live execution.
+
+## Host configuration and developer UX — November 9, 2026
+
+Use [AGENT_CONNECTION.md](AGENT_CONNECTION.md) for installation in Codex / Claude, actual MCP handshake checks, and separation of research-only and Anvil developer transports. The MCP initialization message includes a concise privacy/financial restriction notice. Default consumer tools never reveal unbacked Sepolia test wrapper internal contract suffixes as user-facing token names, but they preserve `testOnly:true` and source provenance. No hosted MCP OAuth, autonomous agent-session registration or smart-account permission grant exists yet.

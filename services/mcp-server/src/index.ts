@@ -30,7 +30,11 @@ import {
 export function createMcpServer(client?: PrigenFiClient) {
   const server = new McpServer(
     { name: "prigenfi", version: "0.1.0" },
-    { capabilities: { tools: {} } },
+    {
+      capabilities: { tools: {} },
+      instructions:
+        "PrigenFi MCP is research-only. Never infer wallet authorization, agent registration, confidential trade execution, portfolio returns or token safety from tools. User goals are voluntarily shared with the local AI host; token market searches are public. First validate agent research scope, then inspect real sourced public pools. Do not pass secrets, decrypted balances, private instructions or trading calldata to market providers. No public trade fallback is permitted. Agent execution is disabled; local Anvil developer simulations are never trades.",
+    },
   );
   const session = client ? new ProposalSession(client) : undefined;
   const requireClient = () => {
@@ -98,9 +102,15 @@ export function createMcpServer(client?: PrigenFiClient) {
   }
   read(
     "confidential_assets_list",
-    "List official Sepolia mock wrapper registry entries. Does not read or decrypt balances.",
+    "List official Sepolia unbacked testnet confidential asset wrappers using user-facing symbols. Does not read or decrypt balances.",
     () => ({
-      assets: confidentialAssets,
+      assets: confidentialAssets.map((asset) => ({
+        symbol: asset.displaySymbol,
+        address: asset.address,
+        category: asset.category,
+        chainId: asset.chainId,
+        testOnly: true,
+      })),
       confidentialExecution: "wallet-only; not delegated to agents",
       source:
         "https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md",

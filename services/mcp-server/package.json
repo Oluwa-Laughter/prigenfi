@@ -8,7 +8,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "start": "tsx src/stdio.ts"
+    "start": "tsx src/research-stdio.ts",
+    "start:dev": "tsx src/stdio.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

@@ -24,7 +24,9 @@
     "local:deploy": "tsx scripts/local-deploy.ts",
     "verify:zama": "tsx scripts/verify-zama.ts",
     "verify:swap:source": "tsx scripts/verify-confidential-swap.ts --source-only",
-    "verify:swap": "tsx scripts/verify-confidential-swap.ts"
+    "verify:swap": "tsx scripts/verify-confidential-swap.ts",
+    "mcp:dev": "pnpm --filter @prigenfi/mcp-server start:dev",
+    "agent:connect": "tsx scripts/agent-connect.ts"
   },
   "devDependencies": {
     "typescript": "7.0.2",

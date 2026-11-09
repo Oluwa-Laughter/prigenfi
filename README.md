@@ -27,25 +27,30 @@ This is the **target product**, not a claim that automated private trading is li
 
 The public site and user workspace have separate navigation. The workspace sidebar can be collapsed on desktop and opened as a drawer on mobile:
 
-| Route         | Purpose                                                                                       |
-| ------------- | --------------------------------------------------------------------------------------------- |
-| `/`           | Public marketing: what PrigenFi is and how delegated finance works                            |
-| `/dashboard`  | Financial command center, public-market charts and honestly unavailable agent results         |
-| `/markets`    | Live, source-labeled research across selected EVM networks; never a private-trading quote     |
-| `/agents`     | User-defined agent research mandates, ready to copy, not wallet permissions                   |
-| `/strategies` | Research-oriented mandate templates: meme, DEX, lending, staking, stablecoins, perps          |
-| `/portfolio`  | Connected wallet gas balance and Zama-backed confidential test token tools                    |
-| `/privacy`    | User-friendly privacy explanation, supported confidential assets and trade-readiness policy   |
-| `/activity`   | Read actual on-chain scoped vault events on the connected supported test network              |
-| `/vault`      | **Developer sandbox only**: existing local ERC-20 vault, scoped transfer tests and revocation |
-| `/settings`   | Security boundaries and links to wallet controls                                              |
-| `/docs`       | Developer/MCP integration instructions, separate from the customer-facing app                 |
+| Route             | Purpose                                                                                       |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `/`               | Public marketing: what PrigenFi is and how delegated finance works                            |
+| `/dashboard`      | Financial command center, public-market charts and honestly unavailable agent results         |
+| `/markets`        | Live, source-labeled research across selected EVM networks; never a private-trading quote     |
+| `/agents`         | User-defined agent research mandates, ready to copy, not wallet permissions                   |
+| `/agents/connect` | Real local MCP connection guide for Codex, Claude Desktop and developers; no wallet grants    |
+| `/strategies`     | Research-oriented mandate templates: meme, DEX, lending, staking, stablecoins, perps          |
+| `/portfolio`      | Connected wallet gas balance and Zama-backed confidential test token tools                    |
+| `/privacy`        | User-friendly privacy explanation, supported confidential assets and trade-readiness policy   |
+| `/activity`       | Read actual on-chain scoped vault events on the connected supported test network              |
+| `/vault`          | **Developer sandbox only**: existing local ERC-20 vault, scoped transfer tests and revocation |
+| `/settings`       | Security boundaries and links to wallet controls                                              |
+| `/docs`           | Developer/MCP integration instructions, separate from the customer-facing app                 |
 
 ## Agent integration and source boundaries
 
 `pnpm mcp` starts an existing local stdio MCP server. A connected agent host can retrieve the `interpret_private_defi_goal` prompt, provide its own model reasoning, verify scope with `agent_market_research_check`, search public network data using `market_search`, inspect a specific pool with `market_pair_lookup`, and submit model-authored research plans to fail-closed validators. No model provider API keys or hosting secrets are bundled into this repo. **Do not assume merely connecting MCP enables a signed trade.** Local Anvil-only public ERC-20 vault simulation tools are hidden from ordinary MCP sessions and cannot be mistaken for actual trading. See [MCP integration](docs/MCP_INTEGRATION.md).
 
 An owner has **not** signed an authenticated session or authorized fund movement through these research tools. Private agent strategies, smart account restrictions, on-chain FHE transactions and realized returns remain upcoming engineering work. Users can lose capital when those capabilities eventually become available; PrigenFi does not promise profit.
+
+### Connect an existing AI host
+
+Run `pnpm agent:connect --check` to verify the actual local MCP stdio handshake, **eight consumer research tools**, the host-facing agent prompt and a locked execution boundary. Use `pnpm agent:connect --write` to generate nonsecret Codex and Claude Desktop configuration fragments under ignored `.local/agent-connection/`. You can also print them with `--print codex` or `--print claude`. **The checker does not register or authenticate a remote/user agent**. The consumer default `pnpm mcp` uses a dedicated research-only server that cannot enable developer vault tools from inherited environment settings; local Anvil simulations require explicit `pnpm mcp:dev`. The `/agents/connect` page and [agent connection documentation](docs/AGENT_CONNECTION.md) explain the actual host setup.
 
 ## Market data and analytics
 

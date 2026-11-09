@@ -197,6 +197,24 @@ for (const width of [1440, 390]) {
         "CONFIDENTIAL ONLY",
       );
 
+      await page.goto("/agents/connect");
+      await expect(page.getByRole("heading", { level: 1 })).toContainText(
+        "Connect an agent to PrigenFi.",
+      );
+      await expect(page.locator("main#main")).toContainText(
+        "pnpm agent:connect --check",
+      );
+      await expect(page.locator("main#main")).toContainText(
+        "No trading permission",
+      );
+      await page.getByRole("button", { name: "Claude Desktop" }).click();
+      await expect(page.locator("main#main")).toContainText(
+        "pnpm agent:connect --print claude",
+      );
+      await page.getByRole("button", { name: "Codex" }).click();
+      await expect(page.locator("main#main")).toContainText(
+        "pnpm agent:connect --print codex",
+      );
       await page.goto("/privacy");
       await expect(page.locator("main#main")).not.toContainText("RFQ");
       await expect(page.locator("main#main")).not.toContainText("proxy");
@@ -224,7 +242,7 @@ for (const width of [1440, 390]) {
       );
       await page.goto("/docs");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
-        "explicit financial boundaries",
+        "Build agents with real capabilities.",
       );
       expect(errors).toEqual([]);
     },

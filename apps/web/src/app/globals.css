@@ -3017,3 +3017,177 @@ textarea:focus-visible {
     width: 100%;
   }
 }
+/* Agent connection UX: real local stdio setup, never simulated status. */
+.agent-connect-guide {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+  margin-top: 18px;
+}
+.agent-connect-intro {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+.agent-connect-intro > div {
+  border: 1px solid #e9e1f3;
+  border-radius: 15px;
+  background: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 9px;
+  min-width: 0;
+}
+.agent-connect-intro svg {
+  color: #7058ae;
+}
+.agent-connect-intro strong {
+  color: #3b3153;
+  font-size: 14px;
+}
+.agent-connect-intro span {
+  color: #827a8d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.agent-connect-section {
+  background: #fff;
+  border: 1px solid #e9e1f3;
+  border-radius: 16px;
+  padding: clamp(17px, 3vw, 28px);
+  min-width: 0;
+}
+.agent-connect-section > h2 {
+  font-size: clamp(21px, 2.3vw, 27px);
+  letter-spacing: -0.04em;
+  margin: 8px 0;
+}
+.agent-connect-section > p {
+  font-size: 13px;
+  color: #756e85;
+  line-height: 1.7;
+  max-width: 840px;
+}
+.agent-connect-steps {
+  padding: 0;
+  list-style: none;
+  margin: 20px 0 0;
+  display: grid;
+  gap: 19px;
+}
+.agent-connect-steps > li {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  min-width: 0;
+}
+.agent-connect-steps > li > div {
+  flex: 1;
+  min-width: 0;
+}
+.agent-connect-steps strong {
+  display: block;
+  margin: 4px 0 9px;
+  color: #473a62;
+  font-size: 13px;
+}
+.agent-step-number {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  color: #694eb3;
+  background: #f0eafa;
+  font-size: 13px;
+  font-weight: 800;
+  flex: none;
+}
+.agent-command {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #e8e2f0;
+  background: #faf9fc;
+  border-radius: 10px;
+  padding: 10px 11px;
+  min-width: 0;
+}
+.agent-command code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  color: #3f365b;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.agent-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
+  font-size: 11px;
+  color: #58469e;
+  background: #ebe5f7;
+  padding: 9px 12px;
+  border: 1px solid #ddd3f2;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 36px;
+}
+.agent-copy:hover {
+  background: #e1d7f3;
+}
+.agent-host-switch {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+.agent-host-switch button {
+  background: #f4effa;
+  border: 1px solid #e4d9f2;
+  color: #604b81;
+  padding: 10px 17px;
+  border-radius: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.agent-host-switch button[aria-pressed="true"] {
+  background: #45306e;
+  color: #fff;
+}
+.agent-connect-file code {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.agent-connect-caution {
+  background: #f9f6ff;
+}
+.agent-connect-back {
+  margin-bottom: 11px;
+}
+@media (max-width: 780px) {
+  .agent-connect-intro {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .agent-copy {
+    font-size: 0;
+    padding: 9px;
+    min-width: 40px;
+  }
+  .agent-command code {
+    font-size: 11px;
+  }
+  .agent-connect-section {
+    padding: 16px;
+  }
+}

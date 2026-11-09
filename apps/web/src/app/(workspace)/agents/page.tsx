@@ -28,6 +28,23 @@ export default function AgentsPage() {
         </span>
       </div>
       <AgentBrief />
+      <section
+        className="ws-security-note"
+        aria-labelledby="agent-connect-heading"
+      >
+        <PlugZap size={21} aria-hidden="true" />
+        <div>
+          <h2 id="agent-connect-heading">Connect an existing AI agent</h2>
+          <p>
+            Use PrigenFi's verified local MCP research tools in Codex, Claude
+            Desktop, or another compatible host. This connects tools, not wallet
+            spending rights.
+          </p>
+          <Link href="/agents/connect" className="ws-text-link">
+            Connect your agent <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </section>
       <div className="ws-section-row">
         <div>
           <p className="ws-kicker">Your connections</p>
@@ -48,9 +65,9 @@ export default function AgentsPage() {
           </div>
           <h3>Your registered agents</h3>
           <p>
-            Your future agents will appear here with the strategies they follow
-            and the permissions you approve. Agent connections are not yet
-            available in this preview.
+            Hosted agent accounts, user authentication and live trading sessions
+            are not yet connected to the website. Developers can use the local
+            MCP bridge to give their existing AI hosts real research tools.
           </p>
           <Link href="/strategies">
             Explore agent strategies <ArrowUpRight size={16} />
@@ -75,12 +92,12 @@ export default function AgentsPage() {
           </div>
           <h3>What MCP supports</h3>
           <p>
-            Existing local tools expose scoped reads and simulated proposals.
-            Remote OAuth, unattended trade execution and confidential swaps are
-            not live.
+            The default local MCP server offers public market discovery, typed
+            strategy research and confidential-capability checks. Development
+            vault simulations are isolated from normal agent hosts.
           </p>
-          <Link href="/activity">
-            Understand activity <ArrowUpRight size={16} />
+          <Link href="/agents/connect">
+            MCP connection guide <ArrowUpRight size={16} />
           </Link>
         </article>
       </div>

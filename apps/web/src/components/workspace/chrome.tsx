@@ -46,6 +46,7 @@ const labels: Record<string, string> = {
   "/dashboard": "Overview",
   "/markets": "Explore markets",
   "/agents": "My agents",
+  "/agents/connect": "Connect an agent",
   "/strategies": "Strategies",
   "/privacy": "Privacy",
   "/portfolio": "Portfolio",
@@ -74,8 +75,19 @@ function NavGroup({
           href={href}
           aria-label={label}
           title={label}
-          aria-current={pathname === href ? "page" : undefined}
-          className={"ws-nav-link " + (pathname === href ? "active" : "")}
+          aria-current={
+            pathname === href ||
+            (href === "/agents" && pathname.startsWith("/agents/"))
+              ? "page"
+              : undefined
+          }
+          className={
+            "ws-nav-link " +
+            (pathname === href ||
+            (href === "/agents" && pathname.startsWith("/agents/"))
+              ? "active"
+              : "")
+          }
           onClick={onNavigate}
         >
           <Icon size={19} strokeWidth={1.9} aria-hidden="true" />

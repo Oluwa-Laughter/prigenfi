@@ -1,81 +1,89 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+export const metadata = { title: "PrigenFi Developer Tools" };
 export default function Docs() {
   return (
     <main id="main" className="wrap">
       <article className="docs">
-        <h1>Build with explicit financial boundaries.</h1>
+        <h1>Build agents with real capabilities.</h1>
         <p>
-          PrigenFi is in testnet development. The first slice connects
-          owner-controlled ERC-20 vaults, a typed policy SDK, local MCP
-          proposals, and wallet-based confidential token operations.
+          Connect an existing MCP-enabled AI host to PrigenFi's live, public EVM
+          market-research tools and strictly validated confidential-only
+          planning. Private trades, smart-account sessions and autonomous
+          investments are not enabled.
         </p>
-        <h2>Run locally</h2>
+        <h2>Connect an agent in three commands</h2>
         <pre className="code-panel">
           {
-            "pnpm install --frozen-lockfile\npnpm contracts:build\nanvil --silent\npnpm local:deploy\npnpm dev"
+            "pnpm install --frozen-lockfile\npnpm agent:connect --check\npnpm agent:connect --write"
           }
         </pre>
         <p>
-          The deploy command uses unlocked local Anvil accounts. It refuses
-          non-local RPC hosts and any chain other than 31337. It does not load
-          signing secrets.
+          Run these from your local PrigenFi checkout. The check starts the
+          research-only stdio server and independently negotiates an MCP
+          handshake. Local host configuration templates are created inside
+          ignored <code>.local/agent-connection</code>; your other MCP settings
+          are not overwritten.
         </p>
-        <h2>Connect an MCP client</h2>
+        <h2>Connect Codex or Claude Desktop</h2>
         <pre className="code-panel">
           {
-            '{\n  "mcpServers": {\n    "prigenfi": {\n      "command": "pnpm",\n      "args": ["exec", "tsx", "services/mcp-server/src/stdio.ts"],\n      "env": {\n        "CHAIN_ID": "31337",\n        "RPC_URL": "http://127.0.0.1:8545",\n        "VAULT_ADDRESS": "YOUR_LOCAL_VAULT",\n        "AGENT_ADDRESS": "YOUR_AGENT_ADDRESS",\n        "TOKEN_ADDRESS": "YOUR_LOCAL_MOCK_TOKEN"\n      }\n    }\n  }\n}'
+            "pnpm agent:connect --print codex\npnpm agent:connect --print claude"
           }
         </pre>
         <p>
-          Run from the repository root. The operator binds one vault, agent, and
-          token at server startup. Tools cannot change that scope. Stdio
-          inherits local operating-system access; a remote MCP endpoint is not
-          available.
+          Add only the generated PrigenFi entry to your chosen host's
+          configuration, then verify its tools inside the host. Paths in those
+          entries are generated from the installed local checkout. Neither the
+          website nor a successful local check claims to have authenticated your
+          agent or granted permission to move funds.
         </p>
-        <h2>Policy is independently enforced</h2>
-        <p>
-          The vault checks the caller, token, recipient, amount, UTC daily
-          spending, expiry, nonce, and pause state. The SDK also checks a short
-          proposal deadline. That deadline is a simulation freshness rule, not
-          an on-chain signed-intent guarantee.
-        </p>
-        <h2>Confidential token boundaries</h2>
-        <p>
-          Sepolia cUSDCMock and cUSDTMock are separate wallet assets. The app
-          verifies deployed code, underlying addresses, rates, and decimals
-          before enabling operations. Decryption is opt-in and stays in browser
-          memory. No confidential token operator is granted to an agent.
-        </p>
-        <p>
-          Shielding and unshielding expose public amounts. Encrypted transfers
-          still expose addresses and timing. No confidential swap venue or
-          agent-managed confidential spending policy is integrated.
-        </p>
-        <h2>Current availability</h2>
+        <h2>What the connected host can do</h2>
         <ul>
           <li>
-            Local isolated vault creation, permissions, revocation, pause, and
-            mock token transfers.
-          </li>
-          <li>Public chain reads and simulation-only MCP proposals.</li>
-          <li>
-            Official Zama SDK and React SDK integration; real Sepolia operations
-            require a connected funded test wallet and reachable Zama services.
+            Read market observations from the public DEX Screener source on
+            selected EVM networks.
           </li>
           <li>
-            Remote OAuth, persistent user accounts, PostgreSQL, ERC-4337 smart
-            accounts, and production execution are pending.
+            Discover a host-facing interpretation prompt for a user-shared DeFi
+            research goal.
+          </li>
+          <li>
+            Check network, token and market scope before calling public research
+            tools.
+          </li>
+          <li>
+            Inspect Sepolia confidential token capabilities without decrypting
+            balances.
+          </li>
+          <li>
+            Receive a clear unavailable status for private trade execution.
           </li>
         </ul>
+        <h2>Development environment is separate</h2>
+        <p>
+          Only developers intentionally running the local Anvil workflow should
+          use <code>pnpm mcp:dev</code> and explicitly configured local vault
+          identifiers. Those tools simulate public ERC-20 test transfers and
+          cannot be mistaken for actual private DeFi trades. Customer-facing
+          agent connections use <code>pnpm mcp</code>, which exposes no vault
+          actions even when development environment variables are inherited.
+        </p>
+        <h2>Privacy boundaries</h2>
+        <p>
+          External AI hosts receive goals explicitly shared with them, and
+          public market providers can see searched token symbols or addresses.
+          Do not share wallet seeds or decrypted balances. Full private
+          execution requires separately verified Zama-compatible venues,
+          independently enforced wallet consent and settlement reconciliation.
+        </p>
         <div className="actions">
           <Button asChild>
-            <Link href="/vault">Manage testnet vault</Link>
+            <Link href="/agents/connect">Agent connection guide</Link>
           </Button>
           <Button asChild variant="outline">
-            <a href="https://github.com/Oluwa-Laughter/prigenfi/tree/main/docs">
-              Engineering documentation
-            </a>
+            <Link href="/agents">Back to your agents</Link>
           </Button>
         </div>
       </article>
