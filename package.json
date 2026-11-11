@@ -17,7 +17,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:contracts": "forge test --root contracts -vv",
-    "contracts:build": "forge build --root contracts && tsx scripts/generate-contracts.ts",
+    "contracts:build": "forge clean --root contracts && forge build --root contracts && tsx scripts/generate-contracts.ts",
     "test:browser": "playwright test",
     "mcp": "pnpm --filter @prigenfi/mcp-server start",
     "api": "pnpm --filter @prigenfi/api start",
