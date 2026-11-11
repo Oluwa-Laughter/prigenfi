@@ -25,3 +25,7 @@ The `/markets` selector supports Ethereum, Base, Arbitrum, Optimism, Polygon and
 ## Agent connection UX — November 9, 2026
 
 The multi-page workspace now includes `/agents/connect`, reachable from `/agents`, with working copy controls and Codex / Claude Desktop host selection. It provides a local handshake command, generated configuration paths and explicit host-verification instructions; it **does not** claim to know whether the browser user has a running local MCP server. Developer documentation at `/docs` uses the same real commands. Desktop and mobile layout tests cover the new page without saving any screenshots.
+
+## Wallet sign-in and owner-scoped research-agent profiles — November 11, 2026
+
+`/agents` now has a functioning **EIP-4361 sign-in** flow, user-managed agent research profiles, exact wallet/chain matching, and owner-only server-side revocation. Persistence requires a separately configured Postgres database, `PRIGENFI_APP_ORIGIN`, a trusted configured RPC and `pnpm db:agents:migrate`. Without this, the web page shows a clear unavailable state and invents no users or agent connections. Profiles do not authorize transactions, smart-account execution or any real trade. A local disposable Anvil/Postgres integration script exercises real EOA and ERC-1271 signatures. See [AGENT_ACCOUNTS](../../docs/AGENT_ACCOUNTS.md).

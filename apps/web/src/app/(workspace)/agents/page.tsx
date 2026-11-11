@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { AgentBrief } from "@/components/agent-brief";
+import { AgentAccounts } from "@/components/workspace/agent-accounts";
 
 export const metadata = { title: "My Agents" };
 export default function AgentsPage() {
@@ -28,6 +29,7 @@ export default function AgentsPage() {
         </span>
       </div>
       <AgentBrief />
+      <AgentAccounts />
       <section
         className="ws-security-note"
         aria-labelledby="agent-connect-heading"
@@ -63,11 +65,11 @@ export default function AgentsPage() {
           <div className="ws-guidance-icon purple">
             <Bot size={25} />
           </div>
-          <h3>Your registered agents</h3>
+          <h3>Authenticated research profiles</h3>
           <p>
-            Hosted agent accounts, user authentication and live trading sessions
-            are not yet connected to the website. Developers can use the local
-            MCP bridge to give their existing AI hosts real research tools.
+            A wallet-verified session can save scoped research profiles when the
+            database is configured. This is not proof that the AI host is online
+            or that the wallet has authorized financial execution.
           </p>
           <Link href="/strategies">
             Explore agent strategies <ArrowUpRight size={16} />

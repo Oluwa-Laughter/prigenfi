@@ -189,6 +189,12 @@ for (const width of [1440, 390]) {
       await expect(page.getByLabel("Public research networks")).toHaveValue(
         "all",
       );
+      await expect(
+        page.getByRole("heading", { name: "Your research-agent profiles" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "Save research profile" }),
+      ).toHaveCount(0);
       await page.getByText("Preview the complete confidential mandate").click();
       await expect(page.locator(".brief-preview pre")).toContainText(
         "All Ethereum markets",

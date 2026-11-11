@@ -1,0 +1,395 @@
+/**
+ * Isolated local Anvil + PostgreSQL HTTP integration checks; never run on
+ * production wallets, mainnet or a live user database.
+ */
+import assert from "node:assert/strict";
+import { createWalletClient, createPublicClient, http } from "viem";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { foundry } from "viem/chains";
+
+const base = process.env.AGENT_AUTH_TEST_URL;
+if (!base || !/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(base)) {
+  throw new Error("AGENT_AUTH_TEST_URL must be a localhost test server");
+}
+if (process.env.PRIGENFI_AUTH_CHAIN_ID !== "31337")
+  throw new Error("Only local Anvil chain allowed");
+const provider = createWalletClient({
+  chain: foundry,
+  transport: http("http://127.0.0.1:8545", { timeout: 5000, retryCount: 0 }),
+});
+const addresses = await provider.getAddresses();
+if (addresses.length < 2)
+  throw new Error("Two unlocked local Anvil identities required");
+
+type ApiResult = {
+  status: number;
+  payload: Record<string, unknown>;
+  cookie: string;
+};
+async function call(
+  path: string,
+  method = "GET",
+  body?: unknown,
+  cookie = "",
+  origin = base,
+): Promise<ApiResult> {
+  const response = await fetch(base + path, {
+    method,
+    headers: {
+      ...(body === undefined ? {} : { "content-type": "application/json" }),
+      ...(origin ? { origin } : {}),
+      ...(cookie ? { cookie } : {}),
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const payload = (await response.json()) as Record<string, unknown>;
+  const set = response.headers.get("set-cookie") ?? "";
+  return { status: response.status, payload, cookie: set.split(";")[0] };
+}
+function status(result: ApiResult, expected: number, context: string) {
+  assert.equal(
+    result.status,
+    expected,
+    `${context}: unexpected HTTP ${result.status}`,
+  );
+  return result;
+}
+async function signIn(
+  address: (typeof addresses)[number],
+  signingAccount = address,
+) {
+  const challenge = status(
+    await call("/api/auth/challenge", "POST", { address, chainId: 31337 }),
+    200,
+    "challenge",
+  );
+  assert.equal(typeof challenge.payload.message, "string");
+  const message = challenge.payload.message as string;
+  const signature = await provider.signMessage({
+    account: signingAccount,
+    message,
+  });
+  const verified = status(
+    await call("/api/auth/verify", "POST", { message, signature }),
+    200,
+    "verify",
+  );
+  assert.equal(verified.payload.authenticated, true);
+  assert.match(verified.cookie, /^prigenfi_research_session=[a-f0-9]{64}$/);
+  return { cookie: verified.cookie, message, signature };
+}
+
+async function main() {
+  status(await call("/api/agents"), 401, "public agents read denied");
+  status(
+    await call(
+      "/api/auth/challenge",
+      "POST",
+      { address: addresses[0], chainId: 31337 },
+      "",
+      "https://forged.invalid",
+    ),
+    403,
+    "cross-origin challenge",
+  );
+  status(
+    await call("/api/auth/challenge", "POST", {
+      address: addresses[0],
+      chainId: 1,
+    }),
+    400,
+    "mainnet chain refused",
+  );
+  status(
+    await call(
+      "/api/auth/challenge",
+      "POST",
+      { address: addresses[0], chainId: 31337 },
+      "",
+      "",
+    ),
+    403,
+    "missing Origin",
+  );
+  status(
+    await call("/api/agents", "POST", {
+      label: "Unauthenticated",
+      host: "codex",
+      allowedNetworks: ["base"],
+      allowedMarkets: ["defi"],
+      durationDays: 1,
+    }),
+    401,
+    "unauthenticated registration denied",
+  );
+  const attempt = status(
+    await call("/api/auth/challenge", "POST", {
+      address: addresses[0],
+      chainId: 31337,
+    }),
+    200,
+    "signed challenge requested",
+  );
+  const challengeMessage = attempt.payload.message as string;
+  const forgedSig = await provider.signMessage({
+    account: addresses[1],
+    message: challengeMessage,
+  });
+  status(
+    await call("/api/auth/verify", "POST", {
+      message: challengeMessage,
+      signature: forgedSig,
+    }),
+    401,
+    "wrong key signature refused",
+  );
+  const originalSig = await provider.signMessage({
+    account: addresses[0],
+    message: challengeMessage,
+  });
+  status(
+    await call("/api/auth/verify", "POST", {
+      message: challengeMessage,
+      signature: originalSig,
+    }),
+    401,
+    "used nonce refused",
+  );
+
+  const a = await signIn(addresses[0]);
+  status(
+    await call("/api/auth/verify", "POST", {
+      message: a.message,
+      signature: a.signature,
+    }),
+    401,
+    "signed nonce replay refused",
+  );
+  const own = status(
+    await call("/api/auth/session", "GET", undefined, a.cookie),
+    200,
+    "wallet session",
+  );
+  assert.equal(own.payload.authenticated, true);
+  assert.equal(own.payload.executionAllowed, false);
+  const existing = status(
+    await call("/api/agents", "GET", undefined, a.cookie),
+    200,
+    "owner scoped agent read",
+  );
+  assert.ok(Array.isArray(existing.payload.agents));
+  status(
+    await call(
+      "/api/agents",
+      "POST",
+      {
+        label: "Bad network",
+        host: "codex",
+        allowedNetworks: ["solana"],
+        allowedMarkets: ["defi"],
+        durationDays: 1,
+      },
+      a.cookie,
+    ),
+    400,
+    "unsupported network rejected",
+  );
+  status(
+    await call(
+      "/api/agents",
+      "POST",
+      {
+        label: "Duplicate network",
+        host: "codex",
+        allowedNetworks: ["base", "base"],
+        allowedMarkets: ["defi"],
+        durationDays: 1,
+      },
+      a.cookie,
+    ),
+    400,
+    "duplicate scope rejected",
+  );
+  status(
+    await call(
+      "/api/agents",
+      "POST",
+      {
+        label: "Cross-origin",
+        host: "codex",
+        allowedNetworks: ["base"],
+        allowedMarkets: ["defi"],
+        durationDays: 1,
+      },
+      a.cookie,
+      "https://forged.invalid",
+    ),
+    403,
+    "cross-origin mutation denied",
+  );
+  const created = status(
+    await call(
+      "/api/agents",
+      "POST",
+      {
+        label: "Research scope integration check",
+        host: "codex",
+        allowedNetworks: ["ethereum", "base"],
+        allowedMarkets: ["defi", "stablecoins"],
+        durationDays: 1,
+      },
+      a.cookie,
+    ),
+    201,
+    "owner creates research profile",
+  );
+  const record = created.payload.agent as Record<string, unknown>;
+  assert.equal(record.executionAllowed, false);
+  assert.equal(record.permissionType, "research-profile");
+  assert.deepEqual(record.allowedNetworks, ["ethereum", "base"]);
+  assert.deepEqual(record.allowedMarkets, ["defi", "stablecoins"]);
+  assert.equal("walletKey" in record, false);
+  const id = record.id as string;
+  const b = await signIn(addresses[1]);
+  const bRead = status(
+    await call("/api/agents", "GET", undefined, b.cookie),
+    200,
+    "other wallet list",
+  );
+  assert.deepEqual(bRead.payload.agents, []);
+  status(
+    await call("/api/agents/" + id, "DELETE", undefined, b.cookie),
+    404,
+    "cross-wallet revocation denied",
+  );
+  const aRead = status(
+    await call("/api/agents", "GET", undefined, a.cookie),
+    200,
+    "owner sees own research record",
+  );
+  assert.ok(
+    (aRead.payload.agents as { id: string }[]).some((entry) => entry.id === id),
+  );
+  status(
+    await call("/api/agents/" + id, "DELETE", undefined, a.cookie),
+    200,
+    "owner revokes profile",
+  );
+  status(
+    await call("/api/agents/" + id, "DELETE", undefined, a.cookie),
+    404,
+    "second revocation rejected",
+  );
+  const after = status(
+    await call("/api/agents", "GET", undefined, a.cookie),
+    200,
+    "revocation persisted",
+  );
+  assert.ok(
+    (after.payload.agents as { revokedAt: string | null }[])[0].revokedAt,
+  );
+  status(
+    await call("/api/auth/logout", "POST", undefined, a.cookie),
+    200,
+    "logout",
+  );
+  status(
+    await call("/api/agents", "GET", undefined, a.cookie),
+    401,
+    "revoked session access denied",
+  );
+  // Concurrent requests cannot bypass the 20-live-profile owner cap.
+  const competing = await Promise.all(
+    Array.from({ length: 23 }, (_, index) =>
+      call(
+        "/api/agents",
+        "POST",
+        {
+          label: "Concurrent research policy " + index,
+          host: "codex",
+          allowedNetworks: ["base"],
+          allowedMarkets: ["defi"],
+          durationDays: 1,
+        },
+        b.cookie,
+      ),
+    ),
+  );
+  assert.equal(competing.filter((r) => r.status === 201).length, 20);
+  assert.equal(competing.filter((r) => r.status === 409).length, 3);
+  const capped = status(
+    await call("/api/agents", "GET", undefined, b.cookie),
+    200,
+    "per-owner profile cap",
+  );
+  assert.equal((capped.payload.agents as unknown[]).length, 20);
+  status(
+    await call("/api/auth/logout", "POST", undefined, b.cookie),
+    200,
+    "second owner logout",
+  );
+  // Test-only ERC-1271 smart wallet verified on local Anvil. The identity
+  // belongs to this contract while the signature comes from its trusted EOA.
+  const artifact = JSON.parse(
+    await readFile(
+      resolve("contracts/out/LocalAuth1271.sol/LocalAuth1271.json"),
+      "utf8",
+    ),
+  ) as { abi: unknown; bytecode: { object: string } };
+  const deployed = await provider.deployContract({
+    account: addresses[0],
+    abi: artifact.abi as never,
+    bytecode: artifact.bytecode.object as `0x${string}`,
+    args: [addresses[0]],
+  });
+  const publicClient = createPublicClient({
+    chain: foundry,
+    transport: http("http://127.0.0.1:8545"),
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: deployed,
+  });
+  assert.ok(
+    receipt.contractAddress,
+    "Anvil EIP-1271 fixture deployment must confirm",
+  );
+  const contractAccount = receipt.contractAddress;
+  const smart = await signIn(contractAccount, addresses[0]);
+  const smartSession = status(
+    await call("/api/auth/session", "GET", undefined, smart.cookie),
+    200,
+    "smart account session",
+  );
+  assert.equal(
+    (smartSession.payload.address as string).toLowerCase(),
+    contractAccount.toLowerCase(),
+  );
+  const smartRecords = status(
+    await call("/api/agents", "GET", undefined, smart.cookie),
+    200,
+    "smart account registry isolated",
+  );
+  assert.deepEqual(smartRecords.payload.agents, []);
+  status(
+    await call("/api/auth/logout", "POST", undefined, smart.cookie),
+    200,
+    "smart account logout",
+  );
+
+  const concurrentChallenges = await Promise.all(
+    Array.from({ length: 8 }, () =>
+      call("/api/auth/challenge", "POST", {
+        address: addresses[0],
+        chainId: 31337,
+      }),
+    ),
+  );
+  assert.ok(concurrentChallenges.every((r) => [200, 429].includes(r.status)));
+  assert.ok(concurrentChallenges.some((r) => r.status === 429));
+  assert.ok(concurrentChallenges.filter((r) => r.status === 200).length <= 4);
+  process.stdout.write(
+    "PASS: Real Anvil EOA and ERC-1271 SIWE signatures, nonce replay protection, Postgres sessions, owner-isolated research profiles, concurrent caps, revocation, logout, strict origins. No trades or wallet permissions.\n",
+  );
+}
+await main();

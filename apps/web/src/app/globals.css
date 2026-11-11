@@ -3191,3 +3191,259 @@ textarea:focus-visible {
     padding: 16px;
   }
 }
+/* Wallet-owned agent research profiles: real server records, no demo accounts. */
+.agent-account-section {
+  display: grid;
+  gap: 20px;
+  padding: clamp(16px, 3vw, 30px);
+  border: 1px solid #e6dff0;
+  border-radius: 17px;
+  background: #fff;
+  margin: 24px 0;
+  min-width: 0;
+}
+.agent-account-section .ws-section-row {
+  margin-bottom: 0;
+}
+.agent-account-section .ws-section-row h2 {
+  font-size: clamp(22px, 2.6vw, 31px);
+}
+.agent-account-section p,
+.agent-account-section small {
+  color: #776e86;
+  line-height: 1.65;
+}
+.agent-account-message,
+.agent-account-auth {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  background: #f8f5fd;
+  border: 1px solid #ebe4f4;
+  border-radius: 12px;
+  color: #554772;
+}
+.agent-account-message svg,
+.agent-account-auth svg {
+  flex: none;
+  color: #745bac;
+}
+.agent-account-auth > div {
+  flex: 1;
+}
+.agent-account-auth strong {
+  display: block;
+  color: #3b3058;
+}
+.agent-account-primary,
+.agent-account-secondary,
+.agent-account-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  cursor: pointer;
+  border-radius: 9px;
+  padding: 10px 16px;
+  margin: 6px 8px 6px 0;
+  min-height: 43px;
+  font-size: 13px;
+  font-weight: 750;
+}
+.agent-account-primary {
+  background: #45336d;
+  border: 1px solid #45336d;
+  color: #fff;
+}
+.agent-account-primary:hover {
+  background: #5f498a;
+}
+.agent-account-secondary {
+  background: #f5f1fa;
+  color: #574776;
+  border: 1px solid #e0d4ee;
+}
+.agent-account-danger {
+  background: #fff4f3;
+  color: #a8364c;
+  border: 1px solid #edc4ca;
+}
+.agent-account-primary:disabled,
+.agent-account-secondary:disabled,
+.agent-account-danger:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+.agent-account-error {
+  background: #fff3f5;
+  border: 1px solid #edc8d0;
+  color: #942d44 !important;
+  padding: 12px 15px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+.agent-account-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 20px;
+  align-items: start;
+}
+.agent-account-form {
+  display: grid;
+  gap: 15px;
+  padding: 20px;
+  border: 1px solid #ebe4f3;
+  border-radius: 13px;
+  background: #fcfaff;
+  min-width: 0;
+}
+.agent-account-form-title {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #5b4982;
+}
+.agent-account-form-title h3,
+.agent-account-list h3 {
+  font-size: 17px;
+  color: #403353;
+  margin: 0;
+}
+.agent-account-form-title p {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.agent-account-form > label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: #4b4063;
+  font-weight: 700;
+}
+.agent-account-form input:not([type="checkbox"]),
+.agent-account-form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #dbd2ec;
+  background: #fff;
+  border-radius: 8px;
+  color: #41355c;
+  font-size: 13px;
+}
+.agent-account-form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.agent-account-form legend {
+  font-size: 13px;
+  color: #4b4063;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.agent-account-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.agent-account-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 10px;
+  border: 1px solid #e0d7ec;
+  border-radius: 9px;
+  background: #fff;
+  font-size: 12px;
+  color: #574774;
+  cursor: pointer;
+}
+.agent-account-options input {
+  accent-color: #6242a0;
+}
+.agent-account-form small {
+  font-size: 11px;
+}
+.agent-account-list {
+  min-width: 0;
+}
+.agent-account-list h3 {
+  margin-bottom: 12px;
+}
+.agent-account-list h3 span {
+  font-weight: 400;
+  color: #9388a2;
+}
+.agent-account-empty {
+  padding: 22px;
+  border: 1px dashed #dcd4e9;
+  border-radius: 11px;
+  font-size: 13px;
+}
+.agent-account-entry {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #e8e0f1;
+  border-radius: 12px;
+  margin: 0 0 10px;
+  min-width: 0;
+}
+.agent-account-entry > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.agent-account-entry strong {
+  color: #433259;
+  overflow-wrap: anywhere;
+}
+.agent-account-entry span {
+  font-size: 11px;
+  color: #76688d;
+}
+.agent-account-entry p {
+  font-size: 12px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.agent-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+}
+.agent-account-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #7c708d;
+}
+.agent-account-footer a {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: #6046a6;
+  font-weight: 700;
+}
+@media (max-width: 950px) {
+  .agent-account-content {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 450px) {
+  .agent-account-section {
+    padding: 15px;
+  }
+  .agent-account-form {
+    padding: 14px;
+  }
+  .agent-account-entry > div:first-child {
+    flex-direction: column;
+  }
+}

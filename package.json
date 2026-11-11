@@ -26,7 +26,9 @@
     "verify:swap:source": "tsx scripts/verify-confidential-swap.ts --source-only",
     "verify:swap": "tsx scripts/verify-confidential-swap.ts",
     "mcp:dev": "pnpm --filter @prigenfi/mcp-server start:dev",
-    "agent:connect": "tsx scripts/agent-connect.ts"
+    "agent:connect": "tsx scripts/agent-connect.ts",
+    "db:agents:migrate": "tsx scripts/migrate-agent-accounts.ts",
+    "test:agent-accounts": "tsx scripts/verify-agent-accounts.ts"
   },
   "devDependencies": {
     "typescript": "7.0.2",

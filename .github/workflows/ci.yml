@@ -16,6 +16,26 @@ jobs:
       CI: "true"
       NEXT_TELEMETRY_DISABLED: "1"
       LOCAL_INTEGRATION: "1"
+      # These are isolated, ephemeral CI credentials and local Anvil identities only.
+      PRIGENFI_DATABASE_URL: "postgres://prigenfi_ci:ci_local_testing_only@127.0.0.1:5432/prigenfi_ci"
+      PRIGENFI_APP_ORIGIN: "http://127.0.0.1:3000"
+      PRIGENFI_AUTH_CHAIN_ID: "31337"
+      PRIGENFI_AUTH_RPC_URL: "http://127.0.0.1:8545"
+      AGENT_AUTH_TEST_URL: "http://127.0.0.1:3000"
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: prigenfi_ci
+          POSTGRES_PASSWORD: ci_local_testing_only
+          POSTGRES_DB: prigenfi_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U prigenfi_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -63,10 +83,23 @@ jobs:
             sleep 1
           done
           pnpm local:deploy
+      - name: Migrate isolated Postgres agent-account tables
+        run: pnpm db:agents:migrate
       - name: TypeScript, API, SDK and external MCP client integration
         run: pnpm test
       - name: Production frontend build
         run: pnpm build
+      - name: Live signed-wallet agent ownership and database isolation
+        run: |
+          set -euo pipefail
+          node apps/web/node_modules/next/dist/bin/next start apps/web --hostname 127.0.0.1 --port 3000 > /tmp/prigenfi-agent-auth-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:3000/api/auth/session >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          pnpm test:agent-accounts
       - name: Browser installation
         run: pnpm exec playwright install --with-deps chromium
       - name: Desktop, mobile and wallet browser integration
