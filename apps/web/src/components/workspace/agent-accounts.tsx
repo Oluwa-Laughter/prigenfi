@@ -52,6 +52,13 @@ export function AgentAccounts() {
   const [owner, setOwner] = useState<Owner | null>(null);
   const [agents, setAgents] = useState<AgentProfile[]>([]);
   const [busy, setBusy] = useState(false);
+  const [remoteMcpAvailable, setRemoteMcpAvailable] = useState(false);
+  const [oneTimeConnection, setOneTimeConnection] = useState<{
+    profileId: string;
+    token: string;
+    endpoint: string;
+    expiresAt: string;
+  } | null>(null);
   const [error, setError] = useState("");
   const [label, setLabel] = useState("");
   const [host, setHost] = useState<"codex" | "claude" | "other">("codex");
@@ -64,6 +71,7 @@ export function AgentAccounts() {
     try {
       const res = await agentRequest("/api/auth/session");
       setService("available");
+      setRemoteMcpAvailable(res.remoteMcpAvailable === true);
       if (res.authenticated === true && typeof res.address === "string") {
         const identity = {
           authenticated: true as const,
@@ -82,6 +90,7 @@ export function AgentAccounts() {
     } catch (e) {
       setOwner(null);
       setAgents([]);
+      setRemoteMcpAvailable(false);
       setService(
         e instanceof Error && e.message === "AGENT_ACCOUNTS_UNAVAILABLE"
           ? "unavailable"
@@ -99,9 +108,18 @@ export function AgentAccounts() {
     wallet.address?.toLowerCase() === owner.address &&
     wallet.chainId === owner.chainId;
 
+  const connectedAddress = wallet.address;
+  const connectedChain = wallet.chainId;
+  useEffect(() => {
+    if (connectedAddress !== undefined || connectedChain !== undefined) {
+      setOneTimeConnection(null);
+    }
+  }, [connectedAddress, connectedChain]);
+
   async function signIn() {
     if (!wallet.isConnected || !wallet.address || !wallet.chainId) return;
     setBusy(true);
+    setOneTimeConnection(null);
     setError("");
     try {
       const address = wallet.address,
@@ -132,6 +150,7 @@ export function AgentAccounts() {
     }
   }
   async function logOut() {
+    setOneTimeConnection(null);
     setBusy(true);
     setError("");
     try {
@@ -147,6 +166,7 @@ export function AgentAccounts() {
     event.preventDefault();
     if (!walletMatches) return;
     setBusy(true);
+    setOneTimeConnection(null);
     setError("");
     try {
       await agentRequest("/api/agents", "POST", {
@@ -168,6 +188,7 @@ export function AgentAccounts() {
   }
   async function revoke(id: string) {
     if (!walletMatches) return;
+    setOneTimeConnection(null);
     setBusy(true);
     setError("");
     try {
@@ -177,6 +198,51 @@ export function AgentAccounts() {
       setError(e instanceof Error ? e.message : "REVOCATION_FAILED");
     } finally {
       setConfirmRevoke(null);
+      setBusy(false);
+    }
+  }
+  async function issueResearchConnection(id: string) {
+    if (!walletMatches || !remoteMcpAvailable) return;
+    setBusy(true);
+    setError("");
+    setOneTimeConnection(null);
+    try {
+      const response = await agentRequest(
+        "/api/agents/" + encodeURIComponent(id) + "/access-key",
+        "POST",
+      );
+      if (
+        typeof response.bearerToken !== "string" ||
+        typeof response.endpoint !== "string" ||
+        typeof response.expiresAt !== "string" ||
+        response.executionAllowed !== false
+      )
+        throw new Error("INVALID_MCP_CONNECTION_RESPONSE");
+      setOneTimeConnection({
+        profileId: id,
+        token: response.bearerToken,
+        endpoint: response.endpoint,
+        expiresAt: response.expiresAt,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "CONNECTION_FAILED");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function revokeResearchConnection(id: string) {
+    if (!walletMatches) return;
+    setBusy(true);
+    setError("");
+    setOneTimeConnection(null);
+    try {
+      await agentRequest(
+        "/api/agents/" + encodeURIComponent(id) + "/access-key",
+        "DELETE",
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "REVOCATION_FAILED");
+    } finally {
       setBusy(false);
     }
   }
@@ -413,6 +479,90 @@ export function AgentAccounts() {
                       Expires:{" "}
                       {new Date(profile.expiresAt).toLocaleDateString()}
                     </p>
+                    {!inactive && remoteMcpAvailable && (
+                      <div className="agent-account-mcp-controls">
+                        <button
+                          type="button"
+                          className="agent-account-primary"
+                          disabled={busy}
+                          onClick={() =>
+                            void issueResearchConnection(profile.id)
+                          }
+                        >
+                          Issue research connection
+                        </button>
+                        <button
+                          type="button"
+                          className="agent-account-secondary"
+                          disabled={busy}
+                          onClick={() =>
+                            void revokeResearchConnection(profile.id)
+                          }
+                        >
+                          Disable access keys
+                        </button>
+                        <small>
+                          Remote research preview. Keys are valid for up to 24
+                          hours, never authorize trades, and replacing one
+                          invalidates the previous key.
+                        </small>
+                        {oneTimeConnection?.profileId === profile.id && (
+                          <div
+                            role="status"
+                            className="agent-account-mcp-secret"
+                          >
+                            <strong>
+                              Copy this new key now — it cannot be shown again.
+                            </strong>
+                            <p>
+                              Use a trusted MCP host. Keep the access key out of
+                              screenshots, chat prompts, Git and logs.
+                            </p>
+                            <label>
+                              One-time research key{" "}
+                              <input
+                                value={oneTimeConnection.token}
+                                readOnly
+                                aria-label="One-time agent research key"
+                                type="password"
+                              />
+                            </label>
+                            <button
+                              type="button"
+                              className="agent-account-secondary"
+                              onClick={() =>
+                                void navigator.clipboard.writeText(
+                                  oneTimeConnection.token,
+                                )
+                              }
+                            >
+                              Copy key
+                            </button>
+                            <p>
+                              Set the environment variable{" "}
+                              <code>PRIGENFI_MCP_TOKEN</code> securely on your
+                              own device, then register the endpoint with Codex:
+                            </p>
+                            <code className="agent-account-mcp-command">{`codex mcp add prigenfi-profile --url ${oneTimeConnection.endpoint} --bearer-token-env-var PRIGENFI_MCP_TOKEN`}</code>
+                            <p>
+                              Expires{" "}
+                              {new Date(
+                                oneTimeConnection.expiresAt,
+                              ).toLocaleString()}
+                              . Never place the key directly into the command
+                              line.
+                            </p>
+                            <button
+                              type="button"
+                              className="agent-account-secondary"
+                              onClick={() => setOneTimeConnection(null)}
+                            >
+                              Close one-time key
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     {!inactive &&
                       (confirmRevoke === profile.id ? (
                         <div className="agent-account-actions">

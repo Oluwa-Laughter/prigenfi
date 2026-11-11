@@ -22,6 +22,7 @@ jobs:
       PRIGENFI_AUTH_CHAIN_ID: "31337"
       PRIGENFI_AUTH_RPC_URL: "http://127.0.0.1:8545"
       AGENT_AUTH_TEST_URL: "http://127.0.0.1:3000"
+      PRIGENFI_MCP_HTTP_ENABLED: "true"
     services:
       postgres:
         image: postgres:16-alpine
@@ -100,8 +101,11 @@ jobs:
             sleep 1
           done
           pnpm test:agent-accounts
+          pnpm test:profile-mcp
       - name: Browser installation
-        run: pnpm exec playwright install --with-deps chromium
+        # Ubuntu-hosted runners normally have chromium shared libraries already.
+        # Avoid apt-get --with-deps DNS failures caused by runner package mirrors.
+        run: pnpm exec playwright install chromium
       - name: Desktop, mobile and wallet browser integration
         run: pnpm test:browser
   security:

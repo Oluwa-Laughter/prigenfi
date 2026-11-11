@@ -28,7 +28,8 @@
     "mcp:dev": "pnpm --filter @prigenfi/mcp-server start:dev",
     "agent:connect": "tsx scripts/agent-connect.ts",
     "db:agents:migrate": "tsx scripts/migrate-agent-accounts.ts",
-    "test:agent-accounts": "tsx scripts/verify-agent-accounts.ts"
+    "test:agent-accounts": "tsx scripts/verify-agent-accounts.ts",
+    "test:profile-mcp": "tsx scripts/verify-profile-mcp.ts"
   },
   "devDependencies": {
     "typescript": "7.0.2",

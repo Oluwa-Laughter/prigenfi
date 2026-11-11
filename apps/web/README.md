@@ -29,3 +29,7 @@ The multi-page workspace now includes `/agents/connect`, reachable from `/agents
 ## Wallet sign-in and owner-scoped research-agent profiles — November 11, 2026
 
 `/agents` now has a functioning **EIP-4361 sign-in** flow, user-managed agent research profiles, exact wallet/chain matching, and owner-only server-side revocation. Persistence requires a separately configured Postgres database, `PRIGENFI_APP_ORIGIN`, a trusted configured RPC and `pnpm db:agents:migrate`. Without this, the web page shows a clear unavailable state and invents no users or agent connections. Profiles do not authorize transactions, smart-account execution or any real trade. A local disposable Anvil/Postgres integration script exercises real EOA and ERC-1271 signatures. See [AGENT_ACCOUNTS](../../docs/AGENT_ACCOUNTS.md).
+
+## Authenticated remote research MCP preview — November 11, 2026
+
+The wallet-owned `/agents` profile cards now support one-time key issuance and immediate key/profile revocation when the operator enables the `PRIGENFI_MCP_HTTP_ENABLED` server-only flag. The dedicated `/api/mcp` endpoint negotiates real Streamable HTTP with an MCP client, checks the bearer against Postgres on **every** call and exposes only research tools bounded to the owner's saved chain/domain scope. The key is shown once and is never placed into an LLM prompt or wallet. This is NOT agent execution and NOT production OAuth. See `docs/REMOTE_AGENT_MCP.md`.

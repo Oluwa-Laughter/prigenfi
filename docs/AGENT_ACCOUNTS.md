@@ -57,3 +57,7 @@ AGENT_AUTH_TEST_URL=http://127.0.0.1:3000 PRIGENFI_AUTH_CHAIN_ID=31337 pnpm test
 It rejects non-local test URLs and non-Anvil chain IDs. It actually signs with two unlocked local Anvil test accounts, deploys **only a local test-helper ERC-1271 wallet**, checks nonce replay and forged signatures, two-wallet data isolation, owner-only revocation, logout and strict Origin verification. It produces no screenshots and does not broadcast to Sepolia or mainnet.
 
 Official standards: [ERC-4361 SIWE](https://eips.ethereum.org/EIPS/eip-4361), [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271), [viem account signature validation](https://viem.sh/docs/actions/public/verifyMessage).
+
+## Authenticated MCP connection to a saved profile
+
+Once an operator explicitly enables the separate remote research service, signed-in owners may issue a one-time-visible access key from their saved profile on `/agents`. The key is stored only as a hash, expires in at most 24h, and enables real server-validated public research over Streamable HTTP. Rotating or revoking it—or revoking its parent profile—takes effect before the next MCP request. This remains research-only, not wallet spending approval, and is not OAuth 2.1. See [REMOTE_AGENT_MCP.md](REMOTE_AGENT_MCP.md).
