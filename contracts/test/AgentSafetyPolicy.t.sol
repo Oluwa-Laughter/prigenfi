@@ -90,8 +90,60 @@ contract AgentSafetyPolicyTest {
         policy.renounceOwnership();
     }
 
+    function testEmergencyGuardianCanOnlyPauseAndOwnerCanRecover() public {
+        address guardian = address(0xA11CE);
+        vm.expectRevert();
+        vm.prank(ATTACKER);
+        policy.setEmergencyGuardian(guardian);
+        policy.setEmergencyGuardian(guardian);
+        require(policy.emergencyGuardian() == guardian);
+        vm.expectRevert(AgentSafetyPolicy.UnauthorizedGuardian.selector);
+        vm.prank(ATTACKER);
+        policy.emergencyPause();
+        vm.prank(guardian);
+        policy.emergencyPause();
+        (bool accepted, bool execute) = policy.assessResearch(20, 50, 100000);
+        require(!accepted && !execute);
+        vm.expectRevert();
+        vm.prank(guardian);
+        policy.setResearchPaused(false);
+        vm.expectRevert();
+        vm.prank(guardian);
+        policy.setResearchLimits(100, 500, 75000);
+        AgentSafetyPolicyV2 next = new AgentSafetyPolicyV2();
+        vm.expectRevert();
+        vm.prank(guardian);
+        policy.scheduleUpgrade(address(next));
+        policy.setResearchPaused(false);
+        (accepted, execute) = policy.assessResearch(20, 50, 100000);
+        require(accepted && !execute);
+        policy.setEmergencyGuardian(address(0));
+        vm.expectRevert(AgentSafetyPolicy.UnauthorizedGuardian.selector);
+        vm.prank(guardian);
+        policy.emergencyPause();
+    }
+
+    function testOwnershipTransferRevokesEmergencyGuardian() public {
+        address guardian = address(0xA11CE);
+        policy.setEmergencyGuardian(guardian);
+        policy.transferOwnership(FUTURE_OWNER);
+        vm.prank(FUTURE_OWNER);
+        policy.acceptOwnership();
+        require(policy.emergencyGuardian() == address(0));
+        vm.expectRevert(AgentSafetyPolicy.UnauthorizedGuardian.selector);
+        vm.prank(guardian);
+        policy.emergencyPause();
+        vm.prank(FUTURE_OWNER);
+        policy.setEmergencyGuardian(guardian);
+        vm.prank(guardian);
+        policy.emergencyPause();
+        (,,, bool paused, bool allowed) = policy.researchPolicy();
+        require(paused && !allowed);
+    }
+
     function testDelayedAuthorizedUpgradePreservesStorage() public {
         policy.setResearchLimits(120, 850, 130000);
+        policy.setEmergencyGuardian(address(0xA11CE));
         AgentSafetyPolicyV2 next = new AgentSafetyPolicyV2();
         vm.expectRevert(AgentSafetyPolicy.UpgradeNotScheduled.selector);
         policy.upgradeToAndCall(address(next), "");
@@ -105,6 +157,7 @@ contract AgentSafetyPolicyTest {
         require(AgentSafetyPolicyV2(address(policy)).version() == 2);
         (uint16 maxSlip, uint16 maxAlloc, uint128 minLiq,, bool execute) = policy.researchPolicy();
         require(maxSlip == 120 && maxAlloc == 850 && minLiq == 130000 && !execute);
+        require(policy.emergencyGuardian() == address(0xA11CE));
         (address queued,,,) = policy.pendingUpgrade();
         require(queued == address(0));
         vm.expectRevert();

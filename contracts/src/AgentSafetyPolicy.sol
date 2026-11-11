@@ -23,6 +23,8 @@ contract AgentSafetyPolicy is Initializable, Ownable2StepUpgradeable, UUPSUpgrad
         bytes32 queuedCodeHash;
         uint64 upgradeReadyAt;
         uint64 upgradeExpiresAt;
+        // Append-only: preserve the original ERC-7201 namespace storage layout.
+        address emergencyGuardian;
     }
     // keccak256(abi.encode(uint256(keccak256("prigenfi.storage.AgentSafetyPolicy")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant SAFETY_SLOT = 0xd065a32101d1f7c6ba8cfc7870d1895aa013204ece914e977365b5d06971a500;
@@ -32,9 +34,11 @@ contract AgentSafetyPolicy is Initializable, Ownable2StepUpgradeable, UUPSUpgrad
     error UpgradeNotReady();
     error UpgradeWindowExpired();
     error OwnershipRenunciationDisabled();
+    error UnauthorizedGuardian();
 
     event ResearchLimitsChanged(uint16 maxSlippageBps, uint16 maxAllocationBps, uint128 minLiquidityUsd);
     event ResearchPaused(bool isPaused);
+    event EmergencyGuardianChanged(address indexed previousGuardian, address indexed newGuardian);
     event UpgradeScheduled(address indexed implementation, bytes32 codeHash, uint64 readyAt, uint64 expiresAt);
     event UpgradeCancelled(address indexed implementation);
 
@@ -100,6 +104,26 @@ contract AgentSafetyPolicy is Initializable, Ownable2StepUpgradeable, UUPSUpgrad
         emit ResearchLimitsChanged(slippageBps, allocationBps, minLiquidityUsd);
     }
 
+    /// @notice Owner appoints an emergency guardian, or address(0) to disable that role.
+    /// @dev Guardian can only halt research screening; it cannot resume, upgrade or spend.
+    function setEmergencyGuardian(address guardian) external onlyOwner {
+        SafetyStorage storage $ = _safety();
+        address previous = $.emergencyGuardian;
+        $.emergencyGuardian = guardian;
+        emit EmergencyGuardianChanged(previous, guardian);
+    }
+
+    function emergencyGuardian() external view returns (address) {
+        return _safety().emergencyGuardian;
+    }
+
+    function emergencyPause() external {
+        SafetyStorage storage $ = _safety();
+        if (msg.sender != $.emergencyGuardian || msg.sender == address(0)) revert UnauthorizedGuardian();
+        $.paused = true;
+        emit ResearchPaused(true);
+    }
+
     function setResearchPaused(bool value) external onlyOwner {
         _safety().paused = value;
         emit ResearchPaused(value);
@@ -159,6 +183,11 @@ contract AgentSafetyPolicy is Initializable, Ownable2StepUpgradeable, UUPSUpgrad
     function _transferOwnership(address newOwner) internal override {
         super._transferOwnership(newOwner);
         SafetyStorage storage $ = _safety();
+        address previousGuardian = $.emergencyGuardian;
+        if (previousGuardian != address(0)) {
+            delete $.emergencyGuardian;
+            emit EmergencyGuardianChanged(previousGuardian, address(0));
+        }
         address previous = $.queuedImplementation;
         if (previous != address(0)) {
             delete $.queuedImplementation;

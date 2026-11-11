@@ -74,3 +74,7 @@ The remote MCP transport now uses owner-scoped, independently revocable research
 ## Risk research and verified upgrade governance — November 11, 2026
 
 The next financial-engineering gates are independent on-chain token bytecode/owner/tax verification, a second trusted liquidity/finality source (DEX Screener alone is not independently attested), supported-chain-specific encrypted venue reproduction, time-series and survivorship-bias-safe strategy evaluation, and auditable trade journal/execution reconciler. None is replaced by a simple current-pool risk class. Before a truly upgradeable custody contract exists, specify who can upgrade user assets, multisig/timelock/exit policy, storage layout validation and authorization tests, and acquire independent audit. The new upgradeable policy registry is noncustodial and not wired into spending. Existing immutable AgentVault deployments must not be silently converted.
+
+## After the research emergency guardian — November 11, 2026
+
+Before any financial authority, validate actual V1-to-V2 ERC-7201 storage layouts with independent upgrade tooling, provision audited multisig/timelock and incident monitoring, and enforce on-chain smart-account transaction policy separately from research screening. Add OAuth 2.1 audience-bound remote MCP tokens and ERC-1271 signer-change invalidation before opening hosted access. Private trades remain blocked pending an independently reproduced FHE-compatible venue lifecycle.

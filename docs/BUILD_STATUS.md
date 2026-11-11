@@ -170,3 +170,7 @@ The first GitHub verification after this milestone identified a bytecode metadat
 ### Remote MCP integration test catalog consistency
 
 The next GitHub verification passed clean artifact generation, the production build and the full EOA/ERC-1271 wallet integration, then surfaced one stale test expectation for the old four-tool remote MCP catalog. The new authenticated endpoint correctly exposes **five** read-only tools. `scripts/verify-profile-mcp.ts` now expects the added `research_market_integrity_check` while retaining the owner-scope denial regression. This is a test catalog correction, not a relaxation of access controls or authorization checks.
+
+## November 11, 2026 — pause-only guardian hardening
+
+Added a separate emergency guardian to the non-custodial UUPS research policy; the guardian can only pause research screening. The owner alone can resume, replace the guardian or change governance. Ownership transfer clears the guardian. ERC-7201 storage is append-only; upgrade tests preserve the guardian assignment. No funds, signing, agent execution, or public deployments were enabled. See `docs/SECURITY_AND_UPGRADES.md`.

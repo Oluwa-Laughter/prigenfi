@@ -18,6 +18,12 @@ These are useful controls, but they **do not make any administrator-operated upg
 
 `contracts/test/AgentSafetyPolicy.t.sol` exercises proxy initialization, owner-only settings, the nonexecuting research screen, delay/cancellation/expiry, wrong implementation, UUPS incompatibility, successful post-delay upgrade with storage preserved, and two-step owner transfer invalidating queued upgrades. The test-only V2 implementation is not intended for production deployment.
 
+## Emergency-stop guardian (November 11, 2026)
+
+The research-policy owner can appoint or revoke a separate **pause-only guardian** with `setEmergencyGuardian(address)`. The guardian can invoke `emergencyPause()` but cannot resume research screening, change risk limits, schedule upgrades, manage ownership, or transfer assets. Only the owner can resume with `setResearchPaused(false)`. On completed ownership transfer, the old guardian assignment is automatically cleared and the new owner must explicitly designate a guardian again. The role is optional (zero address disables it), and all operations emit events.
+
+The `emergencyGuardian` field is **appended** to the ERC-7201 `SafetyStorage` struct; earlier fields are not rearranged. Foundry tests reject unauthorized guardian calls, check owner-only recovery and upgrade scheduling, verify ownership-transfer revocation, and preserve the guardian assignment through an authorized UUPS V2 upgrade. This is a stop for **research-policy screening only**: it does not halt any external trading system, vault, wallet, MCP host, or Zama contract because none is attached to this policy. A production response still needs off-chain incident monitoring and an independently reviewed governance design.
+
 ## Hard requirements before live agent finance
 
 Financial safety cannot be reduced to UI styling or a single DEX market score. Before actual confidential autonomous trading: independently verify Zama FHE ciphertext lifecycle and ACL grants; implement consented smart-account session policies with approved targets/selectors, token budgets, expiry, nonce replay protection, transfer loss caps and immediate revocation; prove swaps through independently verified encrypted venues; keep job and transaction journals with chain finality reconciliation; test upgrade and emergency-pause governance; commission independent security review. On-chain and off-chain risk controls must reconcile rather than trusting model-generated assertions.
