@@ -82,6 +82,13 @@ async function signIn(
 
 async function main() {
   status(await call("/api/agents"), 401, "public agents read denied");
+  status(await call("/api/watchlist"), 401, "public watchlist read denied");
+  status(
+    await call("/api/workspace/overview"),
+    401,
+    "public workspace read denied",
+  );
+
   status(
     await call(
       "/api/auth/challenge",
@@ -173,6 +180,89 @@ async function main() {
   );
   assert.equal(own.payload.authenticated, true);
   assert.equal(own.payload.executionAllowed, false);
+  const emptyWorkspace = status(
+    await call("/api/workspace/overview", "GET", undefined, a.cookie),
+    200,
+    "authenticated empty dashboard",
+  );
+  assert.equal(emptyWorkspace.payload.source, "owner-authenticated-postgres");
+  assert.equal((emptyWorkspace.payload.agents as { active: number }).active, 0);
+  assert.equal(
+    (emptyWorkspace.payload.watchlist as { total: number }).total,
+    0,
+  );
+  assert.equal(emptyWorkspace.payload.executionAllowed, false);
+  const poolA = "0x" + "a".repeat(40);
+  for (const invalid of [
+    { chain: "solana", pairAddress: poolA },
+    { chain: "base", pairAddress: "0x123" },
+    { chain: "base", pairAddress: poolA, positionAmount: "secret" },
+    { chain: "base", pairAddress: poolA, executionAllowed: true },
+  ])
+    status(
+      await call("/api/watchlist", "POST", invalid, a.cookie),
+      400,
+      "invalid watchlist record denied",
+    );
+  status(
+    await call(
+      "/api/watchlist",
+      "POST",
+      { chain: "base", pairAddress: poolA },
+      a.cookie,
+      "https://foreign.invalid",
+    ),
+    403,
+    "cross-origin watchlist denied",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "POST",
+      { chain: "base", pairAddress: poolA },
+      "",
+    ),
+    401,
+    "unsigned watchlist write denied",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "POST",
+      { chain: "base", pairAddress: poolA },
+      a.cookie,
+    ),
+    200,
+    "public market saved to owner database",
+  );
+  // Re-saving a pool is idempotent and cannot bypass the bounded set.
+  status(
+    await call(
+      "/api/watchlist",
+      "POST",
+      { chain: "base", pairAddress: poolA.toUpperCase().replace("0X", "0x") },
+      a.cookie,
+    ),
+    200,
+    "case-insensitive duplicate target",
+  );
+  const overviewAfterSave = status(
+    await call("/api/workspace/overview", "GET", undefined, a.cookie),
+    200,
+    "saved market appears in dashboard",
+  );
+  assert.equal(
+    (overviewAfterSave.payload.watchlist as { total: number }).total,
+    1,
+  );
+  assert.equal(
+    (
+      overviewAfterSave.payload.watchlist as {
+        saved: { chain: string; pairAddress: string }[];
+      }
+    ).saved[0].pairAddress,
+    poolA,
+  );
   const existing = status(
     await call("/api/agents", "GET", undefined, a.cookie),
     200,
@@ -258,6 +348,72 @@ async function main() {
     "other wallet list",
   );
   assert.deepEqual(bRead.payload.agents, []);
+  const bOverview = status(
+    await call("/api/workspace/overview", "GET", undefined, b.cookie),
+    200,
+    "other owner dashboard isolated",
+  );
+  assert.equal((bOverview.payload.watchlist as { total: number }).total, 0);
+  const bWatchlist = status(
+    await call("/api/watchlist", "GET", undefined, b.cookie),
+    200,
+    "other owner market list isolated",
+  );
+  assert.deepEqual(bWatchlist.payload.markets, []);
+  status(
+    await call(
+      "/api/watchlist",
+      "DELETE",
+      { chain: "base", pairAddress: poolA },
+      b.cookie,
+    ),
+    404,
+    "other owner cannot remove saved market",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "DELETE",
+      { chain: "base", pairAddress: poolA },
+      a.cookie,
+      "https://foreign.invalid",
+    ),
+    403,
+    "cross-origin watchlist removal denied",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "DELETE",
+      { chain: "base", pairAddress: poolA },
+      a.cookie,
+    ),
+    200,
+    "owner deletes saved market",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "DELETE",
+      { chain: "base", pairAddress: poolA },
+      a.cookie,
+    ),
+    404,
+    "absent saved market cannot be removed twice",
+  );
+  const ownerAfterDelete = status(
+    await call("/api/workspace/overview", "GET", undefined, a.cookie),
+    200,
+    "owner dashboard refreshed after watchlist removal",
+  );
+  assert.equal(
+    (ownerAfterDelete.payload.watchlist as { total: number }).total,
+    0,
+  );
+  assert.equal(
+    (ownerAfterDelete.payload.agents as { active: number }).active,
+    1,
+  );
   status(
     await call("/api/agents/" + id, "DELETE", undefined, b.cookie),
     404,
@@ -299,6 +455,16 @@ async function main() {
     401,
     "revoked session access denied",
   );
+  status(
+    await call("/api/workspace/overview", "GET", undefined, a.cookie),
+    401,
+    "signed-out workspace denied",
+  );
+  status(
+    await call("/api/watchlist", "GET", undefined, a.cookie),
+    401,
+    "signed-out watchlist denied",
+  );
   // Concurrent requests cannot bypass the 20-live-profile owner cap.
   const competing = await Promise.all(
     Array.from({ length: 23 }, (_, index) =>
@@ -318,6 +484,38 @@ async function main() {
   );
   assert.equal(competing.filter((r) => r.status === 201).length, 20);
   assert.equal(competing.filter((r) => r.status === 409).length, 3);
+  // Concurrent writes cannot exceed the owner-bound 25 public pair bookmarks.
+  const savedInParallel = await Promise.all(
+    Array.from({ length: 29 }, (_, index) =>
+      call(
+        "/api/watchlist",
+        "POST",
+        {
+          chain: "ethereum",
+          pairAddress: "0x" + (index + 1).toString(16).padStart(40, "0"),
+        },
+        b.cookie,
+      ),
+    ),
+  );
+  assert.equal(savedInParallel.filter((x) => x.status === 200).length, 25);
+  assert.equal(savedInParallel.filter((x) => x.status === 409).length, 4);
+  const watchedCap = status(
+    await call("/api/watchlist", "GET", undefined, b.cookie),
+    200,
+    "bounded owner watchlist",
+  );
+  assert.equal((watchedCap.payload.markets as unknown[]).length, 25);
+  const overviewCap = status(
+    await call("/api/workspace/overview", "GET", undefined, b.cookie),
+    200,
+    "owner aggregate read from database",
+  );
+  assert.equal((overviewCap.payload.watchlist as { total: number }).total, 25);
+  assert.equal(
+    (overviewCap.payload.watchlist as { saved: unknown[] }).saved.length,
+    5,
+  );
   const capped = status(
     await call("/api/agents", "GET", undefined, b.cookie),
     200,

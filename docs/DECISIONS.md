@@ -29,3 +29,9 @@ Confidential tools load on demand, use a separate query cache and SDK memory sto
 ## Design direction
 
 Midnight #09151e, slate #10212b, mint #8dddbd, pale text #edf4f5 and muted #a9bac3. Refined light mode uses #f5f8f8, white and deep green #176247. Neutral system sans typography, large compact headlines and an explicit wallet → permission → vault diagram describe the product without invented financial statistics. Marketing stays server-rendered; wallet and heavy FHE tools load only where used.
+
+## November 11, 2026: server-side research workspace, not fictitious portfolio balances
+
+Choose a narrow public-market watchlist as the next durable consumer feature. Store only owner-scoped EVM chain/pair addresses (25 max) in a new explicitly migrated Postgres table; derive the dashboard's profile counts, expiring profiles and watched-market records from the existing wallet-authenticated backend. Do not invent agent profits, price candles, synthetic trades or positions to make the dashboard appear active. A research watchlist is not a confidential holdings journal. Retain Fastify as a separate public metadata service; never create a second unsafe identity system for it. A valid connected wallet must match the authenticated cookie before the browser shows private saved account records.
+
+Design uses existing DM Sans/Space Grotesk and the established indigo/lavender/coral palette with a lower, consistent display scale. The hero is shorter; use real records to carry the page instead of oversized typography and placeholder financial stat cards. Navigation uses a fixed destination list in a native dialog, not a new search backend or a fabricated agent assistant.

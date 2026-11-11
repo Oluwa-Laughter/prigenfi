@@ -131,20 +131,29 @@ export default function ActivityPage() {
                       profitable trade
                     </small>
                   </div>
-                  <a
-                    href={
-                      chainId === 11155111
-                        ? "https://sepolia.etherscan.io/tx/" +
-                          event.transactionHash
-                        : "#"
-                    }
-                    target={chainId === 11155111 ? "_blank" : undefined}
-                    rel="noreferrer"
-                    aria-label={"Inspect transaction " + event.transactionHash}
-                  >
-                    {chainId === 11155111 ? "View receipt" : "Local receipt"}{" "}
-                    <ArrowUpRight size={15} />
-                  </a>
+                  {chainId === 11155111 ? (
+                    <a
+                      href={
+                        "https://sepolia.etherscan.io/tx/" +
+                        event.transactionHash
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={
+                        "Inspect transaction " + event.transactionHash
+                      }
+                    >
+                      View receipt <ArrowUpRight size={15} />
+                    </a>
+                  ) : (
+                    <span
+                      className="activity-local-hash"
+                      title={event.transactionHash}
+                    >
+                      Local tx {event.transactionHash.slice(0, 8)}…
+                      {event.transactionHash.slice(-6)}
+                    </span>
+                  )}
                 </div>
               ))
             )}

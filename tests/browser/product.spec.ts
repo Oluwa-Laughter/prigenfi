@@ -87,6 +87,13 @@ for (const width of [1440, 390]) {
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Direct the trade.",
       );
+      const marketingHeadlineSize = await page
+        .locator(".m-hero h1")
+        .evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).fontSize),
+        );
+      expect(marketingHeadlineSize).toBeLessThanOrEqual(width < 570 ? 56 : 92);
+
       await expect(page.locator("footer")).not.toContainText("GitHub");
       await page.keyboard.press("Tab");
       await expect(
@@ -120,7 +127,42 @@ for (const width of [1440, 390]) {
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Make your agent work for you.",
       );
-      await expect(page.getByText("Trading win rate")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Research, in one place." }),
+      ).toBeVisible();
+      await expect(page.locator("#workspace-summary")).toContainText(
+        "Your saved workspace",
+      );
+      const workspaceHeadlineSize = await page
+        .locator(".ws-page-heading h1")
+        .evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).fontSize),
+        );
+      expect(workspaceHeadlineSize).toBeLessThanOrEqual(41);
+      const quickNavigation = page.getByRole("button", {
+        name: "Jump to a page",
+      });
+      await quickNavigation.click();
+      const quickDialog = page.getByRole("dialog", {
+        name: "Jump to a workspace page",
+      });
+      await expect(quickDialog).toBeVisible();
+      await quickDialog
+        .getByRole("textbox", { name: "Search workspace pages" })
+        .fill("privacy");
+      await quickDialog
+        .getByRole("textbox", { name: "Search workspace pages" })
+        .press("Enter");
+      await expect(page).toHaveURL(/\/privacy$/);
+      await page.goto("/dashboard");
+      await page.keyboard.press("Control+k");
+      await expect(
+        page.getByRole("dialog", { name: "Jump to a workspace page" }),
+      ).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(
+        page.getByRole("dialog", { name: "Jump to a workspace page" }),
+      ).not.toBeVisible();
       const sidebarCallToAction = page.locator(".ws-sidebar-bottom");
       await expect(sidebarCallToAction).not.toContainText(
         "Protected by your rules",
@@ -163,10 +205,21 @@ for (const width of [1440, 390]) {
           page.getByRole("navigation", { name: "Platform" }),
         ).toBeVisible();
       }
+      const unavailableSaved = await page.request.get(
+        "/api/workspace/overview",
+      );
+      expect([401, 503]).toContain(unavailableSaved.status());
       await page.goto("/markets?category=meme");
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Explore EVM markets.",
       );
+      await expect(
+        page.getByRole("link", { name: /Research .+ pool/ }).first(),
+      ).toHaveAttribute(
+        "href",
+        /\/markets\/pair\/ethereum\/0x[0-9a-fA-F]{40}$/,
+      );
+
       await expect(
         page.getByRole("button", { name: "Emerging tokens" }),
       ).toHaveAttribute("aria-pressed", "true");

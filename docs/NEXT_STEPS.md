@@ -93,3 +93,11 @@ Before any financial authority, validate actual V1-to-V2 ERC-7201 storage layout
 3. Independently reproduce one encrypted Zama Sepolia crypto pair's order-to-finality lifecycle before enabling financial execution, and separately audit smart-account session permissions and on-chain loss/exposure limits. Do not claim any crypto wrapper makes a DeFi pool confidential.
 4. Maintain the crypto-only cUSDC/cUSDT/cZAMA/cWETH product allowlist and test rejection of excluded reference/FX wrappers at SDK, MCP and wallet boundaries. Historical verification records remain archived as evidence only.
 5. Add a signed, operator-maintained skill manifest with digest/version pinning and a dedicated deployment/host handshake smoke. Do not auto-run downloaded scripts or silently install arbitrary external skills.
+
+## After persisted research workspace UX — November 11, 2026
+
+1. Provision and migrate the **actual production** owner-authenticated database (including `0004_owner_market_watchlist.sql`) only after backups/approval; verify deployed HTTPS origin, configured chain RPC, session policies, production preview isolation and telemetry with no secrets. Code and local Anvil/Postgres integration alone do not prove hosted user readiness.
+2. Add a durable, privacy-minimized research audit trail for user-initiated market checks before promising strategy operations; avoid storing plaintext personal goals or encrypted wallet balances. A bookmarked public pool isn't a trade or a position.
+3. Finish independently verified Zama-compatible confidential execution, owner-signed smart-account permissions and finality reconciliation before enabling real spending, private swaps or financial performance reports.
+4. Implement owner-initiated export/delete for stored public watchlists, account data retention policy, cross-device UX and independent accessibility review. Watchlist privacy depends on controlling who can see owner-linked research preferences in the backend.
+5. Keep the Fastify service narrow unless a concrete source-backed, explicitly authorized backend capability justifies expanding it; do not duplicate SIWE/session or issuer authority across services.

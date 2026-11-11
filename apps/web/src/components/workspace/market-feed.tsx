@@ -283,22 +283,13 @@ export function MarketFeedView({
                       />
                     </td>
                     <td>
-                      <a
+                      <Link
                         className="market-source-link"
-                        href={
-                          "https://dexscreener.com/" +
-                          chain +
-                          "/" +
-                          p.pairAddress
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={
-                          "Inspect " + p.base + " pair on DEX Screener"
-                        }
+                        href={`/markets/pair/${chain}/${p.pairAddress}`}
+                        aria-label={`Research ${p.base} / ${p.quote} pool`}
                       >
-                        Inspect <ArrowUpRight size={14} />
-                      </a>
+                        View pair <ArrowUpRight size={14} />
+                      </Link>
                     </td>
                   </tr>
                 ))}

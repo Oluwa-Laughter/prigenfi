@@ -27,6 +27,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Brand } from "@/components/header";
+import { QuickNavigation } from "./quick-navigation";
 
 const primaryNav = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -204,6 +205,7 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
             <strong>{labels[pathname] ?? "PrigenFi"}</strong>
           </div>
           <div className="ws-topbar-actions">
+            <QuickNavigation key={pathname} />
             <span className="ws-network">
               <FlaskConical size={14} />{" "}
               {chainId === 31337

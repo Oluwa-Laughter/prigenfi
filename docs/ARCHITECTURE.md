@@ -105,3 +105,18 @@ The Next.js site now distributes three static instruction-only SKILL.md files an
 The earlier authenticated `/api/mcp` continues to use wallet-owned, revocable per-profile bearer credentials, persisted scopes, and per-key quotas. Public access must never bypass a wallet profile's denied scope: they are different trust levels. The local stdio MCP remains a maintainer path only, and the user-facing connection guide is now hosted-first.
 
 The active PrigenFi confidential asset allowlist is the crypto-only cUSDC/cUSDT/cZAMA/cWETH set of **unbacked Sepolia test wrappers**, not the full historically verified seven-wrapper source registry. The three other historical reference wrappers are not active UI, MCP capabilities, or agent planning assets. This intentionally narrows product scope without falsifying the archived upstream/source verification evidence.
+
+## Real owner-backed saved research — November 11, 2026
+
+The core application **already has a backend**, separate from the metadata Fastify service:
+
+- `apps/web/src/app/api/auth/*` and `apps/web/src/app/api/agents/*`: owner-signed SIWE/EOA/ERC-1271 identity and PostgreSQL research-agent profile CRUD.
+- `apps/web/src/app/api/watchlist`: signed-in wallet-only GET/POST/DELETE for **public** `{chain,pairAddress}` market bookmarks. All writes require the configured exact Origin and known EVM research network; identifiers are lowercased in the database; duplicate saves are idempotent. A PostgreSQL advisory transaction lock prevents racing past 25 entries. Revocation/logout eliminates access immediately when sessions are invalidated.
+- `apps/web/src/app/api/workspace/overview`: signed-in owner-only aggregate of live/revoked/expiring research profiles plus the newest five saved public pools and actual saved count. Counts and lists derive from PostgreSQL, never fabricated. Every lookup is constrained by current authenticated owner address and account chain. No user may set an owner address in request JSON.
+- `apps/web/src/app/(workspace)/markets/pair/[chain]/[pairAddress]`: validated, read-only pool detail from the shared untrusted DEX Screener adapter and deterministic risk policy, with a wallet-gated Save/Remove control. No trade quote, execution or permission mutation is available.
+
+`infra/migrations/0004_owner_market_watchlist.sql` introduces the single new owner-scoped table with network/address validation and unique key; it must be **applied explicitly** in the target PostgreSQL before using the new API, and only after operator review and backups for any production database. No positions, strategies, confidential balances, wallet seeds or user-token data are written there. Saving a public pool does reveal which pool an account is researching to the PrigenFi backend and is not confidential activity. A public third-party data service sees only the pool identifier/network of the query and never user cookies, wallet session, private amounts or strategy text.
+
+The independent Fastify `services/api` remains a small **public metadata-only** service: health/readiness and active crypto test asset metadata, with rate limits and redacted logs. It neither owns account sessions nor serves profitable trades, real portfolios, financial execution or private MCP. This separation is deliberate; duplicating identity and persistence into Fastify without a secure federation would weaken the boundary.
+
+Navigation UX uses a native focus-managed `<dialog>` to jump to existing customer pages via keyboard `Ctrl/⌘ + K`; all paths are statically declared, not arbitrary links or public-provider text. The new owner dashboard immediately clears saved records when its connected wallet or chain no longer matches the authenticated cookie.

@@ -6,6 +6,7 @@ import {
   LockKeyhole,
   ShieldAlert,
   WalletCards,
+  Bookmark,
 } from "lucide-react";
 export const metadata = { title: "Safety & Settings" };
 export default function SettingsPage() {
@@ -22,6 +23,22 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="settings-list">
+        <div>
+          <span className="ws-guidance-icon lilac">
+            <Bookmark size={23} />
+          </span>
+          <div>
+            <h2>Saved market research</h2>
+            <p>
+              Public EVM pool addresses you choose to follow can be saved to
+              your wallet-owned workspace. This is a watchlist, not a portfolio,
+              an order or an authorized agent mandate.
+            </p>
+          </div>
+          <Link href="/dashboard#workspace-summary">
+            Open saved workspace <ArrowUpRight size={16} />
+          </Link>
+        </div>
         <div>
           <span className="ws-guidance-icon purple">
             <KeyRound size={23} />

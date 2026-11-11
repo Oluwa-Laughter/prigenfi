@@ -3,8 +3,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Bot,
-  ChartColumnIncreasing,
-  CircleDot,
   Compass,
   LockKeyhole,
   ShieldCheck,
@@ -12,6 +10,7 @@ import {
 } from "lucide-react";
 import { MarketFeedView } from "@/components/workspace/market-feed";
 import { AgentPerformanceCharts } from "@/components/workspace/performance";
+import { WorkspaceOverview } from "@/components/workspace/overview-state";
 
 export const metadata = { title: "Overview" };
 export default function Overview() {
@@ -60,36 +59,7 @@ export default function Overview() {
           <span className="orbit-node orbit-four">ETH</span>
         </div>
       </section>
-      <div className="ws-stat-grid">
-        <article className="ws-stat">
-          <span>
-            <Bot size={18} /> Agent results
-          </span>
-          <strong>—</strong>
-          <small>No verified closed agent trades yet</small>
-        </article>
-        <article className="ws-stat">
-          <span>
-            <ChartColumnIncreasing size={18} /> Trading win rate
-          </span>
-          <strong>—</strong>
-          <small>Calculated after settled trades are indexed</small>
-        </article>
-        <article className="ws-stat">
-          <span>
-            <CircleDot size={18} /> Realized P&amp;L
-          </span>
-          <strong>—</strong>
-          <small>Not available without verified fills and cost basis</small>
-        </article>
-        <article className="ws-stat">
-          <span>
-            <ShieldCheck size={18} /> Execution policy
-          </span>
-          <strong>Testnet</strong>
-          <small>Confidential agent swaps remain disabled</small>
-        </article>
-      </div>
+      <WorkspaceOverview />
       <div className="ws-section-row">
         <div>
           <p className="ws-kicker">Ethereum mainnet signals</p>
@@ -138,7 +108,7 @@ export default function Overview() {
           </div>
           <h3>Confidential by design</h3>
           <p>
-            Explore cUSDC, cUSDT and cZAMA through Zama wallet tools on
+            Explore cUSDC, cUSDT, cZAMA and cWETH through Zama wallet tools on
             Sepolia—not public-market privacy claims.
           </p>
           <Link href="/portfolio">

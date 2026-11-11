@@ -37,7 +37,7 @@ const marketData = {
     },
   ],
 };
-for (const width of [320, 360, 430, 768, 1024]) {
+for (const width of [320, 360, 390, 430, 768, 1024, 1440]) {
   test(
     "no viewport overflow across pages at " + width + "px",
     async ({ page }) => {

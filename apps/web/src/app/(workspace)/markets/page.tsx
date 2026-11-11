@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { MarketFeedView } from "@/components/workspace/market-feed";
 import { marketCategories, type MarketCategory } from "@/lib/markets";
 
@@ -32,6 +34,15 @@ export default async function MarketsPage({
         safe tokens or executable confidential routes. Verify contract risk,
         liquidity, token addresses and venues independently. Private trading
         remains disabled across all listed networks.
+      </div>
+      <div className="market-watchlist-entry">
+        <span>
+          Research a public pool and save it to your wallet-owned workspace for
+          later.
+        </span>
+        <Link href="/dashboard#workspace-summary" className="ws-text-link">
+          My saved markets <ArrowUpRight size={16} />
+        </Link>
       </div>
       <MarketFeedView initialCategory={category} />
     </div>

@@ -27,3 +27,11 @@ Agent onboarding now separates three distinct states: (1) **MCP host connected l
 ## Scoped, wallet-owned MCP research connections — November 11, 2026
 
 Users can create genuine scoped agent research profiles by signing in with a supported EOA or ERC-1271 smart account, then optionally connect an existing remote MCP-compatible AI host with an expiring, one-time-visible bearer key. The hosted research MCP checks live owner-saved research network/market restrictions, session expiry, quota and immediate revocation before every request. Key issuance is opt-in, disabled until a properly configured operator deployment enables it. The external model interprets the user's voluntarily shared goals; the protocol does not trade, earn yields, deploy contracts or expose confidential balances. OAuth 2.1 identity federation and wallet-granted execution policies are future work.
+
+## Saved public markets — November 11, 2026
+
+A signed-in user can now **inspect a real public EVM pool**, save only its chain and pool address under their authenticated wallet in PostgreSQL, revisit the market from their dashboard, and remove it. The data comes from the same source-checked, time-stamped public DEX Screener adapter used in market research; no user balances, private strategy instructions, token positions, fake asset valuations, signals, returns, fills or transactions are created. A watchlist is an organizational aid, not trading permission or a portfolio. If the provider is down, no substitute price or integrity score is invented.
+
+A product workflow now reads: choose a public market → inspect source/risk and optionally save it → sign in to your wallet-owned workspace → manage research profiles or prepare a private mandate → inspect onchain privacy capabilities → review real records. The backend requires its dedicated operator-provisioned PostgreSQL and SIWE session; when unavailable the UI says so, not showing sample saved users. The product remains research-first with financial execution disabled.
+
+The desktop/phone interface uses a tighter, less oversized heading scale, smaller hero sections and an accessible `Ctrl/⌘ + K` navigation dialog for jumping directly between real routes. No new custom fonts or fake products were introduced.

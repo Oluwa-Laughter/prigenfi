@@ -29,8 +29,7 @@ const categories = [
   {
     number: "03",
     title: "Confidential assets",
-    detail:
-      "Plan around cUSDC, cUSDT, cZAMA, cWETH and more on supported private rails.",
+    detail: "Explore cUSDC, cUSDT, cZAMA and cWETH on Sepolia test rails.",
     tone: "stable",
     slug: "stable",
   },
