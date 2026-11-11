@@ -71,7 +71,8 @@ export const chains = {
     capabilities: ["erc20-transfer"],
   },
 } as const;
-/** Official Zama Sepolia wrapper registry, unbacked test assets only.
+/** Crypto-only PrigenFi product allowlist of official unbacked Sepolia Zama wrappers.
+ * Non-crypto reference wrappers from the upstream registry are intentionally excluded.
  * Public addresses are not a claim that an encrypted swap venue exists.
  * Source: https://github.com/zama-ai/protocol-apps/blob/main/docs/addresses/testnet/sepolia.md
  */
@@ -109,33 +110,6 @@ export const confidentialAssets = [
     category: "Wrapped ETH",
     address: getAddress("0x46208622DA27d91db4f0393733C8BA082ed83158"),
     underlying: getAddress("0xff54739b16576FA5402F211D0b938469Ab9A5f3F"),
-    chainId: 11155111,
-    isTestAsset: true,
-  },
-  {
-    symbol: "cBRONMock",
-    displaySymbol: "cBRON",
-    category: "Token",
-    address: getAddress("0xaa5612FA27c927a0c7961f5AEFEE5ba3A0F9C891"),
-    underlying: getAddress("0xFf021fB13cA64e5354c62c954b949a88cfDEb25E"),
-    chainId: 11155111,
-    isTestAsset: true,
-  },
-  {
-    symbol: "cXAUtMock",
-    displaySymbol: "cXAUt",
-    category: "Gold-linked test token",
-    address: getAddress("0xe4FcF848739845BC81Dee1d5352cf3844F0a60C7"),
-    underlying: getAddress("0x24377AE4AA0C45ecEe71225007f17c5D423dd940"),
-    chainId: 11155111,
-    isTestAsset: true,
-  },
-  {
-    symbol: "ctGBPMock",
-    displaySymbol: "ctGBP",
-    category: "FX-linked test token",
-    address: getAddress("0xfCE5c7069c5525eF6c8C2b2E35A745bA20a2F7CC"),
-    underlying: getAddress("0x93c931278A2aad1916783F952f94276eA5111442"),
     chainId: 11155111,
     isTestAsset: true,
   },

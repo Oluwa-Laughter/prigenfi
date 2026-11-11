@@ -33,3 +33,13 @@ The Codex host can invoke `$prigenfi-market-diligence` when working in this repo
 A real strategy must have a documented hypothesis, unbiased historical chain/venue dataset, survivorship-bias and look-ahead controls, fee/gas/MEV and slippage models, out-of-sample and walk-forward evaluation, bounded position sizing and audited risk constraints, realistic loss scenarios, reconciled realized P&L and continuing production monitoring. No safe or profitable strategy can be inferred from a single public DEX snapshot or a source-provided percent-change value. Code reviews and simulated tests do not constitute a user-facing financial result.
 
 References: [Agent Skills open standard](https://agentskills.io/), [Codex skill locations](https://learn.chatgpt.com/docs/build-skills), [OpenZeppelin Skills](https://www.openzeppelin.com/news/introducing-openzeppelin-skills), [MCP security considerations](https://skills.extensions.modelcontextprotocol.io/specification/beta/skills).
+
+## Public installable research skill library — November 11, 2026
+
+A user or developer no longer needs to clone the repository to obtain basic PrigenFi skills. Three **instruction-only** Agent Skills-standard packages are published as plain markdown in the deployed site's static assets:
+
+- `/skills/prigenfi-market-diligence/SKILL.md` — onchain market diligence, with scope-first, real-source integrity checks. The deployed copy matches the repository-maintained skill.
+- `/skills/prigenfi-defi-risk/SKILL.md` — onchain spot, lending, staking, liquidity and token contract risks, including unknowns and provenance.
+- `/skills/prigenfi-confidential-readiness/SKILL.md` — separate verified encrypted-token metadata from unverified confidential trading/execution readiness.
+
+A machine-readable catalog is provided at `/skills/index.json`. Download one SKILL.md into the host's documented skills directory or load its HTTPS URL through a compatible host. Review all instructions before use. No scripts are shipped or executed; these are not wallets, model weights, signatures, token decryption or trading operators. The hosted public MCP research endpoint is independently operator-enabled and globally rate-limited; a skill remains readable even when MCP is disabled. Research rejection from a wallet-scoped MCP profile must never be bypassed via a broader public MCP server.

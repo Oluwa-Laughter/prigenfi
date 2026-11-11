@@ -1,8 +1,12 @@
-# Connecting an AI agent to PrigenFi (local MCP)
+# Connecting an AI agent to PrigenFi (hosted first)
 
 PrigenFi is building a privacy-preserving, agent-native DeFi system. **Today the connection supports live public EVM market research and strictly typed confidential-only planning**, not private autonomous trading, wallet spending, or profitable investment guarantees.
 
-## Real local MCP check
+## No-clone path for users
+
+The public hosted research MCP, when explicitly enabled by the operator, is available at the deployed PrigenFi domain's `/api/mcp/public`. It exposes public market search, pair lookup, market-integrity screen, crypto-only confidential metadata and unavailable execution status. `/agents/connect` checks whether the **real operator-configured service** is available and displays the actual URL, a copyable Codex command, Claude custom-connector directions and three downloadable SKILL.md research skills. No source checkout, local Node install or signing key is required. A separate owner-scoped remote service uses a one-time research bearer token from an authenticated `/agents` profile. Neither mode can trade or see decrypted balances. A disabled service must not be presented as live. More at [REMOTE_AGENT_MCP](REMOTE_AGENT_MCP.md).
+
+## Optional: real local MCP check for maintainers
 
 On a computer with Node 22+, pnpm 10.34.6 and a trusted checkout of the repository:
 

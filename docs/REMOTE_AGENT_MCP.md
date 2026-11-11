@@ -57,3 +57,19 @@ Before enabling externally for general users: implement the MCP OAuth protected-
 `pnpm test:profile-mcp` uses only disposable local Anvil, Postgres and a localhost Next.js production server with `PRIGENFI_MCP_HTTP_ENABLED=true`. It performs a **real SDK Streamable HTTP handshake**, checks a wallet-owned saved research scope, rejected network/market inputs, rotating and revoking bearer keys, cross-origin denial and 30-requests-per-minute enforcement, with no real transfers or live user accounts. The companion `pnpm test:agent-accounts` checks SIWE EOA/ERC-1271 signatures and profile owner isolation. These are included in GitHub CI with a disposable Postgres service container.
 
 References: [MCP 2026 Streamable HTTP spec](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports), [MCP authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), [Codex MCP setup](https://developers.openai.com/codex/mcp).
+
+## No-clone, public read-only hosted MCP — November 11, 2026
+
+PrigenFi now has a separate optional `POST /api/mcp/public` Streamable HTTP research service with **no login**. This service is an alternative to the owner-scoped bearer MCP, not a wallet or automated trading service. It provides the exact tools `market_search`, `market_pair_lookup`, `market_integrity_assess`, `confidential_capabilities_get` and `agent_execution_status`. Every tool is public/read-only; no developer-vault tools, transaction calls, session keys or confidential decryption are linked. Search and pair lookups use the same strict chain/address validation and DEX Screener adapter as the site, never fabricated provider responses. Its crypto-only test wrapper metadata lists cUSDC, cUSDT, cZAMA and cWETH.
+
+**Operator enablement:** the service is disabled unless `PRIGENFI_PUBLIC_MCP_ENABLED=true`, a valid exact `PRIGENFI_APP_ORIGIN`, a dedicated Postgres URL and an explicitly applied `0003_public_research_mcp_quota.sql` migration are present. The configured HTTPS origin must be public for external AI hosts; localhost HTTP is permitted only in isolated tests. This does **not** auto-enable the existing bearer MCP or any trading feature. Disabling the flag immediately blocks further public exchanges. The quota atomically permits at most **60 total public HTTP exchanges per one-minute window across all serverless instances combined**; the 61st receives HTTP 429 and Retry-After 60. This is a basic shared abuse ceiling, not user-based fairness and not a substitute for WAF, IP-aware upstream filtering, load testing or operational monitoring. The service does not log or persist IPs, user questions, balances or wallet addresses.
+
+The `GET /api/mcp/connect` status route exposes only the enabled URLs and research/disabled-execution metadata, never secrets. `/agents/connect` shows real hosted status, live endpoint URL when configured and Codex/Claude/other host instructions. For Codex, once enabled:
+
+```sh
+codex mcp add prigenfi-public --url https://YOUR_PRIGENFI_DOMAIN/api/mcp/public
+```
+
+This command is an example: use **the exact endpoint returned from the running deployment**, not a placeholder domain. For Claude use Customize → Connectors → Add custom connector with No sign in; native remote hosts must support Streamable HTTP. If the service is disabled or unavailable, the UI does not falsely indicate a live connection. The normal authenticated profile MCP `/api/mcp` continues to be available separately only when its existing operator flag is enabled and its authorization checks pass; its bearer token is NEVER interchangeable with public anonymity.
+
+Three downloadable skills with Agent Skills-standard frontmatter are published at `/skills/index.json` and `/skills/<name>/SKILL.md`; the files are independent of MCP availability. Never treat skills or an MCP handshake as permission to trade. Real-money, confidential settlement and smart-account execution remain disabled.

@@ -138,10 +138,10 @@ export default function PortfolioPage() {
       <div className="ws-security-note">
         <WalletCards size={18} />
         <p>
-          cUSDC, cUSDT, cZAMA, cWETH, cBRON, cXAUt and ctGBP are display labels
-          for unbacked Sepolia test wrappers. The cZAMA test underlying is not
-          the real Sepolia ZAMA token. Wrapping deposits, withdrawals, addresses
-          and timing remain public.
+          cUSDC, cUSDT, cZAMA and cWETH are display labels for unbacked Sepolia
+          test wrappers. The cZAMA test underlying is not the real Sepolia ZAMA
+          token. Wrapping deposits, withdrawals, addresses and timing remain
+          public.
         </p>
       </div>
     </div>

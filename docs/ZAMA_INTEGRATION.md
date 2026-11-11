@@ -52,3 +52,7 @@ The reviewed Sepolia registry lists wrapper infrastructure and csteakcUSDC but d
 No dedicated PrigenFi Sepolia test wallet has been provisioned in this session. There is no funded, user-approved signer with which to run the mint → shield → permit → decrypt → encrypted transfer → unshield lifecycle. No signing secret was requested or read. A founder-provisioned wallet through the app is required; no key should be shared with an engineer or LLM.
 
 Foundry tests exercise ordinary EVM vaults, not FHE cryptography. The official Hardhat template at ec84e1aa1b0a3ef61d9795ef8bf367115b79272f was inspected and still lists the legacy relayer dependency. It was not copied into PrigenFi. No custom confidential contract or local FHEVM integration harness is claimed. SDK declarations compile; discovery reads were real; confidential write flows remain unverified on Sepolia.
+
+## Product crypto-only allowlist — November 11, 2026
+
+The table above is **historical verification evidence** of the broader official Sepolia registry, not the active PrigenFi token menu. The active product, SDK allowlist, research planning and MCP capability list now expose only **cUSDC, cUSDT, cZAMA and cWETH** as unbacked crypto-focused test wrappers. The historical cBRON, cXAUt and ctGBP reference entries remain here for provenance; they are not selectable in the wallet product or accepted as confidential plan assets. No private swap venue or financial execution is enabled.

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "license": "See individual skills",
+  "executionAllowed": false,
+  "skills": [
+    {
+      "name": "prigenfi-market-diligence",
+      "title": "Onchain market diligence",
+      "description": "Source-checked tokens, liquidity and pool integrity",
+      "path": "/skills/prigenfi-market-diligence/SKILL.md"
+    },
+    {
+      "name": "prigenfi-defi-risk",
+      "title": "DeFi risk review",
+      "description": "Research lending, staking, liquidity and onchain risk",
+      "path": "/skills/prigenfi-defi-risk/SKILL.md"
+    },
+    {
+      "name": "prigenfi-confidential-readiness",
+      "title": "Confidentiality readiness",
+      "description": "Check privacy boundaries and unsupported execution routes",
+      "path": "/skills/prigenfi-confidential-readiness/SKILL.md"
+    }
+  ]
+}

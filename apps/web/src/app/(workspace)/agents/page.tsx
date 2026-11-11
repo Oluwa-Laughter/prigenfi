@@ -38,9 +38,10 @@ export default function AgentsPage() {
         <div>
           <h2 id="agent-connect-heading">Connect an existing AI agent</h2>
           <p>
-            Use PrigenFi's verified local MCP research tools in Codex, Claude
-            Desktop, or another compatible host. This connects tools, not wallet
-            spending rights.
+            Connect Codex, Claude or another compatible host directly to hosted
+            read-only research, when enabled. No source checkout is needed. Add
+            portable Agent Skills to guide the workflow. This does not grant
+            wallet spending rights.
           </p>
           <Link href="/agents/connect" className="ws-text-link">
             Connect your agent <ArrowUpRight size={16} />
@@ -94,9 +95,9 @@ export default function AgentsPage() {
           </div>
           <h3>What MCP supports</h3>
           <p>
-            The default local MCP server offers public market discovery, typed
-            strategy research and confidential-capability checks. Development
-            vault simulations are isolated from normal agent hosts.
+            Hosted MCP offers scoped or public crypto-market research when
+            enabled. Downloadable skills help agents use real source-stamped
+            findings, with no signing or trading tools.
           </p>
           <Link href="/agents/connect">
             MCP connection guide <ArrowUpRight size={16} />

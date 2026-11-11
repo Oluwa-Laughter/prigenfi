@@ -121,6 +121,15 @@ for (const width of [1440, 390]) {
         "Make your agent work for you.",
       );
       await expect(page.getByText("Trading win rate")).toBeVisible();
+      const sidebarCallToAction = page.locator(".ws-sidebar-bottom");
+      await expect(sidebarCallToAction).not.toContainText(
+        "Protected by your rules",
+      );
+      await expect(sidebarCallToAction).not.toContainText("Public website");
+      await expect(sidebarCallToAction).toContainText("Put an agent to work.");
+      await expect(
+        sidebarCallToAction.getByRole("link", { name: "Connect an agent" }),
+      ).toHaveAttribute("href", "/agents/connect");
       await expect(
         page.getByRole("heading", { name: "24h market volume" }),
       ).toBeVisible();
@@ -207,20 +216,49 @@ for (const width of [1440, 390]) {
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         "Connect an agent to PrigenFi.",
       );
+      await expect(
+        page.getByRole("heading", { name: "One endpoint. Your own agent." }),
+      ).toBeVisible();
       await expect(page.locator("main#main")).toContainText(
-        "pnpm agent:connect --check",
+        "No repository checkout",
       );
-      await expect(page.locator("main#main")).toContainText(
-        "No trading permission",
-      );
-      await page.getByRole("button", { name: "Claude Desktop" }).click();
-      await expect(page.locator("main#main")).toContainText(
-        "pnpm agent:connect --print claude",
-      );
-      await page.getByRole("button", { name: "Codex" }).click();
-      await expect(page.locator("main#main")).toContainText(
-        "pnpm agent:connect --print codex",
-      );
+      await expect(
+        page.getByRole("heading", {
+          name: "Research skills your agent can read.",
+        }),
+      ).toBeVisible();
+      await expect(page.locator(".agent-skill-card")).toHaveCount(3);
+      await page.getByRole("button", { name: "Claude", exact: true }).click();
+      await expect(
+        page.getByRole("button", { name: "Claude", exact: true }),
+      ).toHaveAttribute("aria-pressed", "true");
+      await page.getByRole("button", { name: "Other MCP hosts" }).click();
+      await page.getByRole("button", { name: "Codex", exact: true }).click();
+      const connection = await page.request.get("/api/mcp/connect");
+      expect(connection.status()).toBe(200);
+      const connectionData = await connection.json();
+      expect(connectionData.executionAllowed).toBe(false);
+      if (connectionData.publicResearch.enabled) {
+        await expect(page.locator("main#main")).toContainText(
+          "codex mcp add prigenfi-public --url",
+        );
+      } else {
+        await expect(page.locator("main#main")).toContainText(
+          "Public hosted research is not enabled",
+        );
+      }
+      const skillManifest = await page.request.get("/skills/index.json");
+      expect(skillManifest.ok()).toBe(true);
+      expect((await skillManifest.json()).skills).toHaveLength(3);
+      for (const skill of (
+        await (await page.request.get("/skills/index.json")).json()
+      ).skills) {
+        const file = await page.request.get(skill.path);
+        expect(file.ok()).toBe(true);
+        const content = await file.text();
+        expect(content).toContain(`name: ${skill.name}`);
+        expect(content).toContain("---");
+      }
       await page.goto("/privacy");
       await expect(page.locator("main#main")).not.toContainText("RFQ");
       await expect(page.locator("main#main")).not.toContainText("proxy");
@@ -230,6 +268,13 @@ for (const width of [1440, 390]) {
       await expect(
         page.locator(".privacy-asset").getByText("cZAMA", { exact: true }),
       ).toBeVisible();
+      await expect(page.locator(".privacy-asset")).toHaveCount(4);
+      await expect(page.locator(".privacy-asset-grid")).not.toContainText(
+        "ctGBP",
+      );
+      await expect(page.locator(".privacy-asset-grid")).not.toContainText(
+        "cXAUt",
+      );
       await expect(
         page.getByText("Blocked — no verified private execution venue"),
       ).toBeVisible();

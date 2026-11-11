@@ -858,33 +858,97 @@ textarea:focus-visible {
   color: #fff;
   box-shadow: inset 3px 0 #eec6b6;
 }
+/* Concise agent-desk CTA; no exposed localhost, fake protection badge or repeated disclaimer. */
 .ws-sidebar-bottom {
-  border-top: 1px solid #3d365c;
-  padding: 22px;
+  padding: 14px;
+  border-top: 1px solid #403859;
 }
-.ws-protection-mark {
-  display: flex;
-  gap: 11px;
-  align-items: center;
-  font-size: 12px;
-  color: #eadfff;
-  font-weight: 750;
-}
-.ws-protection-mark svg {
-  color: #d9b5ff;
-}
-.ws-sidebar-bottom p {
-  font-size: 11px;
-  color: #a8a0c8;
-  line-height: 1.55;
-}
-.ws-back-link {
-  display: flex;
-  align-items: center;
+.ws-agent-desk {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 19px 17px 16px;
+  background: linear-gradient(145deg, #403568 0%, #30284f 60%, #2a2548 100%);
+  border: 1px solid rgba(211, 191, 255, 0.19);
+  display: grid;
   gap: 9px;
+}
+.ws-agent-desk::after {
+  content: "";
+  position: absolute;
+  top: -54px;
+  right: -48px;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(183, 152, 255, 0.23),
+    transparent 72%
+  );
+  pointer-events: none;
+}
+.ws-agent-desk-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: #e2d1ff;
+  background: rgba(174, 144, 244, 0.2);
+  border: 1px solid rgba(202, 182, 255, 0.23);
+}
+.ws-agent-desk .ws-agent-desk-eyebrow {
+  margin: 2px 0 0;
+  color: #c5b4f2;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+}
+.ws-agent-desk strong {
+  color: #fff;
+  line-height: 1.23;
+  font-size: 16px;
+  letter-spacing: -0.03em;
+}
+.ws-agent-desk > span {
   font-size: 12px;
-  color: #c6bef0;
-  margin-top: 18px;
+  line-height: 1.55;
+  color: #d4caea;
+}
+.ws-agent-desk-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 41px;
+  gap: 8px;
+  background: #efe8ff;
+  color: #352657;
+  font-size: 12px;
+  font-weight: 750;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 7px;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+.ws-agent-desk-link:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+.ws-agent-desk-link:focus-visible {
+  outline: 3px solid #d7bdff;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-agent-desk-link {
+    transition: none;
+  }
+  .ws-agent-desk-link:hover {
+    transform: none;
+  }
 }
 .ws-mobile-backdrop,
 .ws-close,
@@ -3566,4 +3630,122 @@ textarea:focus-visible {
 .market-integrity-detail small {
   font-size: 10px;
   line-height: 1.5;
+}
+/* Hosted no-clone MCP onboarding and portable skills. */
+.agent-hosted-section {
+  border-color: #d9caef;
+  background: linear-gradient(140deg, #fff 8%, #faf6ff 90%);
+}
+.agent-live-status {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: #f4f1f8;
+  color: #504563;
+  border: 1px solid #e6dfef;
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin: 16px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.agent-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+  background: #9b91a8;
+}
+.agent-status-dot.is-active {
+  background: #288977;
+  box-shadow: 0 0 0 3px rgba(40, 137, 119, 0.11);
+}
+.agent-connect-section .agent-connect-inline-label {
+  margin: 20px 0 6px;
+  font-weight: 750;
+  color: #423257;
+}
+.agent-connect-section .agent-connect-unavailable {
+  border-left: 3px solid #b7a7cc;
+  padding: 10px 13px;
+  background: #f8f5fb;
+  margin: 15px 0 0;
+  border-radius: 0 9px 9px 0;
+}
+.agent-skill-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+  margin: 23px 0;
+}
+.agent-skill-card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid #e3dbea;
+  border-radius: 14px;
+  padding: 19px;
+  background: #fcfbff;
+}
+.agent-skill-card > svg {
+  color: #6c50a4;
+}
+.agent-skill-card strong {
+  font-size: 14px;
+  color: #382a52;
+  line-height: 1.4;
+}
+.agent-skill-card p {
+  font-size: 12px;
+  color: #706480;
+  line-height: 1.55;
+  flex: 1;
+}
+.agent-skill-actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.agent-skill-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #4a3477;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.agent-local-details summary {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-weight: 750;
+  color: #443158;
+  cursor: pointer;
+  list-style: revert;
+}
+.agent-local-details[open] summary {
+  margin-bottom: 16px;
+}
+.agent-copy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 920px) {
+  .agent-skill-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .agent-skill-actions .agent-copy {
+    font-size: 11px;
+  }
+  .agent-connect-section {
+    overflow-wrap: anywhere;
+  }
 }

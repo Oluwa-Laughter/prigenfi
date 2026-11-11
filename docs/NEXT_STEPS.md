@@ -85,3 +85,11 @@ Before any financial authority, validate actual V1-to-V2 ERC-7201 storage layout
 2. Verify a real Sepolia encrypted trade and confidential settlement with independent source/interface/ACL/quote/finality evidence before enabling any private agent execution. The public vault transfer is **not** a confidential swap.
 3. Introduce multi-asset fiat-equivalent risk budgets only after independently trusted, stale/reorg-aware price/oracle sources, token decimals, manipulation controls and loss accounting exist; never treat the shared base-unit cap as cross-asset exposure.
 4. Complete ERC-1271 signer-change session invalidation, OAuth 2.1 remote MCP consent/audience validation, durable privacy-safe job records and independent protocol review.
+
+## After hosted public research and portable skills — November 11, 2026
+
+1. Before enabling public MCP on the deployed domain: confirm configured HTTPS origin, dedicated Postgres, applied migration, untrusted network/Host/Origin handling, upstream quotas, WAF and request monitoring, load-testing, and an independent review of public tool schemas. Keep both public and scoped remote gates off until operations are ready. Anonymous shared global rate control does not provide per-user fairness.
+2. Complete OAuth 2.1 protected-resource and authorization-server discovery for the wallet-owned remote MCP. The currently revocable bearer preview is not a long-term account authorization system; never let public MCP bypass a denied profile.
+3. Independently reproduce one encrypted Zama Sepolia crypto pair's order-to-finality lifecycle before enabling financial execution, and separately audit smart-account session permissions and on-chain loss/exposure limits. Do not claim any crypto wrapper makes a DeFi pool confidential.
+4. Maintain the crypto-only cUSDC/cUSDT/cZAMA/cWETH product allowlist and test rejection of excluded reference/FX wrappers at SDK, MCP and wallet boundaries. Historical verification records remain archived as evidence only.
+5. Add a signed, operator-maintained skill manifest with digest/version pinning and a dedicated deployment/host handshake smoke. Do not auto-run downloaded scripts or silently install arbitrary external skills.

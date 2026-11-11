@@ -228,6 +228,121 @@ assert.equal(revokeProfile.status, 200);
 assert.equal(await (await rpc(thirdToken)).status, 401);
 await api("/api/auth/logout", "POST", undefined, cookie);
 await api("/api/auth/logout", "POST", undefined, other);
+
+// Standalone hosted no-clone MCP: public tools, zero wallet access and atomic quota.
+if (process.env.PRIGENFI_PUBLIC_MCP_ENABLED !== "true")
+  throw new Error("Public MCP test flag required for disposable integration");
+const publicStatus = await api("/api/mcp/connect");
+assert.equal(publicStatus.status, 200);
+assert.equal(publicStatus.value.executionAllowed, false);
+assert.deepEqual(publicStatus.value.publicResearch, {
+  enabled: true,
+  endpoint: base + "/api/mcp/public",
+  authentication: "none",
+});
+const publicEndpoint = base + "/api/mcp/public";
+const publicCall = (body: unknown, origin?: string) =>
+  fetch(publicEndpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      accept: "application/json, text/event-stream",
+      ...(origin ? { origin } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+assert.equal((await fetch(publicEndpoint)).status, 405);
+assert.equal(
+  (
+    await publicCall(
+      { jsonrpc: "2.0", id: 1, method: "tools/list" },
+      "https://wrong.invalid",
+    )
+  ).status,
+  403,
+);
+assert.equal(
+  (await fetch(publicEndpoint, { method: "POST", body: "{}" })).status,
+  415,
+);
+const publicTransport = new StreamableHTTPClientTransport(
+  new URL(publicEndpoint),
+);
+const publicClient = new Client({
+  name: "prigenfi-public-no-clone",
+  version: "0.1.0",
+});
+await publicClient.connect(publicTransport);
+try {
+  const names = (await publicClient.listTools()).tools.map((tool) => tool.name);
+  assert.deepEqual(
+    [...names].sort(),
+    [
+      "market_search",
+      "market_pair_lookup",
+      "market_integrity_assess",
+      "confidential_capabilities_get",
+      "agent_execution_status",
+    ].sort(),
+  );
+  assert.ok(
+    !names.some((name) =>
+      /(?:transfer|wallet|approve|sign|decrypt|execute|dev_)/.test(name),
+    ),
+  );
+  const caps = await publicClient.callTool({
+    name: "confidential_capabilities_get",
+    arguments: {},
+  });
+  const crypto = JSON.parse((caps.content as { text: string }[])[0].text);
+  assert.deepEqual(
+    crypto.confidentialAssets.map((a: { symbol: string }) => a.symbol),
+    ["cUSDC", "cUSDT", "cZAMA", "cWETH"],
+  );
+  assert.equal(crypto.privateAgentExecution, false);
+  const execution = await publicClient.callTool({
+    name: "agent_execution_status",
+    arguments: {},
+  });
+  assert.equal(
+    JSON.parse((execution.content as { text: string }[])[0].text)
+      .executionAllowed,
+    false,
+  );
+  await assert.rejects(() =>
+    publicClient.callTool({ name: "executeTransfer", arguments: {} }),
+  );
+  const rejected = await publicClient
+    .callTool({
+      name: "market_search",
+      arguments: { chain: "solana", query: "USDC" },
+    })
+    .catch((error: unknown) => ({ isError: true, error }));
+  assert.equal(rejected.isError, true);
+} finally {
+  await publicClient.close().catch(() => {});
+}
+// Query the same disposable Postgres backing the HTTP endpoint; no active user data.
+const { consumePublicMcpQuota, PUBLIC_MCP_MAX_REQUESTS_PER_MINUTE } =
+  await import("../apps/web/src/lib/agent-accounts/public-mcp");
+const { agentDb } = await import("../apps/web/src/lib/agent-accounts/db");
+const sql = agentDb();
+await sql`UPDATE prigenfi_public_mcp_quota SET request_count=0,window_started_at=now() WHERE singleton=true`;
+const attempts = await Promise.all(
+  Array.from({ length: PUBLIC_MCP_MAX_REQUESTS_PER_MINUTE + 9 }, () =>
+    consumePublicMcpQuota(),
+  ),
+);
+assert.equal(
+  attempts.filter(Boolean).length,
+  PUBLIC_MCP_MAX_REQUESTS_PER_MINUTE,
+);
+assert.equal(attempts.filter((allowed) => !allowed).length, 9);
+assert.equal(
+  (await publicCall({ jsonrpc: "2.0", id: 99, method: "tools/list" })).status,
+  429,
+);
+await sql`UPDATE prigenfi_public_mcp_quota SET request_count=0,window_started_at=now() WHERE singleton=true`;
 process.stdout.write(
   "PASS: Real Streamable HTTP MCP handshake, persisted wallet research profile, forbidden networks/markets, cross-origin denial, token rotation/revocation/profile revocation and no trading tools.\n",
 );

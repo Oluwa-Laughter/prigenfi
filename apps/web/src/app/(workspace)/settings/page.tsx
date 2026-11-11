@@ -75,10 +75,10 @@ export default function SettingsPage() {
         <div>
           <h2>Execution boundaries</h2>
           <p>
-            PrigenFi has no authenticated remote MCP, no unattended swap engine
-            and no verified confidential trading venue yet. P&L and win rates
-            require reconciled fills and closed positions. Mainnet trading is
-            disabled.
+            PrigenFi has optional research-only remote MCP, no unattended swap
+            engine and no verified confidential trading venue yet. P&L and win
+            rates require reconciled fills and closed positions. Mainnet trading
+            is disabled.
           </p>
         </div>
       </div>

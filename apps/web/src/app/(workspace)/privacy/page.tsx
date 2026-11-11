@@ -43,7 +43,7 @@ export default function PrivacyPage() {
       <PrivateRouteCheck />
       <div className="ws-section-row">
         <div>
-          <p className="ws-kicker">Official Sepolia wrappers</p>
+          <p className="ws-kicker">Crypto-focused Sepolia test wrappers</p>
           <h2>Confidential asset universe</h2>
           <p>
             Eligible wallet-level confidential token tools for evaluation. These

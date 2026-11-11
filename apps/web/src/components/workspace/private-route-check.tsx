@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import {
-  assessConfidentialTrade,
   confidentialCapabilities,
   type ConfidentialMandate,
 } from "@prigenfi/shared/confidential-policy";
@@ -11,14 +10,11 @@ export function PrivateRouteCheck() {
   const [market, setMarket] =
     useState<ConfidentialMandate["market"]>("portfolio");
   const [asset, setAsset] = useState<string>("cUSDC");
-  const outcome = assessConfidentialTrade({
-    market,
-    watchAssets: asset,
-    suggestedCapitalLimit: "10",
-    instruction:
-      "Research this confidential market and propose only a verified private route.",
-    privacy: "confidential-only",
-  });
+  // Capability lookup only: do not fabricate a user mandate, amount or trading quote.
+  const listed = confidentialCapabilities.confidentialAssets.some(
+    (entry) => entry.symbol === asset,
+  );
+  const executionAllowed = false;
   return (
     <section
       className="private-route-check"
@@ -27,12 +23,13 @@ export function PrivateRouteCheck() {
       <div className="private-route-head">
         <div>
           <p className="ws-kicker">
-            <LockKeyhole size={15} /> Live policy readout
+            <LockKeyhole size={15} /> Read-only product capabilities
           </p>
           <h2 id="private-route-title">Can an agent route this privately?</h2>
           <p>
-            Inspect the current internal policy gate. No wallet, instructions or
-            private balances are sent to a market API here.
+            Inspect the product's declared market scope and crypto-only
+            test-wrapper selection. This is not a verified live trading route,
+            and no capital amount or instruction is fabricated.
           </p>
         </div>
       </div>
@@ -69,7 +66,7 @@ export function PrivateRouteCheck() {
       </div>
       <div className="private-route-result" role="status">
         <div className="private-route-result-icon">
-          {outcome.executionAllowed ? (
+          {executionAllowed ? (
             <CheckCircle2 size={25} />
           ) : (
             <ShieldAlert size={25} />
@@ -77,14 +74,13 @@ export function PrivateRouteCheck() {
         </div>
         <div>
           <strong>
-            {outcome.executionAllowed
+            {executionAllowed
               ? "Verified private execution available"
               : "Blocked — no verified private execution venue"}
           </strong>
           <p>
-            Policy: confidential only · Public routing: forbidden · Wallet
-            authority: not granted · Research mandate:{" "}
-            {outcome.acceptedAsResearch ? "valid" : "invalid"}
+            Market: {market} · Test wrapper: {listed ? "listed" : "unsupported"}
+            {" · "}Public fallback: forbidden · Wallet authority: not granted
           </p>
         </div>
       </div>

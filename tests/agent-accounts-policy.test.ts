@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
+  publicMcpEnabled,
+  PUBLIC_MCP_MAX_REQUESTS_PER_MINUTE,
+} from "../apps/web/src/lib/agent-accounts/public-mcp";
+import {
   agentAccountsConfig,
   AgentAccountsUnavailable,
 } from "../apps/web/src/lib/agent-accounts/config";
@@ -102,5 +106,18 @@ describe("wallet ownership and agent research policy configuration", () => {
         signature: "0x123",
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("anonymous hosted research operator gate", () => {
+  it("is disabled unless explicitly opted into and maintains an atomic global quota", () => {
+    expect(publicMcpEnabled({})).toBe(false);
+    expect(publicMcpEnabled({ PRIGENFI_PUBLIC_MCP_ENABLED: "false" })).toBe(
+      false,
+    );
+    expect(publicMcpEnabled({ PRIGENFI_PUBLIC_MCP_ENABLED: "true" })).toBe(
+      true,
+    );
+    expect(PUBLIC_MCP_MAX_REQUESTS_PER_MINUTE).toBe(60);
   });
 });

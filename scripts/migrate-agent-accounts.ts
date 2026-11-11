@@ -8,6 +8,7 @@ async function main() {
   const migrations = [
     "0001_agent_research_accounts.sql",
     "0002_agent_mcp_keys.sql",
+    "0003_public_research_mcp_quota.sql",
   ];
   const sql = agentDb();
   for (const filename of migrations) {
@@ -19,9 +20,9 @@ async function main() {
   }
   const tables = await sql<{ table_name: string }[]>`
     SELECT table_name FROM information_schema.tables WHERE table_schema='public'
-    AND table_name IN ('prigenfi_auth_challenges','prigenfi_auth_sessions','prigenfi_research_agents','prigenfi_agent_mcp_keys')
+    AND table_name IN ('prigenfi_auth_challenges','prigenfi_auth_sessions','prigenfi_research_agents','prigenfi_agent_mcp_keys','prigenfi_public_mcp_quota')
     ORDER BY table_name`;
-  if (tables.length !== 4) throw new Error("MIGRATION_INCOMPLETE");
+  if (tables.length !== 5) throw new Error("MIGRATION_INCOMPLETE");
   process.stdout.write(
     "Agent authentication and research registry tables verified (" +
       config.chainId +

@@ -187,3 +187,21 @@ Introduced an on-chain, fail-closed, **aggregate daily outflow cap per token acr
 - Workspace TypeScript typechecks, Biome lint, Prettier formatting and Next production build passed.
 - `python3 scripts/security-scan.py`: 102 Slither detectors across the three scanned development contracts; **only two previously triaged low-severity timestamp findings** for `AgentVault` and its factory import, zero for `MockUSD`. No untriaged findings in the scan's current policy. This is not a comprehensive audit of `AgentSafetyPolicy` or the entire app.
 - **No public deployment, private swap, mainnet authorization, or user-funded transaction was performed.** GitHub CI for this commit must be independently verified after push.
+
+## November 11, 2026 — hosted MCP and crypto-only product scope
+
+- Redesigned the workspace sidebar footer into a compact agent-research CTA, removing the repetitive testnet/protection copy and public-website localhost link. Added responsive layout/keyboard targets.
+- Rebuilt `/agents/connect` as **hosted-first**, with actual operator-configured public and wallet-scoped MCP URLs, Codex/Claude/other host setup, no false live status, and a secondary maintainer-only local stdio guide. `/docs` and `/agents` now lead with no-clone onboarding.
+- Added optional no-login public read-only Streamable HTTP MCP at `/api/mcp/public` with five explicit research-only tools, global Postgres-backed 60-exchange/minute quota and an independent default-OFF `PRIGENFI_PUBLIC_MCP_ENABLED` switch. The separate existing owner-scoped bearer MCP is unchanged. Added endpoint discovery with no secrets at `/api/mcp/connect`.
+- Published three SKILL.md instruction-only agent skills and `/skills/index.json` for direct download without source checkout. No signing, trading, agent execution, synthetic markets or balance decryption is exposed.
+- Narrowed the **active** confidential token allowlist, wallet tab UI, market/planning validation and MCP capability metadata to **cUSDC, cUSDT, cZAMA and cWETH**, all unbacked Sepolia test wrappers. Preserved historical external verification evidence for the broader seven-wrapper reference registry without treating those other wrappers as current product assets.
+- Real remote MCP availability still requires **operator provisioning, migrations and explicit enablement**. Do not claim that a code commit proves the deployed server is live or audited.
+
+### Local verification — hosted research and crypto-only catalog
+
+- **75/75 Vitest checks passed** with `LOCAL_INTEGRATION=1` against a freshly redeployed disposable Anvil vault, including rejected historical wrappers and SDK/stdio MCP integration; no skipped unit checks.
+- **8/8 Chromium browser tests passed** against a production Next build, including the redesigned sidebar, hosted MCP/skills UX, four-asset privacy catalog, owner vault controls and responsive widths from 320px to desktop. No screenshots, traces or videos generated.
+- Real HTTP integration on disposable localhost Postgres/Anvil: `pnpm test:agent-accounts` and `pnpm test:profile-mcp` both passed SIWE EOA/ERC-1271, owner profile isolation, revocation, scope denial, both scoped and public MCP handshakes, read-only public tool enumeration, confidential asset filtering and concurrent **60 accepted / 9 denied** public-quota check (plus HTTP 429).
+- TypeScript typechecks across all workspaces, Biome lint, Prettier formatting, Next.js production build and existing Foundry test suite passed. The pinned official Zama registry source SHA-256 verification passed; all off-chain execution gates remain blocked.
+- Static scan `scripts/security-scan.py` passed its configured triage: only the existing two low-severity time-based findings for vault and factory, zero for the mock token. It is not an independent audit of the hosted server, production infrastructure or Zama execution.
+- **Public hosted endpoint is off by default**. Local test activation is not production provisioning, a live deployed endpoint, or permission to move funds. Dedicated Postgres, HTTPS, WAF, monitoring, migration and an operator enable decision are still required before external users can connect.

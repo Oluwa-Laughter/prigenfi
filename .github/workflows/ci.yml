@@ -23,6 +23,7 @@ jobs:
       PRIGENFI_AUTH_RPC_URL: "http://127.0.0.1:8545"
       AGENT_AUTH_TEST_URL: "http://127.0.0.1:3000"
       PRIGENFI_MCP_HTTP_ENABLED: "true"
+      PRIGENFI_PUBLIC_MCP_ENABLED: "true"
     services:
       postgres:
         image: postgres:16-alpine

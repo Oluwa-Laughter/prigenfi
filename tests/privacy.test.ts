@@ -56,10 +56,13 @@ describe("fail-closed confidential agent trading", () => {
       "cUSDT",
       "cZAMA",
       "cWETH",
-      "cBRON",
-      "cXAUt",
-      "ctGBP",
     ]);
+    expect(confidentialAssets.map((a) => a.displaySymbol)).not.toContain(
+      "ctGBP",
+    );
+    expect(confidentialAssets.map((a) => a.displaySymbol)).not.toContain(
+      "cXAUt",
+    );
     expect(
       new Set(confidentialAssets.map((a) => a.address.toLowerCase())).size,
     ).toBe(confidentialAssets.length);

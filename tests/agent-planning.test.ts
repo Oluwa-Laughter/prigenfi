@@ -104,6 +104,26 @@ describe("agent plan boundary", () => {
     expect(result.executionAllowed).toBe(false);
   });
 
+  it("rejects historical non-product reference wrappers in confidential plans", () => {
+    const deprecatedReferenceWrappers = [
+      "0xe4FcF848739845BC81Dee1d5352cf3844F0a60C7", // cXAUt archived provenance only
+      "0xfCE5c7069c5525eF6c8C2b2E35A745bA20a2F7CC", // ctGBP archived provenance only
+      "0xaa5612FA27c927a0c7961f5AEFEE5ba3A0F9C891", // cBRON archived provenance only
+    ];
+    for (const tokenOut of deprecatedReferenceWrappers) {
+      const input = make();
+      const result = evaluateAgentResearchPlan(
+        { ...input, plan: { ...input.plan, steps: [{ ...step, tokenOut }] } },
+        now,
+      );
+      expect(result.acceptedAsResearch).toBe(false);
+      expect(result.steps[0].reasons).toContain(
+        "UNSUPPORTED_CONFIDENTIAL_OUTPUT",
+      );
+      expect(result.executionAllowed).toBe(false);
+    }
+  });
+
   it("rejects mismatched market scopes and over-allocation", () => {
     const input = make();
     const result = evaluateAgentResearchPlan(

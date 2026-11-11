@@ -12,7 +12,6 @@ import {
 import { injected } from "wagmi/connectors";
 import {
   Activity,
-  ArrowLeft,
   ArrowUpRight,
   Bot,
   ChartNoAxesCombined,
@@ -22,7 +21,6 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
-  ShieldCheck,
   LockKeyhole,
   SlidersHorizontal,
   X,
@@ -147,14 +145,23 @@ export function WorkspaceChrome({ children }: { children: ReactNode }) {
           />
         </div>
         <div className="ws-sidebar-bottom">
-          <div className="ws-protection-mark">
-            <ShieldCheck size={19} />
-            <span>Protected by your rules</span>
+          <div className="ws-agent-desk">
+            <div className="ws-agent-desk-icon">
+              <Bot size={20} aria-hidden="true" />
+            </div>
+            <p className="ws-agent-desk-eyebrow">YOUR RESEARCH DESK</p>
+            <strong>Put an agent to work.</strong>
+            <span>
+              Explore onchain markets with a research-only connection.
+            </span>
+            <Link
+              href="/agents/connect"
+              className="ws-agent-desk-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              Connect an agent <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
           </div>
-          <p>Sepolia preview · Automated trades are not enabled.</p>
-          <Link href="/" className="ws-back-link">
-            <ArrowLeft size={15} /> Public website
-          </Link>
         </div>
       </aside>
       {menuOpen && (

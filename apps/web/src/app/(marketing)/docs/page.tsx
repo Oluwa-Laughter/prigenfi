@@ -13,31 +13,47 @@ export default function Docs() {
           planning. Private trades, smart-account sessions and autonomous
           investments are not enabled.
         </p>
-        <h2>Connect an agent in three commands</h2>
+        <h2>Hosted MCP — no repo clone</h2>
+        <p>
+          PrigenFi has a hosted read-only research endpoint that operators can
+          enable after configuring persistent global rate limits. Connect an
+          existing AI host by URL, with no local server or dependencies. The
+          wallet-scoped remote endpoint uses a revocable, owner-issued research
+          key for network and market restrictions. Both features are optional
+          and disabled until securely configured for a deployment.
+        </p>
+        <p>
+          Open the <Link href="/agents/connect">connection desk</Link> for the
+          actual endpoint status, copyable Codex setup, Claude connector
+          instructions and three downloadable Agent Skills-standard files.
+        </p>
+        <pre className="code-panel">{`# Example only — use the actual enabled URL shown in your connection desk
+codex mcp add prigenfi-public --url https://YOUR_PRIGENFI_DOMAIN/api/mcp/public`}</pre>
+        <p>
+          The public MCP has five research/availability tools, never keys or
+          signing operations. The scoped endpoint requires an owner-approved
+          profile and a one-time access key. Public tools may contact DEX
+          Screener and disclose the searched public symbols or addresses.
+        </p>
+        <h2>Install a research skill directly</h2>
+        <p>
+          Pick an instruction-only workflow for onchain market diligence, DeFi
+          risk screening or confidentiality readiness from the{" "}
+          <Link href="/agents/connect">skill library</Link>. Download a plain
+          <code>SKILL.md</code> to your AI host's supported skills directory; no
+          repository cloning is needed. The public catalog is at
+          <a href="/skills/index.json"> /skills/index.json</a>.
+        </p>
+        <h2>Local source setup for maintainers</h2>
         <pre className="code-panel">
           {
             "pnpm install --frozen-lockfile\npnpm agent:connect --check\npnpm agent:connect --write"
           }
         </pre>
         <p>
-          Run these from your local PrigenFi checkout. The check starts the
-          research-only stdio server and independently negotiates an MCP
-          handshake. Local host configuration templates are created inside
-          ignored <code>.local/agent-connection</code>; your other MCP settings
-          are not overwritten.
-        </p>
-        <h2>Connect Codex or Claude Desktop</h2>
-        <pre className="code-panel">
-          {
-            "pnpm agent:connect --print codex\npnpm agent:connect --print claude"
-          }
-        </pre>
-        <p>
-          Add only the generated PrigenFi entry to your chosen host's
-          configuration, then verify its tools inside the host. Paths in those
-          entries are generated from the installed local checkout. Neither the
-          website nor a successful local check claims to have authenticated your
-          agent or granted permission to move funds.
+          Only maintainers developing PrigenFi from its repository need the
+          older stdio workflow. Generated host configuration stays in the
+          ignored <code>.local/agent-connection</code> folder.
         </p>
         <h2>What the connected host can do</h2>
         <ul>
