@@ -134,6 +134,7 @@ try {
       "research_scope_get",
       "research_market_search",
       "research_pair_lookup",
+      "research_market_integrity_check",
       "agent_execution_status",
     ].sort(),
   );
