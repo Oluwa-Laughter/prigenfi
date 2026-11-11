@@ -25,6 +25,7 @@ contract AgentVaultTest {
         vault = new AgentVault(address(this));
         token = new MockUSD();
         token.mint(address(vault), 1_000_000_000);
+        vault.setTokenDailyLimit(address(token), 200);
         vault.setPermission(AGENT, address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 1 days));
     }
 
@@ -38,6 +39,83 @@ contract AgentVaultTest {
         vm.prank(RECIPIENT);
         AgentVault created = AgentVault(factory.createVault());
         require(created.owner() == RECIPIENT);
+    }
+
+    function testAllAgentsShareOneTokenBudget() public {
+        address agentTwo = address(0xA2);
+        vault.setTokenDailyLimit(address(token), 150);
+        vault.setPermission(agentTwo, address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 1 days));
+        send(100, 0);
+        vm.prank(agentTwo);
+        vault.executeTransfer(address(token), RECIPIENT, 50, 0);
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        vm.prank(agentTwo);
+        vault.executeTransfer(address(token), RECIPIENT, 1, 1);
+        // Reauthorizing resets the per-agent window but cannot reset aggregate token spending.
+        vault.setPermission(AGENT, address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 1 days));
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        send(1, 1);
+        (uint128 daily, uint128 spent,) = vault.tokenBudgets(address(token));
+        require(daily == 150 && spent == 150);
+        require(vault.nonces(AGENT) == 1);
+        require(vault.nonces(agentTwo) == 1);
+        require(token.balanceOf(RECIPIENT) == 150);
+    }
+
+    function testUnsetBudgetAndOwnerLimitUpdatesNeverResetSpending() public {
+        vault.setTokenDailyLimit(address(token), 0);
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        send(1, 0);
+        vault.setTokenDailyLimit(address(token), 100);
+        send(100, 0);
+        vault.setTokenDailyLimit(address(token), 50);
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        send(1, 1);
+        vault.setTokenDailyLimit(address(token), 120);
+        send(20, 1);
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        send(1, 2);
+        require(token.balanceOf(RECIPIENT) == 120);
+        (uint128 daily, uint128 spent,) = vault.tokenBudgets(address(token));
+        require(daily == 120 && spent == 120);
+    }
+
+    function testIndependentTokenBudgetsAndNextDayReset() public {
+        MockUSD other = new MockUSD();
+        other.mint(address(vault), 200);
+        vault.setPermission(AGENT, address(other), RECIPIENT, 100, 200, uint64(block.timestamp + 2 days));
+        vm.expectRevert(AgentVault.PolicyDenied.selector);
+        vm.prank(AGENT);
+        vault.executeTransfer(address(other), RECIPIENT, 1, 0);
+        vault.setTokenDailyLimit(address(other), 25);
+        vm.prank(AGENT);
+        vault.executeTransfer(address(other), RECIPIENT, 25, 0);
+        send(100, 1);
+        require(other.balanceOf(RECIPIENT) == 25 && token.balanceOf(RECIPIENT) == 100);
+        vm.warp(block.timestamp + 1 days);
+        vault.setPermission(AGENT, address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 1 days));
+        send(100, 2);
+        (, uint128 spent, uint64 day) = vault.tokenBudgets(address(token));
+        require(spent == 100 && day == uint64(block.timestamp / 1 days));
+    }
+
+    function testFuzzMultiAgentCannotExceedSharedTokenLimit(uint128 amountA, uint128 amountB) public {
+        uint128 a = uint128(uint256(amountA) % 101);
+        uint128 b = uint128(uint256(amountB) % 101);
+        address agentTwo = address(0xA2);
+        vault.setTokenDailyLimit(address(token), 125);
+        vault.setPermission(agentTwo, address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 1 days));
+        if (a > 0) send(a, 0);
+        if (b > 0) {
+            if (uint256(a) + b > 125) {
+                vm.expectRevert(AgentVault.PolicyDenied.selector);
+            }
+            vm.prank(agentTwo);
+            vault.executeTransfer(address(token), RECIPIENT, b, 0);
+        }
+        (uint128 limit, uint128 spent,) = vault.tokenBudgets(address(token));
+        require(limit == 125 && spent <= limit);
+        require(token.balanceOf(RECIPIENT) == spent);
     }
 
     function testDailyCapAndReplay() public {
@@ -80,6 +158,11 @@ contract AgentVaultTest {
         vm.expectRevert(AgentVault.Unauthorized.selector);
         vm.prank(AGENT);
         vault.withdraw(address(token), AGENT, 1);
+        vm.expectRevert(AgentVault.Unauthorized.selector);
+        vm.prank(AGENT);
+        vault.setTokenDailyLimit(address(token), 1);
+        vm.expectRevert(AgentVault.InvalidPermission.selector);
+        vault.setTokenDailyLimit(address(0), 100);
         vm.expectRevert(AgentVault.Unauthorized.selector);
         vm.prank(AGENT);
         vault.setPaused(false);

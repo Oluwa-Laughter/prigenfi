@@ -30,6 +30,7 @@ const snapshot: PolicySnapshot = {
   paused: false,
   nonce: 0n,
   balance: 1000n,
+  tokenBudget: { dailyLimit: 300n, spent: 100n, day: 11n },
   timestamp: 1000000n,
   blockNumber: 1n,
   permission: {
@@ -57,6 +58,8 @@ describe("policy boundary", () => {
     "chain",
     "recipient",
     "daily",
+    "global-budget",
+    "budget-unset",
     "deadline",
     "balance",
     "scope",
@@ -70,6 +73,8 @@ describe("policy boundary", () => {
     if (kind === "chain") s.chainId = 1;
     if (kind === "recipient") i.recipient = token;
     if (kind === "daily") s.permission.spent = 200n;
+    if (kind === "global-budget") s.tokenBudget.spent = 250n;
+    if (kind === "budget-unset") s.tokenBudget.dailyLimit = 0n;
     if (kind === "deadline") i.deadline = 1000000;
     if (kind === "balance") s.balance = 1n;
     if (kind === "scope") i.vault = token;
@@ -85,6 +90,16 @@ describe("policy boundary", () => {
         permission: { ...snapshot.permission, day: 10n, spent: 200n },
       }).allowed,
     ).toBe(true);
+  });
+  it("cannot bypass the shared cap by resetting an agent permission", () => {
+    const resetAgent = structuredClone(snapshot);
+    resetAgent.permission.spent = 0n;
+    resetAgent.tokenBudget.spent = 300n;
+    expect(evaluateTransfer(intent, resetAgent).reasons).toContain(
+      "TOKEN_DAILY_BUDGET",
+    );
+    resetAgent.tokenBudget.day = 10n;
+    expect(evaluateTransfer(intent, resetAgent).allowed).toBe(true);
   });
   it("rejects arbitrary calls and mainnet", () => {
     expect(() => transferSchema.parse({ ...intent, chainId: 1 })).toThrow();

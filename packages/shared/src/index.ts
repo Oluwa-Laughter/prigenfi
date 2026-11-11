@@ -46,6 +46,7 @@ export type PolicySnapshot = {
   paused: boolean;
   nonce: bigint;
   permission: Permission;
+  tokenBudget: { dailyLimit: bigint; spent: bigint; day: bigint };
   timestamp: bigint;
   blockNumber: bigint;
   balance: bigint;
@@ -185,6 +186,13 @@ export function evaluateTransfer(
   const spent = p.day === s.timestamp / 86400n ? p.spent : 0n;
   if (amount > p.perOperation || spent + amount > p.dailyLimit)
     reasons.push("SPENDING_LIMIT");
+  const globalSpent =
+    s.tokenBudget.day === s.timestamp / 86400n ? s.tokenBudget.spent : 0n;
+  if (
+    s.tokenBudget.dailyLimit === 0n ||
+    globalSpent + amount > s.tokenBudget.dailyLimit
+  )
+    reasons.push("TOKEN_DAILY_BUDGET");
   if (amount > s.balance) reasons.push("INSUFFICIENT_BALANCE");
   if (
     BigInt(intent.deadline) <= s.timestamp ||

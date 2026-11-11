@@ -174,3 +174,16 @@ The next GitHub verification passed clean artifact generation, the production bu
 ## November 11, 2026 — pause-only guardian hardening
 
 Added a separate emergency guardian to the non-custodial UUPS research policy; the guardian can only pause research screening. The owner alone can resume, replace the guardian or change governance. Ownership transfer clears the guardian. ERC-7201 storage is append-only; upgrade tests preserve the guardian assignment. No funds, signing, agent execution, or public deployments were enabled. See `docs/SECURITY_AND_UPGRADES.md`.
+
+## November 11, 2026 — shared vault token budget across multiple agents
+
+Introduced an on-chain, fail-closed, **aggregate daily outflow cap per token across all agents** in the immutable testnet-only `AgentVault`, keeping exact uint128 token base units, nonce and existing per-agent/recipient scopes. Cap changes preserve usage for the current UTC day, so agent reauthorization and switching agents cannot reset the shared budget. Zero disables that token's agent transfers. Updated fixed-block SDK policy reads/simulation, generated contract artifacts, owner vault UI, isolated Anvil deployment and contract/browser tests. Removed prefilled financial amounts in the vault owner controls. This is a public-token development control, not encrypted trading or a mainnet capital policy. Existing older vault bytecode is not automatically upgraded. See `docs/SECURITY_AND_UPGRADES.md`.
+
+### Verification for aggregate-budget milestone (local)
+
+- Foundry: **27/27** contract tests, including two-agent aggregate exhaustion, adversarial transfer rollback, fuzz constraints and 128 invariant runs / 8192 calls. `forge fmt --check` passed.
+- Vitest with a freshly deployed disposable Anvil vault and `LOCAL_INTEGRATION=1`: **72/72**, no skipped tests. The SDK verified the regenerated vault bytecode.
+- Chromium Playwright against the rebuilt production app and the freshly redeployed local vault: **8/8**; exercised owner-set shared cap 0 → blocked simulation → restored cap → passing simulation. DOM/layout tests use explicitly synthetic market data only inside isolated browser fixtures; no fake market responses in app code.
+- Workspace TypeScript typechecks, Biome lint, Prettier formatting and Next production build passed.
+- `python3 scripts/security-scan.py`: 102 Slither detectors across the three scanned development contracts; **only two previously triaged low-severity timestamp findings** for `AgentVault` and its factory import, zero for `MockUSD`. No untriaged findings in the scan's current policy. This is not a comprehensive audit of `AgentSafetyPolicy` or the entire app.
+- **No public deployment, private swap, mainnet authorization, or user-funded transaction was performed.** GitHub CI for this commit must be independently verified after push.

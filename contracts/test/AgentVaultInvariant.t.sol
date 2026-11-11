@@ -32,6 +32,7 @@ contract AgentVaultInvariantTest {
         token = new MockUSD();
         handler = new TransferHandler(vault, token, RECIPIENT);
         token.mint(address(vault), 1000);
+        vault.setTokenDailyLimit(address(token), 150);
         vault.setPermission(address(handler), address(token), RECIPIENT, 100, 200, uint64(block.timestamp + 30 days));
         targets.push(address(handler));
     }
@@ -41,8 +42,8 @@ contract AgentVaultInvariantTest {
     }
 
     function invariantCapitalBoundary() public view {
-        require(token.balanceOf(RECIPIENT) <= 200, "daily cap bypass");
-        require(token.balanceOf(address(vault)) >= 800, "principal boundary");
+        require(token.balanceOf(RECIPIENT) <= 150, "shared daily cap bypass");
+        require(token.balanceOf(address(vault)) >= 850, "principal boundary");
         require(token.balanceOf(address(vault)) + token.balanceOf(RECIPIENT) == 1000, "capital not conserved");
     }
 }

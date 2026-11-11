@@ -161,9 +161,10 @@ function Workspace({
   const [agent, setAgent] = useState("");
   const [token, setToken] = useState("");
   const [recipient, setRecipient] = useState("");
-  const [perOperation, setPerOperation] = useState("10");
-  const [dailyLimit, setDailyLimit] = useState("20");
-  const [amount, setAmount] = useState("1");
+  const [perOperation, setPerOperation] = useState("");
+  const [dailyLimit, setDailyLimit] = useState("");
+  const [assetDailyLimit, setAssetDailyLimit] = useState("");
+  const [amount, setAmount] = useState("");
   const [snapshot, setSnapshot] = useState<PolicySnapshot>();
   const [decimals, setDecimals] = useState<number>();
   const [proposal, setProposal] = useState<string>();
@@ -396,7 +397,7 @@ function Workspace({
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="daily-cap">
-                      UTC daily cap (tokens)
+                      Per-agent UTC daily cap (tokens)
                     </FieldLabel>
                     <Input
                       id="daily-cap"
@@ -405,6 +406,65 @@ function Workspace({
                       onChange={(e) => setDailyLimit(e.target.value)}
                     />
                   </Field>
+                </div>
+                <div className="rounded-xl border p-4 space-y-3">
+                  <p className="font-medium">
+                    Shared token budget across all agents
+                  </p>
+                  <p className="muted text-sm">
+                    The vault blocks every agent transfer for this token until
+                    the owner establishes an aggregate daily cap. Changing an
+                    agent permission cannot reset this shared cap. Enter 0 to
+                    halt all agent transfers of this token.
+                  </p>
+                  <Field>
+                    <FieldLabel htmlFor="asset-global-daily-cap">
+                      Vault-wide UTC daily cap (tokens)
+                    </FieldLabel>
+                    <Input
+                      id="asset-global-daily-cap"
+                      inputMode="decimal"
+                      placeholder="Enter an asset-wide cap or 0 to halt"
+                      value={assetDailyLimit}
+                      onChange={(e) => setAssetDailyLimit(e.target.value)}
+                    />
+                  </Field>
+                  <Button
+                    variant="outline"
+                    disabled={
+                      busy ||
+                      !isOwner ||
+                      !vault ||
+                      !isAddress(token) ||
+                      assetDailyLimit.trim() === ""
+                    }
+                    onClick={() =>
+                      run(async () => {
+                        if (!wallet || !client || !vault) throw new Error();
+                        const d = await client.readContract({
+                          address: getAddress(token),
+                          abi: erc20Abi,
+                          functionName: "decimals",
+                        });
+                        const limit =
+                          assetDailyLimit === "0"
+                            ? 0n
+                            : exactUnits(assetDailyLimit, d);
+                        await mined(
+                          await wallet.writeContract({
+                            address: vault,
+                            abi: agentVaultAbi,
+                            functionName: "setTokenDailyLimit",
+                            args: [getAddress(token), limit],
+                          }),
+                          "Shared token budget updated",
+                        );
+                        if (validScope) await refresh();
+                      })
+                    }
+                  >
+                    Set shared token budget
+                  </Button>
                 </div>
                 <Button
                   variant="outline"
@@ -463,11 +523,13 @@ function Workspace({
                   >
                     {snapshot.paused
                       ? "Paused"
-                      : !snapshot.permission.active
-                        ? "Revoked / not authorized"
-                        : snapshot.permission.expiresAt <= snapshot.timestamp
-                          ? "Expired"
-                          : "Active"}
+                      : snapshot.tokenBudget.dailyLimit === 0n
+                        ? "Token budget not enabled"
+                        : !snapshot.permission.active
+                          ? "Revoked / not authorized"
+                          : snapshot.permission.expiresAt <= snapshot.timestamp
+                            ? "Expired"
+                            : "Active"}
                   </Badge>
                   <p className="muted">
                     Public vault balance:{" "}
@@ -482,6 +544,26 @@ function Workspace({
                   </p>
                   <p className="mono">
                     Recipient: {snapshot.permission.recipient}
+                  </p>
+                  <p className="muted">
+                    Shared asset budget (all agents):{" "}
+                    {decimals === undefined
+                      ? "—"
+                      : formatUnits(
+                          snapshot.tokenBudget.day ===
+                            snapshot.timestamp / 86400n
+                            ? snapshot.tokenBudget.spent
+                            : 0n,
+                          decimals,
+                        )}{" "}
+                    /{" "}
+                    {decimals === undefined
+                      ? "—"
+                      : formatUnits(
+                          snapshot.tokenBudget.dailyLimit,
+                          decimals,
+                        )}{" "}
+                    tokens today. A zero cap blocks transfers.
                   </p>
                   <p className="muted">
                     Spent:{" "}

@@ -70,6 +70,15 @@ await receipt(
     account: owner,
     address: vault,
     abi: agentVaultAbi,
+    functionName: "setTokenDailyLimit",
+    args: [token, 20_000_000n],
+  }),
+);
+await receipt(
+  await wallet.writeContract({
+    account: owner,
+    address: vault,
+    abi: agentVaultAbi,
     functionName: "setPermission",
     args: [agent, token, recipient, 10_000_000n, 20_000_000n, now + 86400n],
   }),

@@ -64,35 +64,44 @@ export class PrigenFiClient {
       throw new Error("RPC_CHAIN_MISMATCH");
     const block = await this.client.getBlock();
     await verifyVault(this.client, c.vault, block.number);
-    const [permission, paused, nonce, balance] = await Promise.all([
-      this.client.readContract({
-        address: c.vault,
-        abi: agentVaultAbi,
-        functionName: "permissions",
-        args: [c.agent, c.token],
-        blockNumber: block.number,
-      }),
-      this.client.readContract({
-        address: c.vault,
-        abi: agentVaultAbi,
-        functionName: "paused",
-        blockNumber: block.number,
-      }),
-      this.client.readContract({
-        address: c.vault,
-        abi: agentVaultAbi,
-        functionName: "nonces",
-        args: [c.agent],
-        blockNumber: block.number,
-      }),
-      this.client.readContract({
-        address: c.token,
-        abi: erc20Abi,
-        functionName: "balanceOf",
-        args: [c.vault],
-        blockNumber: block.number,
-      }),
-    ]);
+    const [permission, paused, nonce, balance, tokenBudget] = await Promise.all(
+      [
+        this.client.readContract({
+          address: c.vault,
+          abi: agentVaultAbi,
+          functionName: "permissions",
+          args: [c.agent, c.token],
+          blockNumber: block.number,
+        }),
+        this.client.readContract({
+          address: c.vault,
+          abi: agentVaultAbi,
+          functionName: "paused",
+          blockNumber: block.number,
+        }),
+        this.client.readContract({
+          address: c.vault,
+          abi: agentVaultAbi,
+          functionName: "nonces",
+          args: [c.agent],
+          blockNumber: block.number,
+        }),
+        this.client.readContract({
+          address: c.token,
+          abi: erc20Abi,
+          functionName: "balanceOf",
+          args: [c.vault],
+          blockNumber: block.number,
+        }),
+        this.client.readContract({
+          address: c.vault,
+          abi: agentVaultAbi,
+          functionName: "tokenBudgets",
+          args: [c.token],
+          blockNumber: block.number,
+        }),
+      ],
+    );
     return {
       chainId: c.chainId,
       vault: c.vault,
@@ -103,6 +112,11 @@ export class PrigenFiClient {
       balance,
       timestamp: block.timestamp,
       blockNumber: block.number,
+      tokenBudget: {
+        dailyLimit: tokenBudget[0],
+        spent: tokenBudget[1],
+        day: tokenBudget[2],
+      },
       permission: {
         recipient: permission[0],
         perOperation: permission[1],

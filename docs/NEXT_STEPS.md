@@ -78,3 +78,10 @@ The next financial-engineering gates are independent on-chain token bytecode/own
 ## After the research emergency guardian — November 11, 2026
 
 Before any financial authority, validate actual V1-to-V2 ERC-7201 storage layouts with independent upgrade tooling, provision audited multisig/timelock and incident monitoring, and enforce on-chain smart-account transaction policy separately from research screening. Add OAuth 2.1 audience-bound remote MCP tokens and ERC-1271 signer-change invalidation before opening hosted access. Private trades remain blocked pending an independently reproduced FHE-compatible venue lifecycle.
+
+## After aggregate token-budget enforcement — November 11, 2026
+
+1. Replace the development public-transfer vault with a separately reviewed account-abstraction and ERC-7579 policy module that enforces signed, owner-acknowledged venue/selector/token limits on chain and cannot be weakened by model prompts or off-chain approvals. Do not silently change immutable existing vaults.
+2. Verify a real Sepolia encrypted trade and confidential settlement with independent source/interface/ACL/quote/finality evidence before enabling any private agent execution. The public vault transfer is **not** a confidential swap.
+3. Introduce multi-asset fiat-equivalent risk budgets only after independently trusted, stale/reorg-aware price/oracle sources, token decimals, manipulation controls and loss accounting exist; never treat the shared base-unit cap as cross-asset exposure.
+4. Complete ERC-1271 signer-change session invalidation, OAuth 2.1 remote MCP consent/audience validation, durable privacy-safe job records and independent protocol review.

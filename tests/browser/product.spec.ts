@@ -327,10 +327,24 @@ test("wallet controls, simulation, pause and revoke on actual local vault", asyn
   await vault.getByLabel("Agent wallet address").fill(d.agent);
   await vault.getByLabel("Public ERC-20 token address").fill(d.token);
   await vault.getByLabel("Only allowed recipient").fill(d.recipient);
+  await vault.getByLabel("Per-operation cap (tokens)").fill("10");
+  await vault.getByLabel("Per-agent UTC daily cap (tokens)").fill("20");
+  await vault.getByLabel("Amount (tokens)").fill("1");
   await vault.getByRole("button", { name: "Read on-chain policy" }).click();
   await expect(
     vault.getByText("Public vault balance: 100 tokens"),
   ).toBeVisible();
+  await expect(
+    vault.getByText("Shared asset budget (all agents):", { exact: false }),
+  ).toBeVisible();
+  await vault.getByLabel("Vault-wide UTC daily cap (tokens)").fill("0");
+  await vault.getByRole("button", { name: "Set shared token budget" }).click();
+  await vault.getByRole("button", { name: "Simulate proposal" }).click();
+  await expect(vault.locator("pre[aria-live]")).toContainText(
+    "TOKEN_DAILY_BUDGET",
+  );
+  await vault.getByLabel("Vault-wide UTC daily cap (tokens)").fill("20");
+  await vault.getByRole("button", { name: "Set shared token budget" }).click();
   await vault.getByRole("button", { name: "Simulate proposal" }).click();
   await expect(vault.locator("pre[aria-live]")).toContainText(
     '"simulated":true',

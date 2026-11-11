@@ -20,10 +20,19 @@ contract AgentVault is ReentrancyGuard {
         bool active;
     }
 
+    /// @notice Shared per-token budget for ALL agents, including across reauthorizations.
+    /// @dev A zero limit denies agent transfers until owner explicitly sets a budget.
+    struct TokenBudget {
+        uint128 dailyLimit;
+        uint128 spent;
+        uint64 day;
+    }
+
     address public immutable owner;
     bool public paused;
     mapping(address agent => mapping(address token => Permission)) public permissions;
     mapping(address agent => uint256) public nonces;
+    mapping(address token => TokenBudget) public tokenBudgets;
 
     error Unauthorized();
     error InvalidPermission();
@@ -39,6 +48,7 @@ contract AgentVault is ReentrancyGuard {
     );
     event Revoked(address indexed agent, address indexed token);
     event PauseChanged(bool paused);
+    event TokenDailyLimitChanged(address indexed token, uint128 dailyLimit);
     event Executed(
         address indexed agent, address indexed token, address indexed recipient, uint256 amount, uint256 nonce
     );
@@ -74,6 +84,14 @@ contract AgentVault is ReentrancyGuard {
         emit PermissionSet(agent, token, recipient, perOperation, dailyLimit, expiresAt);
     }
 
+    /// @notice Aggregate agent outflow in token base units. Owner withdrawals are not agent spending.
+    /// @dev Lowering or raising the cap does NOT reset current-day usage. Set zero to halt this token.
+    function setTokenDailyLimit(address token, uint128 limit) external onlyOwner {
+        if (token.code.length == 0) revert InvalidPermission();
+        tokenBudgets[token].dailyLimit = limit;
+        emit TokenDailyLimitChanged(token, limit);
+    }
+
     function revoke(address agent, address token) external onlyOwner {
         permissions[agent][token].active = false;
         emit Revoked(agent, token);
@@ -99,6 +117,15 @@ contract AgentVault is ReentrancyGuard {
             p.spent = 0;
         }
         if (uint256(p.spent) + amount > p.dailyLimit) revert PolicyDenied();
+        TokenBudget storage globalBudget = tokenBudgets[token];
+        if (globalBudget.day != day) {
+            globalBudget.day = day;
+            globalBudget.spent = 0;
+        }
+        if (globalBudget.dailyLimit == 0 || uint256(globalBudget.spent) + amount > globalBudget.dailyLimit) {
+            revert PolicyDenied();
+        }
+        globalBudget.spent += amount;
         p.spent += amount;
         nonces[msg.sender] = nonce + 1;
         // Verify actual vault debit, rejecting fee-on-top and rebasing behavior that exceeds the cap.

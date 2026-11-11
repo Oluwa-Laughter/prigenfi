@@ -65,12 +65,15 @@ contract AdversarialTokenTest {
         AgentVault vault = new AgentVault(address(this));
         FeeOnTop token = new FeeOnTop();
         token.mint(address(vault), 1000);
+        vault.setTokenDailyLimit(address(token), 200);
         vault.setPermission(AGENT, address(token), address(0xB0B), 100, 200, uint64(block.timestamp + 1 days));
         vm.expectRevert();
         vm.prank(AGENT);
         vault.executeTransfer(address(token), address(0xB0B), 100, 0);
         require(token.balanceOf(address(vault)) == 1000);
         require(vault.nonces(AGENT) == 0);
+        (, uint128 spent,) = vault.tokenBudgets(address(token));
+        require(spent == 0);
     }
 
     function testCallbackReentrancyBlocked() public {
@@ -78,6 +81,7 @@ contract AdversarialTokenTest {
         CallbackToken token = new CallbackToken();
         token.setVault(vault);
         token.mint(address(vault), 1000);
+        vault.setTokenDailyLimit(address(token), 200);
         vault.setPermission(AGENT, address(token), address(0xB0B), 100, 200, uint64(block.timestamp + 1 days));
         vault.setPermission(address(token), address(token), address(0xB0B), 100, 200, uint64(block.timestamp + 1 days));
         vm.prank(AGENT);
@@ -91,10 +95,13 @@ contract AdversarialTokenTest {
         AgentVault vault = new AgentVault(address(this));
         FalseReturnToken token = new FalseReturnToken();
         token.mint(address(vault), 1000);
+        vault.setTokenDailyLimit(address(token), 200);
         vault.setPermission(AGENT, address(token), address(0xB0B), 100, 200, uint64(block.timestamp + 1 days));
         vm.expectRevert();
         vm.prank(AGENT);
         vault.executeTransfer(address(token), address(0xB0B), 100, 0);
         require(vault.nonces(AGENT) == 0);
+        (, uint128 spent,) = vault.tokenBudgets(address(token));
+        require(spent == 0);
     }
 }
