@@ -19,6 +19,7 @@ const expected = [
   "agent_market_research_check",
   "market_search",
   "market_pair_lookup",
+  "market_integrity_assess",
   "agent_execution_status",
 ].sort();
 

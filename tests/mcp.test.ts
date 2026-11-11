@@ -12,6 +12,7 @@ const names = [
   "agent_market_research_check",
   "market_search",
   "market_pair_lookup",
+  "market_integrity_assess",
 ];
 it("external stdio client discovers tools and reads permitted metadata", async () => {
   const transport = new StdioClientTransport({

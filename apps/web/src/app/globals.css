@@ -3504,3 +3504,66 @@ textarea:focus-visible {
   font-size: 11px;
   line-height: 1.6;
 }
+
+/* Per-pool deterministic market risk evidence, not investment advice. */
+.market-integrity {
+  position: relative;
+  min-width: 130px;
+  font-size: 12px;
+}
+.market-integrity summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  list-style: none;
+  border: 1px solid #d7cce9;
+  border-radius: 18px;
+  padding: 7px 10px;
+  color: #695886;
+  background: #f7f2fc;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 750;
+}
+.market-integrity summary::-webkit-details-marker {
+  display: none;
+}
+.market-integrity-heightened-risk summary {
+  color: #9c5928;
+  background: #fff5e7;
+  border-color: #ebd5ab;
+}
+.market-integrity-insufficient-evidence summary {
+  color: #99505b;
+  background: #fff2f3;
+  border-color: #e9c7cd;
+}
+.market-integrity-detail {
+  min-width: 220px;
+  max-width: 320px;
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+  margin-top: 8px;
+  border: 1px solid #e3dbec;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 20px #29203310;
+  white-space: normal;
+  color: #6f6580;
+}
+.market-integrity-detail strong {
+  font-size: 12px;
+  color: #4a3d60;
+}
+.market-integrity-detail ul {
+  padding-left: 17px;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 11px;
+}
+.market-integrity-detail small {
+  font-size: 10px;
+  line-height: 1.5;
+}

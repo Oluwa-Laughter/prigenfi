@@ -9,6 +9,7 @@
     "./agent-planning": "./src/agent-planning.ts",
     "./swap-venue": "./src/swap-venue.ts",
     "./market-research": "./src/market-research.ts",
+    "./market-integrity": "./src/market-integrity.ts",
     "./agent-research-scope": "./src/agent-research-scope.ts"
   },
   "scripts": {

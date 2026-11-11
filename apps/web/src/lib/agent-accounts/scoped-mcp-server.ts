@@ -8,6 +8,7 @@ import {
   searchPublicMarkets,
   inspectPublicMarketPair,
 } from "@prigenfi/shared/market-research";
+import { assessMarketIntegrity } from "@prigenfi/shared/market-integrity";
 import type { RemoteResearchScope } from "./mcp";
 
 const market = z.enum(marketDomains);
@@ -108,6 +109,32 @@ export function createProfileScopedMcp(scope: RemoteResearchScope) {
       try {
         return respond(
           await inspectPublicMarketPair({
+            chain: input.chain,
+            pairAddress: input.pairAddress,
+          }),
+        );
+      } catch {
+        return unexpected();
+      }
+    },
+  );
+  server.registerTool(
+    "research_market_integrity_check",
+    {
+      description:
+        "Screen one real public pair against deterministic conservative data-quality and market-integrity limits. BOTH the chain and market category must match the owner's stored profile. Never a safe token certificate, quote, profit signal or trading authorization.",
+      inputSchema: researchPair,
+      annotations: { ...annotations, openWorldHint: true },
+    },
+    async (input) => {
+      if (!allowed(input.chain, input.market)) return denied();
+      try {
+        const observation = await inspectPublicMarketPair({
+          chain: input.chain,
+          pairAddress: input.pairAddress,
+        });
+        return respond(
+          assessMarketIntegrity(observation.pair, observation.fetchedAt, {
             chain: input.chain,
             pairAddress: input.pairAddress,
           }),

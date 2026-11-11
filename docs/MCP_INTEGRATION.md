@@ -26,7 +26,7 @@ pnpm mcp:dev  # developer-only local Anvil vault; NOT the normal agent server
 | `market_pair_lookup`            | Exact public pool lookup on a selected chain, not an executable quote                                                                    |
 | `agent_execution_status`        | Explicit `NO_VERIFIED_TRADING_VENUE` / `privateExecution:false` response; never fake a fill                                              |
 
-The standard default MCP server advertises these **eight tools** and one prompt, `interpret_private_defi_goal`. The prompt is for a **connected AI host's own model** to interpret a voluntarily shared user goal. It does not load an LLM or a model key within PrigenFi. The host can see the user's goal, and public market requests can expose token symbols/addresses to DEX Screener. Do not transmit confidential user data to an untrusted host or public provider.
+The standard default MCP server advertises these **nine tools** and one prompt, `interpret_private_defi_goal`. The prompt is for a **connected AI host's own model** to interpret a voluntarily shared user goal. It does not load an LLM or a model key within PrigenFi. The host can see the user's goal, and public market requests can expose token symbols/addresses to DEX Screener. Do not transmit confidential user data to an untrusted host or public provider.
 
 Only when explicitly configured with a **local Anvil chain-31337 vault client** does the server additionally register the following developer-only tools:
 
@@ -43,7 +43,7 @@ Only when explicitly configured with a **local Anvil chain-31337 vault client** 
 
 All tool inputs have strict Zod schemas. Positive uint128 amounts and uint256 nonces are decimal strings. Address/chain scope cannot be changed through proposals. Idempotency keys are UUIDs. Max 100 proposals per connection; restart loses them. Errors do not contain RPC credentials, private values or raw exception messages. No signing, private decryption, arbitrary calls, raw execution or operator tools exist.
 
-`tests/mcp.test.ts` launches an external SDK client, discovers eight default tools and the host-interpretation prompt, checks validated public scope, metadata and denied execution. In explicit Anvil mode it verifies the developer tools and on-chain vault simulation without claiming trading. With LOCAL_INTEGRATION=1 it reads actual Anvil policy, simulates and proposes an allowed mock transfer, rejects over-budget proposals and reads status. No LLM or fabricated market data is needed.
+`tests/mcp.test.ts` launches an external SDK client, discovers nine default tools and the host-interpretation prompt, checks validated public scope, metadata and denied execution. In explicit Anvil mode it verifies the developer tools and on-chain vault simulation without claiming trading. With LOCAL_INTEGRATION=1 it reads actual Anvil policy, simulates and proposes an allowed mock transfer, rejects over-budget proposals and reads status. No LLM or fabricated market data is needed.
 
 Remote Streamable HTTP and OAuth are not implemented. Do not expose this process through an HTTP shim. Future remote work must validate issuer, audience, resource indicator, expiry and scopes; prevent token passthrough; bind user/agent/tenant on the server; and keep OAuth authorization separate from on-chain spending permissions. External metadata/tool text must be treated as untrusted data and cannot populate execution calldata or expand policy.
 

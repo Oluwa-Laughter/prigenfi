@@ -11,7 +11,7 @@ pnpm install --frozen-lockfile
 pnpm agent:connect --check
 ```
 
-The checker launches the research-only stdio server through Node and the pinned local `tsx` package, negotiates a real MCP handshake, lists eight expected public research/availability tools and the `interpret_private_defi_goal` prompt, and reads the explicit execution-denied status. It **does not** connect to an already running AI host, register a wallet, authenticate a user, or persist a trading session. It strips wallet/vault environment settings before launching the server, and its success output explicitly states those limitations.
+The checker launches the research-only stdio server through Node and the pinned local `tsx` package, negotiates a real MCP handshake, lists nine expected public research/availability tools and the `interpret_private_defi_goal` prompt, and reads the explicit execution-denied status. It **does not** connect to an already running AI host, register a wallet, authenticate a user, or persist a trading session. It strips wallet/vault environment settings before launching the server, and its success output explicitly states those limitations.
 
 To generate absolute-path entries for the current checkout:
 

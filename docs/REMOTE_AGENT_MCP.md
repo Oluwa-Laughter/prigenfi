@@ -2,7 +2,7 @@
 
 PrigenFi supports two **different** MCP connections:
 
-- **Existing local stdio MCP** (`pnpm mcp`): runs on a developer's device, uses the eight general public-data research/availability tools, does not require wallet login, and **never** grants capital permissions. Codex already supports this integration. See [AGENT_CONNECTION.md](AGENT_CONNECTION.md).
+- **Existing local stdio MCP** (`pnpm mcp`): runs on a developer's device, uses the nine general public-data research/availability tools, does not require wallet login, and **never** grants capital permissions. Codex already supports this integration. See [AGENT_CONNECTION.md](AGENT_CONNECTION.md).
 - **Wallet-scoped Streamable HTTP MCP** (`POST /api/mcp`): opt-in, server-side access for an agent profile created and owned through authenticated PrigenFi wallet sign-in. Each request is reauthorized from PostgreSQL and the resulting tools enforce its saved network and market limits. **This is a service-token developer preview, NOT an OAuth 2.1 implementation.** No public production service should be enabled without dedicated operator review, HTTPS, monitored rate limits and proper OAuth authorization infrastructure.
 
 ## Operator provisioning
@@ -41,7 +41,7 @@ Do not paste a bearer token into an LLM prompt, a screenshot, a support message,
 
 ## Strict scope and privacy
 
-- Token scope comes from a real owner-authenticated database profile, never a client-supplied text instruction. The HTTP server uses **four read-only tools** and one host-facing prompt. Every market lookup requires both an allowed chain and an allowed research category; a model cannot escalate its own permissions by changing input JSON or by writing a prompt. All live provider observations remain **PUBLIC**, sourced and time-stamped.
+- Token scope comes from a real owner-authenticated database profile, never a client-supplied text instruction. The HTTP server uses **five read-only tools** and one host-facing prompt. Every market lookup requires both an allowed chain and an allowed research category; a model cannot escalate its own permissions by changing input JSON or by writing a prompt. All live provider observations remain **PUBLIC**, sourced and time-stamped.
 - The token is a random 256-bit credential, stored as a SHA-256 hash only. Each HTTP call rechecks token expiry/revocation, parent-profile expiry/revocation, the configured testnet chain and an atomic **30-request/minute** limit. Key issuance is capped at five per profile per hour and serializes rotations in the database.
 - The system never returns confidential balances, private strategy text, seed phrases, signing keys or smart-account spending rights. It does **not** submit swaps, execute investments, decrypt ciphertext, trade publicly as a privacy fallback, generate synthetic performance metrics or promise profits.
 - Research network permissions (e.g., Base/Arbitrum) are **not** claims of FHE trading support on those chains. Zama-compatible encrypted settlement for each token/venue/chain still needs independent verification. A valid MCP token does not prove that the wallet owner has granted a value-moving session key.

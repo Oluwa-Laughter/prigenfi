@@ -18,7 +18,7 @@ The user can select real public market research across Ethereum, Base, Arbitrum,
 
 ## Local agent onboarding, not wallet authorization — November 9, 2026
 
-The workspace `/agents/connect` and developer `/docs` give users real steps to launch a **read-only local MCP server** with their existing agent host. Codex and Claude Desktop configuration templates are generated for the actual local Node and repository paths, and the connection CLI independently tests an MCP handshake, eight tool names, the AI-host interpretation prompt and the execution-disabled state. This is not a signed agent registration or a web/browser-detectable persistent connection. Local Anvil test vault tools are isolated in a separate developer-only start command. No screenshots or made-up agent profits are produced.
+The workspace `/agents/connect` and developer `/docs` give users real steps to launch a **read-only local MCP server** with their existing agent host. Codex and Claude Desktop configuration templates are generated for the actual local Node and repository paths, and the connection CLI independently tests an MCP handshake, nine tool names, the AI-host interpretation prompt and the execution-disabled state. This is not a signed agent registration or a web/browser-detectable persistent connection. Local Anvil test vault tools are isolated in a separate developer-only start command. No screenshots or made-up agent profits are produced.
 
 ## Verified wallet identity and research profile controls — November 11, 2026
 

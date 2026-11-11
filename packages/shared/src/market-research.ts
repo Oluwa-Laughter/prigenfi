@@ -50,6 +50,7 @@ const pairSchema = z
     quoteToken: tokenSchema,
     priceUsd: z.string().nullish(),
     priceChange: z.object({ h24: z.number().optional() }).nullish(),
+    pairCreatedAt: z.number().optional().nullable(),
     liquidity: z.object({ usd: z.number().optional() }).nullish(),
     volume: z.object({ h24: z.number().optional() }).nullish(),
   })
@@ -68,6 +69,7 @@ export type MarketPair = {
   change24h: number | null;
   liquidityUsd: number | null;
   volume24hUsd: number | null;
+  pairCreatedAtMs: number | null;
 };
 export type MarketFeed = {
   source: "DEX Screener";
@@ -94,9 +96,55 @@ function validPrice(value: string | null | undefined) {
   return Number.isFinite(number) && number > 0 ? value : null;
 }
 
+function cleanProviderLabel(input: string, max: number) {
+  const str = input;
+  return str.length <= max && /^[A-Za-z0-9][A-Za-z0-9._+/-]*$/.test(str)
+    ? str
+    : "unverified";
+}
+function cleanProviderName(input: string, max: number) {
+  const str = input;
+  return str.length <= max && /^[A-Za-z0-9][A-Za-z0-9 ._+()/-]*$/.test(str)
+    ? str
+    : "Unverified token";
+}
+/** Read a bounded provider response. Production fetch has a ReadableStream;
+ * allow the json-only test adapter solely in deterministic unit tests. */
+async function boundedProviderJson(response: Response): Promise<unknown> {
+  const limit = 1024 * 1024;
+  const length = response.headers?.get("content-length");
+  if (length && Number(length) > limit)
+    throw new Error("MARKET_PROVIDER_RESPONSE_TOO_LARGE");
+  if (!response.body?.getReader) return response.json() as Promise<unknown>;
+  const reader = response.body.getReader();
+  let size = 0;
+  const parts: Uint8Array[] = [];
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > limit) throw new Error("MARKET_PROVIDER_RESPONSE_TOO_LARGE");
+      parts.push(value);
+    }
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+  const payload = new Uint8Array(size);
+  let offset = 0;
+  for (const part of parts) {
+    payload.set(part, offset);
+    offset += part.length;
+  }
+  return JSON.parse(
+    new TextDecoder("utf-8", { fatal: true }).decode(payload),
+  ) as unknown;
+}
+
 function extractPairs(
   input: unknown,
   chain: z.infer<typeof marketNetworkSchema>,
+  requiredTokenAddress?: string,
 ): MarketPair[] {
   const arrayResult = z.array(z.unknown()).safeParse(input);
   const wrapped = z
@@ -111,7 +159,7 @@ function extractPairs(
       : [];
   const seen = new Set<string>();
   const output: MarketPair[] = [];
-  for (const row of candidatePairs) {
+  for (const row of candidatePairs.slice(0, 350)) {
     const result = pairSchema.safeParse(row);
     if (!result.success) continue;
     const pair = result.data;
@@ -119,7 +167,12 @@ function extractPairs(
       pair.chainId !== chain ||
       !addressPattern.test(pair.pairAddress) ||
       !addressPattern.test(pair.baseToken.address) ||
-      !addressPattern.test(pair.quoteToken.address)
+      !addressPattern.test(pair.quoteToken.address) ||
+      (requiredTokenAddress !== undefined &&
+        ![
+          pair.baseToken.address.toLowerCase(),
+          pair.quoteToken.address.toLowerCase(),
+        ].includes(requiredTokenAddress.toLowerCase()))
     )
       continue;
     const key = pair.pairAddress.toLowerCase();
@@ -131,15 +184,24 @@ function extractPairs(
       pairAddress: pair.pairAddress,
       baseAddress: pair.baseToken.address,
       quoteAddress: pair.quoteToken.address,
-      base: pair.baseToken.symbol.slice(0, 24),
-      quote: pair.quoteToken.symbol.slice(0, 24),
-      baseName: pair.baseToken.name.slice(0, 55),
-      dex: pair.dexId.slice(0, 30),
+      // Provider-controlled labels are untrusted model/HTML inputs: allow
+      // identifiers, NOT markup, control text, URLs or instructions.
+      base: cleanProviderLabel(pair.baseToken.symbol, 24),
+      quote: cleanProviderLabel(pair.quoteToken.symbol, 24),
+      baseName: cleanProviderName(pair.baseToken.name, 55),
+      dex: cleanProviderLabel(pair.dexId, 30),
       priceUsd: validPrice(pair.priceUsd),
       change24h:
         change !== undefined && Number.isFinite(change) ? change : null,
       liquidityUsd: finiteNonnegative(pair.liquidity?.usd),
       volume24hUsd: finiteNonnegative(pair.volume?.h24),
+      pairCreatedAtMs:
+        pair.pairCreatedAt !== undefined &&
+        pair.pairCreatedAt !== null &&
+        Number.isSafeInteger(pair.pairCreatedAt) &&
+        pair.pairCreatedAt > 0
+          ? pair.pairCreatedAt
+          : null,
     });
     if (output.length === 24) break;
   }
@@ -168,7 +230,7 @@ export async function searchPublicMarkets(
     signal: AbortSignal.timeout(7000),
   });
   if (!response.ok) throw new Error("MARKET_PROVIDER_UNAVAILABLE");
-  const raw = (await response.json()) as unknown;
+  const raw = await boundedProviderJson(response);
   return {
     source: "DEX Screener",
     dataClass: "public-market-research",
@@ -179,7 +241,7 @@ export async function searchPublicMarkets(
     fetchedAt: new Date().toISOString(),
     privateTradingAvailable: false,
     searchMethod: addressSearch ? "chain-token-address" : "global-symbol",
-    pairs: extractPairs(raw, chain),
+    pairs: extractPairs(raw, chain, addressSearch ? query : undefined),
   };
 }
 
@@ -198,7 +260,7 @@ export async function inspectPublicMarketPair(
     },
   );
   if (!response.ok) throw new Error("MARKET_PROVIDER_UNAVAILABLE");
-  const raw = (await response.json()) as unknown;
+  const raw = await boundedProviderJson(response);
   const pairs = extractPairs(raw, chain);
   return {
     source: "DEX Screener" as const,

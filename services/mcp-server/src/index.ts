@@ -19,6 +19,7 @@ import {
   agentPublicResearchSubmissionSchema,
   evaluateAgentPublicResearch,
 } from "@prigenfi/shared/agent-research-scope";
+import { assessMarketIntegrity } from "@prigenfi/shared/market-integrity";
 import {
   marketSearchSchema,
   marketPairLookupSchema,
@@ -233,6 +234,27 @@ export function createMcpServer(client?: PrigenFiClient) {
       },
     },
     (input) => safe(() => inspectPublicMarketPair(input)),
+  );
+  server.registerTool(
+    "market_integrity_assess",
+    {
+      description:
+        "Check one real public pool for missing evidence, liquidity gaps, volatile pricing, unusual turnover and unverified token identity. Input must be a specific chain and pair address; output is risk screening only, NEVER a prediction or permission to trade.",
+      inputSchema: marketPairLookupSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: true,
+      },
+    },
+    (input) =>
+      safe(async () => {
+        const observed = await inspectPublicMarketPair(input);
+        return assessMarketIntegrity(observed.pair, observed.fetchedAt, {
+          chain: input.chain,
+          pairAddress: input.pairAddress,
+        });
+      }),
   );
   // Local Anvil transfer debugging is explicitly separate from consumer
   // MCP research. Never expose public ERC-20 dev transfers as trade tools.

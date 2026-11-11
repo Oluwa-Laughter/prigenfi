@@ -159,6 +159,16 @@ try {
   });
   assert.equal(blocked.isError, true);
   assert.ok(JSON.stringify(blocked).includes("RESEARCH_SCOPE_DENIED"));
+  const outsideRisk = await client.callTool({
+    name: "research_market_integrity_check",
+    arguments: {
+      chain: "ethereum",
+      market: "stablecoins",
+      pairAddress: "0x" + "1".repeat(40),
+    },
+  });
+  assert.equal(outsideRisk.isError, true);
+  assert.ok(JSON.stringify(outsideRisk).includes("RESEARCH_SCOPE_DENIED"));
   const blockedMarket = await client.callTool({
     name: "research_market_search",
     arguments: { chain: "base", market: "derivatives", query: "USDC" },

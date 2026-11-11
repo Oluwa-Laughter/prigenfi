@@ -14,7 +14,51 @@ import {
   publicMarketNetworks,
   marketQuerySchema,
 } from "@prigenfi/shared/market-research";
+import { assessMarketIntegrity } from "@prigenfi/shared/market-integrity";
 import { MarketCharts } from "./market-charts";
+
+function MarketIntegrityCell({
+  pair,
+  fetchedAt,
+  chain,
+}: {
+  pair: MarketPair;
+  fetchedAt: string;
+  chain: string;
+}) {
+  const result = assessMarketIntegrity(pair, fetchedAt, {
+    chain,
+    pairAddress: pair.pairAddress,
+  });
+  const label =
+    result.classification === "insufficient-evidence"
+      ? "Insufficient data"
+      : result.classification === "heightened-risk"
+        ? "Heightened risk"
+        : "Needs verification";
+  return (
+    <details
+      className={"market-integrity market-integrity-" + result.classification}
+    >
+      <summary>{label}</summary>
+      <div className="market-integrity-detail">
+        <strong>Public market evidence only</strong>
+        <ul>
+          {result.signals.map((signal) => (
+            <li key={signal.code}>
+              {signal.code.toLowerCase().replaceAll("_", " ")}
+            </li>
+          ))}
+        </ul>
+        <small>
+          Not an audited token, verified trade quote, forecast, or confidential
+          execution venue. Source retrieval time does not prove the
+          observation's freshness.
+        </small>
+      </div>
+    </details>
+  );
+}
 
 function changeText(n: number | null) {
   return n === null ? "—" : (n > 0 ? "+" : "") + n.toFixed(2) + "%";
@@ -186,6 +230,7 @@ export function MarketFeedView({
                   <th scope="col">24h change</th>
                   <th scope="col">Volume (24h)</th>
                   <th scope="col">Liquidity</th>
+                  <th scope="col">Integrity</th>
                   <th scope="col">Source</th>
                 </tr>
               </thead>
@@ -231,6 +276,13 @@ export function MarketFeedView({
                       })}
                     </td>
                     <td>
+                      <MarketIntegrityCell
+                        pair={p}
+                        fetchedAt={feed?.fetchedAt ?? ""}
+                        chain={chain}
+                      />
+                    </td>
+                    <td>
                       <a
                         className="market-source-link"
                         href={
@@ -266,8 +318,10 @@ export function MarketFeedView({
               : ""}
             . Symbol searches use a globally limited provider result set;
             contract-address searches query your selected network directly. Data
-            may be delayed or manipulated. Research only; no trades or private
-            execution are performed from this table.
+            may be delayed or manipulated. Integrity screens use conservative
+            research policy thresholds, not predicted returns or proof of token
+            safety. Research only; no trades or private execution are performed
+            from this table.
           </div>
           <MarketCharts
             pairs={data}

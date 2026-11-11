@@ -85,7 +85,7 @@ describe("real local MCP host setup", () => {
     expect(result).toMatchObject({
       status: "local-mcp-verified",
       transport: "stdio",
-      toolCount: 8,
+      toolCount: 9,
       hostConnected: false,
       userWalletAuthorized: false,
       privateExecutionEnabled: false,

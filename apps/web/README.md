@@ -33,3 +33,7 @@ The multi-page workspace now includes `/agents/connect`, reachable from `/agents
 ## Authenticated remote research MCP preview — November 11, 2026
 
 The wallet-owned `/agents` profile cards now support one-time key issuance and immediate key/profile revocation when the operator enables the `PRIGENFI_MCP_HTTP_ENABLED` server-only flag. The dedicated `/api/mcp` endpoint negotiates real Streamable HTTP with an MCP client, checks the bearer against Postgres on **every** call and exposes only research tools bounded to the owner's saved chain/domain scope. The key is shown once and is never placed into an LLM prompt or wallet. This is NOT agent execution and NOT production OAuth. See `docs/REMOTE_AGENT_MCP.md`.
+
+## Market intelligence evidence — November 11, 2026
+
+The `/markets` page renders an expandable evidence status on each real DEX Screener pool: insufficient data, heightened risk or needs verification. The client uses the same shared `assessMarketIntegrity()` research-only policy as local and wallet-scoped MCP tools. It never displays a synthetic predicted return, safe-token certification or permission to execute swaps. Test-only fixtures are kept in Vitest files, not the production app; no screenshots are produced. See `docs/MARKET_INTEGRITY.md`.
