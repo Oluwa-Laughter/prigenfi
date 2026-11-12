@@ -155,6 +155,17 @@ for (const width of [1440, 390]) {
         .press("Enter");
       await expect(page).toHaveURL(/\/privacy$/);
       await page.goto("/dashboard");
+      // A server-rendered button can be visible before React registers the
+      // keyboard listener. First exercise the real button to prove hydration,
+      // then independently test Ctrl+K. This avoids a CI-only startup race.
+      await page.getByRole("button", { name: "Jump to a page" }).click();
+      await expect(
+        page.getByRole("dialog", { name: "Jump to a workspace page" }),
+      ).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(
+        page.getByRole("dialog", { name: "Jump to a workspace page" }),
+      ).not.toBeVisible();
       await page.keyboard.press("Control+k");
       await expect(
         page.getByRole("dialog", { name: "Jump to a workspace page" }),
