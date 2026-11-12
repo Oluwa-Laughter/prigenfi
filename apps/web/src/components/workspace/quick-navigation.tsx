@@ -33,6 +33,12 @@ const destinations = [
     icon: Compass,
   },
   {
+    label: "Saved markets & watchlist",
+    description: "Download, remove and manage wallet-owned public pools",
+    href: "/saved",
+    icon: Bookmark,
+  },
+  {
     label: "My agents",
     description: "Sign in and manage research profiles",
     href: "/agents",

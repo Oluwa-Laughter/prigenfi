@@ -35,8 +35,8 @@ export default function SettingsPage() {
               an order or an authorized agent mandate.
             </p>
           </div>
-          <Link href="/dashboard#workspace-summary">
-            Open saved workspace <ArrowUpRight size={16} />
+          <Link href="/saved">
+            Manage saved markets <ArrowUpRight size={16} />
           </Link>
         </div>
         <div>

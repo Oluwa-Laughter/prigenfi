@@ -516,6 +516,96 @@ async function main() {
     (overviewCap.payload.watchlist as { saved: unknown[] }).saved.length,
     5,
   );
+  // Explicit deletion requires both owner session and exact confirmation.
+  for (const invalid of [
+    { clearAll: true },
+    { clearAll: true, confirmation: "CLEAR" },
+    {
+      clearAll: true,
+      confirmation: "CLEAR MY MARKETS",
+      includePrivateBalances: true,
+    },
+    { clearAll: false, confirmation: "CLEAR MY MARKETS" },
+  ]) {
+    status(
+      await call("/api/watchlist", "DELETE", invalid, b.cookie),
+      400,
+      "unconfirmed or extra-field bulk removal rejected",
+    );
+  }
+  const clearPayload = {
+    clearAll: true,
+    confirmation: "CLEAR MY MARKETS",
+  };
+  status(
+    await call("/api/watchlist", "DELETE", clearPayload, ""),
+    401,
+    "anonymous full watchlist deletion denied",
+  );
+  status(
+    await call(
+      "/api/watchlist",
+      "DELETE",
+      clearPayload,
+      b.cookie,
+      "https://forged.invalid",
+    ),
+    403,
+    "cross-origin full watchlist deletion denied",
+  );
+  const removedAll = status(
+    await call("/api/watchlist", "DELETE", clearPayload, b.cookie),
+    200,
+    "wallet owner clears full public watchlist",
+  );
+  assert.equal(removedAll.payload.removed, 25);
+  assert.equal(removedAll.payload.executionAllowed, false);
+  const afterClear = status(
+    await call("/api/watchlist", "GET", undefined, b.cookie),
+    200,
+    "watchlist clear persisted",
+  );
+  assert.deepEqual(afterClear.payload.markets, []);
+  const clearedOverview = status(
+    await call("/api/workspace/overview", "GET", undefined, b.cookie),
+    200,
+    "overview reflects saved market deletion",
+  );
+  assert.equal(
+    (clearedOverview.payload.watchlist as { total: number }).total,
+    0,
+  );
+  // Clearing research bookmarks must not revoke separate agent profiles.
+  assert.equal(
+    (clearedOverview.payload.agents as { active: number }).active,
+    20,
+  );
+  const clearedTwice = status(
+    await call("/api/watchlist", "DELETE", clearPayload, b.cookie),
+    200,
+    "second explicit clear is idempotent",
+  );
+  assert.equal(clearedTwice.payload.removed, 0);
+  status(
+    await call(
+      "/api/watchlist",
+      "POST",
+      { chain: "ethereum", pairAddress: poolA },
+      b.cookie,
+    ),
+    200,
+    "save resumes after clear without stale budget",
+  );
+  assert.equal(
+    (
+      status(
+        await call("/api/watchlist", "GET", undefined, b.cookie),
+        200,
+        "post-clear re-save",
+      ).payload.markets as unknown[]
+    ).length,
+    1,
+  );
   const capped = status(
     await call("/api/agents", "GET", undefined, b.cookie),
     200,

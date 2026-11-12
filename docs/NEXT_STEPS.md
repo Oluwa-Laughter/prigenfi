@@ -101,3 +101,11 @@ Before any financial authority, validate actual V1-to-V2 ERC-7201 storage layout
 3. Finish independently verified Zama-compatible confidential execution, owner-signed smart-account permissions and finality reconciliation before enabling real spending, private swaps or financial performance reports.
 4. Implement owner-initiated export/delete for stored public watchlists, account data retention policy, cross-device UX and independent accessibility review. Watchlist privacy depends on controlling who can see owner-linked research preferences in the backend.
 5. Keep the Fastify service narrow unless a concrete source-backed, explicitly authorized backend capability justifies expanding it; do not duplicate SIWE/session or issuer authority across services.
+
+## After self-service public watchlist ownership — November 12, 2026
+
+1. Implement full user-directed export/deletion and retention for all **research account** records (profiles, hashed connection keys, sessions), with verified owner scope and active-agent revocation. Today's `CLEAR MY MARKETS` affects only public market bookmarks, not the entire account or blockchain.
+2. Verify a real external HTTPS deployment with migrations and wallet sign-in; local Anvil/Postgres and GitHub CI cannot certify deployment readiness or security.
+3. Implement owner-controlled audited smart-account sessions and independently reproduced confidential Zama market execution before enabling any private autonomous trade; no public DEX fallback.
+4. Add a minimal, privacy-safe durable research journal only with explicit consent. Do not store plaintext private goals, confidential balances, agent prompts or speculative P&L to fill a dashboard.
+5. Harden ERC-1271 signer-change invalidation, OAuth 2.1 audience-bound hosted agent connections, finality/indexer reconciliation and independent security review before real funds.

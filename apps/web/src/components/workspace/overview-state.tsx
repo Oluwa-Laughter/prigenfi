@@ -169,8 +169,8 @@ export function WorkspaceOverview() {
             <div>
               <div className="ws-owner-column-heading">
                 <h3>Markets you follow</h3>
-                <Link href="/markets">
-                  Explore <ArrowUpRight size={15} />
+                <Link href="/saved">
+                  View all <ArrowUpRight size={15} />
                 </Link>
               </div>
               {visible.watchlist.saved.length ? (

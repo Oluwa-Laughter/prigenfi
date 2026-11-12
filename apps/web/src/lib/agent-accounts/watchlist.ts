@@ -76,3 +76,16 @@ export async function forgetWatchedMarket(
     ? { status: "removed" as const }
     : { status: "missing" as const };
 }
+
+/** User-directed deletion, serialized against new saves using the same owner lock. */
+export async function clearWatchedMarkets(owner: SignedInOwner) {
+  const sql = agentDb();
+  return sql.begin(async (tx) => {
+    await tx`SELECT pg_advisory_xact_lock(hashtext(${owner.address + ":" + owner.chainId + ":watchlist"}))`;
+    const removed = await tx<{ pair_address: string }[]>`
+      DELETE FROM prigenfi_market_watchlist
+      WHERE owner_address=${owner.address} AND account_chain_id=${owner.chainId}
+      RETURNING pair_address`;
+    return removed.length;
+  });
+}

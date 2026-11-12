@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { agentAccountsConfig } from "@/lib/agent-accounts/config";
 import { currentOwner } from "@/lib/agent-accounts/session";
 import {
@@ -5,6 +6,7 @@ import {
   saveWatchedMarket,
   forgetWatchedMarket,
   MAX_WATCHED_PAIRS,
+  clearWatchedMarkets,
 } from "@/lib/agent-accounts/watchlist";
 import {
   apiError,
@@ -65,6 +67,17 @@ export async function DELETE(req: Request) {
       body = await jsonBody(req);
     } catch {
       return reply({ error: "INVALID_REQUEST" }, 400);
+    }
+    const clearRequest = z
+      .object({
+        clearAll: z.literal(true),
+        confirmation: z.literal("CLEAR MY MARKETS"),
+      })
+      .strict()
+      .safeParse(body);
+    if (clearRequest.success) {
+      const removed = await clearWatchedMarkets(owner);
+      return reply({ removed, executionAllowed: false });
     }
     const result = await forgetWatchedMarket(owner, body);
     if (result.status === "invalid")

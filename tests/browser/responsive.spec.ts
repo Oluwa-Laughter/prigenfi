@@ -4,6 +4,7 @@ const pages = [
   "/",
   "/dashboard",
   "/markets",
+  "/saved",
   "/agents",
   "/agents/connect",
   "/strategies",

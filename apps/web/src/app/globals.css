@@ -4301,3 +4301,215 @@ textarea:focus-visible {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   overflow-wrap: anywhere;
 }
+
+/* Owner-controlled saved public market records. No portfolio or P&L claims. */
+.saved-markets-panel {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e7e1f0;
+  border-radius: 17px;
+}
+.saved-markets-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 24px clamp(18px, 2.8vw, 32px);
+  border-bottom: 1px solid #eae5f3;
+}
+.saved-markets-toolbar > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+.saved-markets-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6951ae;
+  font-size: 12px;
+  font-weight: 700;
+}
+.saved-markets-toolbar strong {
+  color: #322644;
+  font-size: clamp(19px, 2vw, 25px);
+}
+.saved-markets-toolbar small {
+  color: #797086;
+  font-size: 12px;
+  max-width: 540px;
+  line-height: 1.6;
+}
+.saved-markets-actions,
+.saved-markets-item-actions,
+.saved-markets-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.saved-markets-actions button,
+.saved-markets-item-actions button,
+.saved-markets-confirm-actions button {
+  min-height: 42px;
+}
+.saved-markets-danger,
+.saved-markets-remove {
+  border: 1px solid #f1d3d4;
+  background: #fff7f7;
+  color: #ac444b;
+  padding: 10px 12px;
+  border-radius: 9px;
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.saved-markets-danger:hover,
+.saved-markets-remove:hover {
+  background: #ffecee;
+}
+.saved-markets-danger:disabled,
+.saved-markets-remove:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+.saved-markets-empty {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: clamp(26px, 4vw, 46px);
+  color: #71677d;
+  background: #fdfcff;
+}
+.saved-markets-empty > svg {
+  color: #8e75c4;
+}
+.saved-markets-empty p {
+  font-size: 14px;
+  max-width: 680px;
+  line-height: 1.7;
+  margin: 0;
+}
+.saved-markets-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.saved-markets-list li {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: 17px clamp(18px, 2.8vw, 32px);
+  border-bottom: 1px solid #f0edf5;
+}
+.saved-markets-list li:last-child {
+  border-bottom: 0;
+}
+.saved-markets-symbol {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: #f0eafd;
+  color: #7157af;
+  border-radius: 12px;
+}
+.saved-markets-identity {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.saved-markets-identity strong {
+  color: #38294f;
+  font-size: 14px;
+}
+.saved-markets-identity code {
+  color: #736985;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.saved-markets-identity small {
+  color: #81758d;
+  font-size: 11px;
+}
+.saved-markets-confirm {
+  padding: 23px clamp(18px, 2.8vw, 32px);
+  border-top: 1px solid #efd7da;
+  background: #fffafa;
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.saved-markets-confirm > strong {
+  color: #92404a;
+  font-size: 17px;
+}
+.saved-markets-confirm p {
+  color: #79616b;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 740px;
+}
+.saved-markets-confirm label {
+  color: #514154;
+  font-size: 13px;
+}
+.saved-markets-confirm input {
+  width: min(100%, 330px);
+  border: 1px solid #d5bfd0;
+  border-radius: 9px;
+  padding: 11px 12px;
+  background: white;
+  font-size: 14px;
+}
+.saved-markets-message {
+  margin: 0;
+  padding: 12px clamp(18px, 2.8vw, 32px);
+  font-size: 13px;
+  color: #4b6759;
+  background: #f3fbf5;
+}
+.saved-markets-message.is-error {
+  color: #aa414b;
+  background: #fff5f6;
+}
+.saved-markets-disclosure {
+  padding: 15px clamp(18px, 2.8vw, 32px);
+  margin: 0;
+  background: #faf9fd;
+  border-top: 1px solid #eeeaf4;
+  font-size: 11px;
+  line-height: 1.65;
+  color: #7d7389;
+}
+@media (max-width: 700px) {
+  .saved-markets-list li {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .saved-markets-item-actions {
+    width: 100%;
+    padding-left: 59px;
+  }
+  .saved-markets-actions {
+    width: 100%;
+  }
+}
+@media (max-width: 390px) {
+  .saved-markets-symbol {
+    width: 36px;
+    height: 36px;
+  }
+  .saved-markets-item-actions {
+    padding-left: 0;
+  }
+  .saved-markets-actions {
+    gap: 6px;
+  }
+}

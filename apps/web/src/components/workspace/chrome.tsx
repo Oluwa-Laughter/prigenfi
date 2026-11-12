@@ -14,6 +14,7 @@ import {
   Activity,
   ArrowUpRight,
   Bot,
+  Bookmark,
   ChartNoAxesCombined,
   Compass,
   FlaskConical,
@@ -37,6 +38,7 @@ const primaryNav = [
   { href: "/privacy", label: "Privacy", icon: LockKeyhole },
 ];
 const accountNav = [
+  { href: "/saved", label: "Saved markets", icon: Bookmark },
   { href: "/portfolio", label: "Portfolio", icon: ChartNoAxesCombined },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/settings", label: "Safety & settings", icon: SlidersHorizontal },
@@ -44,6 +46,7 @@ const accountNav = [
 const labels: Record<string, string> = {
   "/dashboard": "Overview",
   "/markets": "Explore markets",
+  "/saved": "Saved markets",
   "/agents": "My agents",
   "/agents/connect": "Connect an agent",
   "/strategies": "Strategies",

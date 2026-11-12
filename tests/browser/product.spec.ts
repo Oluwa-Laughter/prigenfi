@@ -485,3 +485,152 @@ test("wallet controls, simulation, pause and revoke on actual local vault", asyn
     vault.getByText("Connect your wallet to set permissions"),
   ).toBeVisible();
 });
+
+test("wallet-owned saved-markets UX: export, individual removal and confirmed clear", async ({
+  page,
+}) => {
+  // Browser-only stub verifies the UI; the Postgres/Anvil HTTP suite proves real authorization.
+  const owner = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+  const fixture = [
+    {
+      chain: "ethereum",
+      pairAddress: "0x" + "1".repeat(40),
+      savedAt: "2026-11-12T10:00:00.000Z",
+    },
+    {
+      chain: "base",
+      pairAddress: "0x" + "2".repeat(40),
+      savedAt: "2026-11-12T11:00:00.000Z",
+    },
+  ];
+  let saved = fixture.slice();
+  const deletes: unknown[] = [];
+  await page.addInitScript(
+    ({ address }) => {
+      const listeners = new Map<string, ((...args: unknown[]) => void)[]>();
+      let connected = false;
+      Object.defineProperty(window, "ethereum", {
+        configurable: true,
+        value: {
+          isMetaMask: true,
+          on: (name: string, handler: (...args: unknown[]) => void) =>
+            listeners.set(name, [...(listeners.get(name) ?? []), handler]),
+          removeListener: (
+            name: string,
+            handler: (...args: unknown[]) => void,
+          ) =>
+            listeners.set(
+              name,
+              (listeners.get(name) ?? []).filter((fn) => fn !== handler),
+            ),
+          request: async ({ method }: { method: string }) => {
+            if (method === "eth_requestAccounts") {
+              connected = true;
+              return [address];
+            }
+            if (method === "eth_accounts") return connected ? [address] : [];
+            if (method === "eth_chainId") return "0x7a69";
+            if (method === "wallet_getPermissions") return [];
+            if (method === "wallet_requestPermissions")
+              return [{ parentCapability: "eth_accounts" }];
+            return null;
+          },
+        },
+      });
+    },
+    { address: owner },
+  );
+  await page.route("**/api/auth/session", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        authenticated: true,
+        address: owner,
+        chainId: 31337,
+        executionAllowed: false,
+      }),
+    }),
+  );
+  await page.route("**/api/watchlist", async (route) => {
+    const req = route.request();
+    if (req.method() === "GET") {
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ markets: saved, executionAllowed: false }),
+      });
+    }
+    if (req.method() !== "DELETE") return route.fulfill({ status: 405 });
+    const body = req.postDataJSON();
+    deletes.push(body);
+    if (body.clearAll === true && body.confirmation === "CLEAR MY MARKETS") {
+      const removed = saved.length;
+      saved = [];
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ removed, executionAllowed: false }),
+      });
+    }
+    saved = saved.filter(
+      (item) =>
+        item.chain !== body.chain || item.pairAddress !== body.pairAddress,
+    );
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ removed: true, executionAllowed: false }),
+    });
+  });
+  await page.goto("/saved");
+  await expect(
+    page.getByRole("heading", { name: "Your saved markets." }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Connect your wallet from the top bar", { exact: false }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Connect wallet", exact: true })
+    .click();
+  await expect(page.getByText("2 saved pools")).toBeVisible();
+  await expect(page.locator(".saved-markets-list li")).toHaveCount(2);
+  const downloadEvent = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export CSV" }).click();
+  const downloaded = await downloadEvent;
+  expect(downloaded.suggestedFilename()).toBe(
+    "prigenfi-public-market-watchlist.csv",
+  );
+  const csvPath = await downloaded.path();
+  expect(csvPath).not.toBeNull();
+  const csv = await readFile(csvPath!, "utf8");
+  expect(csv).toContain("network,pair_address,saved_at");
+  expect(csv).toContain(fixture[0].pairAddress);
+  expect(csv).not.toContain(owner);
+  await page
+    .getByRole("button", {
+      name: `Remove Ethereum pool ${fixture[0].pairAddress}`,
+    })
+    .click();
+  await expect(page.getByText("1 saved pool", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Clear all" }).click();
+  await expect(
+    page.getByRole("button", { name: "Permanently clear markets" }),
+  ).toBeDisabled();
+  await page.getByLabel("Type CLEAR MY MARKETS to confirm").fill("CLEAR");
+  await expect(
+    page.getByRole("button", { name: "Permanently clear markets" }),
+  ).toBeDisabled();
+  await page
+    .getByLabel("Type CLEAR MY MARKETS to confirm")
+    .fill("CLEAR MY MARKETS");
+  await page.getByRole("button", { name: "Permanently clear markets" }).click();
+  await expect(page.getByText("0 saved pools")).toBeVisible();
+  await expect(
+    page.getByText("You have no saved pools", { exact: false }),
+  ).toBeVisible();
+  expect(deletes).toEqual([
+    { chain: fixture[0].chain, pairAddress: fixture[0].pairAddress },
+    { clearAll: true, confirmation: "CLEAR MY MARKETS" },
+  ]);
+});

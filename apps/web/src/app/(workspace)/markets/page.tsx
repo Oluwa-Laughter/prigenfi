@@ -40,7 +40,7 @@ export default async function MarketsPage({
           Research a public pool and save it to your wallet-owned workspace for
           later.
         </span>
-        <Link href="/dashboard#workspace-summary" className="ws-text-link">
+        <Link href="/saved" className="ws-text-link">
           My saved markets <ArrowUpRight size={16} />
         </Link>
       </div>
