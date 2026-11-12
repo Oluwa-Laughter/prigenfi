@@ -174,6 +174,13 @@ for (const width of [1440, 390]) {
       await expect(
         page.getByRole("dialog", { name: "Jump to a workspace page" }),
       ).not.toBeVisible();
+      // Regression: rapid open/escape cycles must use the native dialog state.
+      for (let reopen = 0; reopen < 3; reopen++) {
+        await page.keyboard.press("Control+k");
+        await expect(quickDialog).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(quickDialog).not.toBeVisible();
+      }
       const sidebarCallToAction = page.locator(".ws-sidebar-bottom");
       await expect(sidebarCallToAction).not.toContainText(
         "Protected by your rules",

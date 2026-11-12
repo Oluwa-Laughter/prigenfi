@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-11-12T18:40:59.659Z",
+  "source": "Independent read-only Sepolia RPC code observations",
+  "pinnedRegistrySource": {
+    "commit": "93283992cc39442fa9019c1474ef69331429e71a",
+    "sha256": "68be316c990789ebcf33276392e8780d5ce6e04a31c8f7f7b9fbefceb58d93b5"
+  },
+  "baselineCheckedAt": "2026-11-08T14:23:01.891Z",
+  "referenceSlot": "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
+  "providers": [
+    {
+      "role": "primary",
+      "outcome": "deployed-proxy"
+    },
+    {
+      "role": "secondary",
+      "outcome": "deployed-proxy"
+    }
+  ],
+  "report": {
+    "chainId": 11155111,
+    "proxyAddress": "0xab86445f72A64A99C8d248dcE004915B45C88e20",
+    "status": "consistent-code-evidence",
+    "proxyImplementation": "0x93FA553AFd73952105450264620eA08aBa7B52d5",
+    "proxyCodeHash": "0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6",
+    "implementationCodeHash": "0x9814915edd2e296962367eeeba9d9d798dc45bbd13988040713e15fa7a0f003e",
+    "blockNumbers": {
+      "primary": "12120685",
+      "secondary": "12120685"
+    },
+    "evidenceFromIndependentObservers": true,
+    "baselineMatches": true,
+    "executionAllowed": false,
+    "privateTradingEnabled": false,
+    "signedIntentAllowed": false,
+    "blockers": [
+      "RFQ_INTERFACE_UNVERIFIED",
+      "SEPOLIA_PAIR_SUPPORT_UNVERIFIED",
+      "ENCRYPTED_ORDER_PROOF_MISSING",
+      "LIQUIDITY_AND_FINALITY_UNVERIFIED",
+      "AUDITED_SMART_ACCOUNT_AUTH_MISSING",
+      "PUBLIC_FALLBACK_FORBIDDEN"
+    ]
+  },
+  "meaning": "Only independent UUPS bytecode identity. No RFQ source/ABI, pair liquidity, ciphertext ACL, smart-account rights, encrypted order or finalized settlement is verified."
+}

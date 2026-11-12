@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -87,34 +87,37 @@ export function QuickNavigation() {
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const search = useRef<HTMLInputElement>(null);
-  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const matched = destinations.filter((item) =>
     `${item.label} ${item.description}`
       .toLowerCase()
       .includes(query.trim().toLowerCase()),
   );
+  // Use the native dialog's actual open state as the single source of truth.
+  // A delayed onClose from Escape must never flip a freshly opened shortcut
+  // back to closed; no competing React boolean controls showModal/close.
+  const show = useCallback(() => {
+    if (!dialog.current?.open) {
+      setQuery("");
+      dialog.current?.showModal();
+      search.current?.focus();
+    }
+  }, []);
+  const close = useCallback(() => {
+    if (dialog.current?.open) dialog.current.close();
+    setQuery("");
+  }, []);
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((value) => !value);
+        if (dialog.current?.open) close();
+        else show();
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-  useEffect(() => {
-    if (open && !dialog.current?.open) {
-      dialog.current?.showModal();
-      search.current?.focus();
-    }
-    if (!open && dialog.current?.open) dialog.current.close();
-  }, [open]);
-  function close() {
-    setOpen(false);
-    setQuery("");
-  }
+  }, [show, close]);
   return (
     <>
       <button
@@ -124,7 +127,7 @@ export function QuickNavigation() {
         aria-controls="ws-quick-navigation"
         aria-haspopup="dialog"
         aria-keyshortcuts="Control+K Meta+K"
-        onClick={() => setOpen(true)}
+        onClick={show}
       >
         <Search size={16} aria-hidden="true" />
         <span>Jump to</span>
@@ -135,8 +138,7 @@ export function QuickNavigation() {
         className="ws-quick-dialog"
         ref={dialog}
         aria-label="Jump to a workspace page"
-        onClose={close}
-        onCancel={close}
+        onClose={() => setQuery("")}
       >
         <div className="ws-quick-panel">
           <div className="ws-quick-search-row">

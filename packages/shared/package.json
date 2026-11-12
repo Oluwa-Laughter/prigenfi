@@ -8,6 +8,8 @@
     "./confidential-policy": "./src/confidential-policy.ts",
     "./agent-planning": "./src/agent-planning.ts",
     "./swap-venue": "./src/swap-venue.ts",
+    "./venue-quorum": "./src/venue-quorum.ts",
+    "./confidential-session-review": "./src/confidential-session-review.ts",
     "./market-research": "./src/market-research.ts",
     "./market-integrity": "./src/market-integrity.ts",
     "./agent-research-scope": "./src/agent-research-scope.ts"

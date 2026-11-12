@@ -171,3 +171,7 @@ The `/dashboard` research workspace now reads owner-scoped profile counts/expiry
 Frontend navigation now has a smaller consistent typographic hierarchy, a keyboard-accessible route finder (`Ctrl/⌘ + K`) and user-actionable saved-market and research-profile empty states. Its quick navigation lists only genuine product routes, not technical deployments. The existing dashboard deliberately contains no fabricated trading win rate, ROI or realized P&L.
 
 For an up-to-date engineering milestone and critical-path breakdown, see [Project progress](docs/PROJECT_PROGRESS.md). Research profiles and public bookmarks do not authorize private agent execution or guarantee that the hosted backend has been provisioned.
+
+### Confidential execution readiness (read-only)
+
+`pnpm verify:swap:quorum` now independently compares the pinned Zama Sepolia ConfidentialSwap proxy and UUPS implementation against two RPC observers and the previously reviewed onchain code snapshot. `pnpm verify:swap:quorum --write-evidence` records a successful evidence artifact. `@prigenfi/shared/confidential-session-review` validates proposed account/delegate/venue/selector/time metadata for **manual review only**; it never signs, installs an ERC-7579 module, authorizes a transfer, decrypts anything or moves capital. A matching bytecode fingerprint does not prove a real Sepolia RFQ market or encrypted settlement. Full technical details and missing checks: [Confidential execution foundation](docs/CONFIDENTIAL_EXECUTION_FOUNDATION.md).

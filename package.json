@@ -25,6 +25,7 @@
     "verify:zama": "tsx scripts/verify-zama.ts",
     "verify:swap:source": "tsx scripts/verify-confidential-swap.ts --source-only",
     "verify:swap": "tsx scripts/verify-confidential-swap.ts",
+    "verify:swap:quorum": "tsx scripts/audit-confidential-venue.ts",
     "mcp:dev": "pnpm --filter @prigenfi/mcp-server start:dev",
     "agent:connect": "tsx scripts/agent-connect.ts",
     "db:agents:migrate": "tsx scripts/migrate-agent-accounts.ts",
