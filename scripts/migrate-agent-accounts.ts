@@ -10,6 +10,7 @@ async function main() {
     "0002_agent_mcp_keys.sql",
     "0003_public_research_mcp_quota.sql",
     "0004_owner_market_watchlist.sql",
+    "0005_erc1271_session_authority.sql",
   ];
   const sql = agentDb();
   for (const filename of migrations) {
@@ -24,6 +25,16 @@ async function main() {
     AND table_name IN ('prigenfi_auth_challenges','prigenfi_auth_sessions','prigenfi_research_agents','prigenfi_agent_mcp_keys','prigenfi_public_mcp_quota','prigenfi_market_watchlist')
     ORDER BY table_name`;
   if (tables.length !== 6) throw new Error("MIGRATION_INCOMPLETE");
+  const authorityColumns = await sql<
+    { table_name: string; column_name: string }[]
+  >`
+    SELECT table_name,column_name FROM information_schema.columns
+    WHERE table_schema='public' AND (
+      (table_name='prigenfi_auth_sessions' AND column_name IN ('auth_kind','authority_proof'))
+      OR (table_name='prigenfi_agent_mcp_keys' AND column_name IN ('auth_kind','auth_session_hash'))
+    )`;
+  if (authorityColumns.length !== 4)
+    throw new Error("SESSION_AUTHORITY_MIGRATION_INCOMPLETE");
   process.stdout.write(
     "Agent authentication and research registry tables verified (" +
       config.chainId +

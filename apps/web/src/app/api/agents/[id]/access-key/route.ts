@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
   randomToken,
-  currentOwner,
+  currentAuthSession,
   sha256,
 } from "@/lib/agent-accounts/session";
 import { agentAccountsConfig } from "@/lib/agent-accounts/config";
@@ -17,20 +17,22 @@ async function permitted(request: Request, context: Context) {
     return { error: reply({ error: "REMOTE_MCP_DISABLED" }, 503) };
   if (!checkSameOrigin(request))
     return { error: reply({ error: "INVALID_ORIGIN" }, 403) };
-  const owner = await currentOwner();
-  if (!owner) return { error: reply({ error: "SIGN_IN_REQUIRED" }, 401) };
+  const auth = await currentAuthSession();
+  if (!auth) return { error: reply({ error: "SIGN_IN_REQUIRED" }, 401) };
+  const owner = { address: auth.address, chainId: auth.chainId };
   const { id } = await context.params;
   if (!idSchema.safeParse(id).success)
     return { error: reply({ error: "INVALID_AGENT_ID" }, 400) };
-  return { owner, id };
+  return { owner, id, auth };
 }
 
 export async function POST(req: Request, context: Context) {
   try {
     const access = await permitted(req, context);
     if (access.error) return access.error;
-    const { owner, id } = access;
-    if (!owner || !id) return reply({ error: "SIGN_IN_REQUIRED" }, 401);
+    const { owner, id, auth } = access;
+    if (!owner || !id || !auth)
+      return reply({ error: "SIGN_IN_REQUIRED" }, 401);
     const key = "prf_" + randomToken();
     const sql = agentDb();
     const issued = await sql.begin(async (tx) => {
@@ -47,8 +49,11 @@ export async function POST(req: Request, context: Context) {
       await tx`UPDATE prigenfi_agent_mcp_keys SET revoked_at=now()
         WHERE agent_id=${id} AND revoked_at IS NULL`;
       const rows = await tx<{ expires_at: Date }[]>`
-        INSERT INTO prigenfi_agent_mcp_keys(token_hash,agent_id,expires_at)
-        VALUES (${sha256(key)},${id},least(${profile[0].expires_at},now()+interval '24 hours'))
+        INSERT INTO prigenfi_agent_mcp_keys(token_hash,agent_id,auth_kind,auth_session_hash,expires_at)
+        VALUES (${sha256(key)},${id},${auth.authKind},
+          ${auth.authKind === "erc1271" ? auth.tokenHash : null},
+          least(${profile[0].expires_at},now()+interval '24 hours',
+            ${auth.authKind === "erc1271" ? auth.expiresAt : new Date("9999-01-01T00:00:00.000Z")}))
         RETURNING expires_at`;
       return rows[0].expires_at.toISOString();
     });

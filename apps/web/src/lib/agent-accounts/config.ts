@@ -8,6 +8,10 @@ const configSchema = z.object({
     .int()
     .refine((n) => n === 11155111 || n === 31337),
   PRIGENFI_AUTH_RPC_URL: z.url(),
+  PRIGENFI_AUTH_PROOF_KEY: z
+    .string()
+    .regex(/^[a-fA-F0-9]{64}$/)
+    .optional(),
 });
 
 export class AgentAccountsUnavailable extends Error {
@@ -46,6 +50,7 @@ export function agentAccountsConfig(env: NodeJS.ProcessEnv = process.env) {
     domain: origin.host,
     chainId: cfg.PRIGENFI_AUTH_CHAIN_ID,
     rpcUrl: cfg.PRIGENFI_AUTH_RPC_URL,
+    authProofKey: cfg.PRIGENFI_AUTH_PROOF_KEY,
     cookieSecure: origin.protocol === "https:",
   };
 }

@@ -7,6 +7,8 @@ import { createWalletClient, createPublicClient, http } from "viem";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { foundry } from "viem/chains";
+import { agentDb } from "../apps/web/src/lib/agent-accounts/db";
+import { createHash } from "node:crypto";
 
 const base = process.env.AGENT_AUTH_TEST_URL;
 if (!base || !/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(base)) {
@@ -659,10 +661,145 @@ async function main() {
     "smart account registry isolated",
   );
   assert.deepEqual(smartRecords.payload.agents, []);
-  status(
-    await call("/api/auth/logout", "POST", undefined, smart.cookie),
+  const encryptedRows = await agentDb()<
+    {
+      auth_kind: string;
+      authority_proof: string | null;
+    }[]
+  >`
+    SELECT auth_kind,authority_proof FROM prigenfi_auth_sessions
+      WHERE owner_address=${contractAccount.toLowerCase()} AND auth_kind='erc1271' LIMIT 1`;
+  assert.equal(encryptedRows.length, 1);
+  assert.match(
+    encryptedRows[0].authority_proof ?? "",
+    /^v1\.[a-f0-9]{24}\.[a-f0-9]{32}\.[a-f0-9]+$/,
+  );
+  assert.ok(
+    !(encryptedRows[0].authority_proof ?? "").includes(
+      smart.signature.slice(2),
+    ),
+  );
+  assert.ok(!(encryptedRows[0].authority_proof ?? "").includes(smart.message));
+  // The wallet-authenticated read-only MCP bearer must re-check its issuing
+  // contract-account signature before each use; neither bearer may trade.
+  const smartProfile = status(
+    await call(
+      "/api/agents",
+      "POST",
+      {
+        label: "Smart account research continuity",
+        host: "codex",
+        allowedNetworks: ["ethereum"],
+        allowedMarkets: ["defi"],
+        durationDays: 1,
+      },
+      smart.cookie,
+    ),
+    201,
+    "smart research profile",
+  );
+  const smartProfileId = (smartProfile.payload.agent as { id: string }).id;
+  const smartKey = status(
+    await call(
+      `/api/agents/${smartProfileId}/access-key`,
+      "POST",
+      undefined,
+      smart.cookie,
+    ),
+    201,
+    "smart session-bound research key",
+  );
+  const smartBearer = smartKey.payload.bearerToken as string;
+  const checkMcpBearer = (bearer: string) =>
+    fetch(base + "/api/mcp", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json, text/event-stream",
+        authorization: `Bearer ${bearer}`,
+      },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 888, method: "tools/list" }),
+    });
+  assert.equal((await checkMcpBearer(smartBearer)).status, 200);
+  // Rotating the signer must immediately make an old bearer unusable, even
+  // without a subsequent browser request. The invalidation cascades through
+  // all linked cookie sessions and scoped research MCP keys.
+  const rotationTx = await provider.writeContract({
+    account: addresses[0],
+    address: contractAccount,
+    abi: artifact.abi as never,
+    functionName: "setSigner",
+    args: [addresses[1]],
+  });
+  assert.equal(
+    (await publicClient.waitForTransactionReceipt({ hash: rotationTx })).status,
+    "success",
+  );
+  assert.equal(
+    (await checkMcpBearer(smartBearer)).status,
+    401,
+    "rotated signer MCP bearer denied immediately",
+  );
+  const oldSession = status(
+    await call("/api/auth/session", "GET", undefined, smart.cookie),
     200,
-    "smart account logout",
+    "rotated signer browser session status",
+  );
+  assert.equal(oldSession.payload.authenticated, false);
+  status(
+    await call("/api/agents", "GET", undefined, smart.cookie),
+    401,
+    "old signer cannot read research",
+  );
+  const revokedRows = await agentDb()<{ revoked_at: Date | null }[]>`
+    SELECT revoked_at FROM prigenfi_agent_mcp_keys WHERE token_hash=${createHash("sha256").update(smartBearer).digest("hex")}`;
+  assert.ok(
+    revokedRows[0]?.revoked_at,
+    "linked research bearer revoked in Postgres",
+  );
+  const newSmart = await signIn(contractAccount, addresses[1]);
+  assert.equal(
+    (await call("/api/auth/session", "GET", undefined, newSmart.cookie)).payload
+      .authenticated,
+    true,
+  );
+  assert.equal(
+    (await checkMcpBearer(smartBearer)).status,
+    401,
+    "old key remains denied after new owner sign-in",
+  );
+  // A new wallet owner can still access the existing research profile, while
+  // the old signer cannot reuse its old session or obtain a fresh signature.
+  const inherited = status(
+    await call("/api/agents", "GET", undefined, newSmart.cookie),
+    200,
+    "rotated signer research continuity",
+  );
+  assert.equal((inherited.payload.agents as unknown[]).length, 1);
+  const badChallenge = status(
+    await call("/api/auth/challenge", "POST", {
+      address: contractAccount,
+      chainId: 31337,
+    }),
+    200,
+    "old signer cannot authenticate rotated smart wallet",
+  );
+  const badSignature = await provider.signMessage({
+    account: addresses[0],
+    message: badChallenge.payload.message as string,
+  });
+  status(
+    await call("/api/auth/verify", "POST", {
+      message: badChallenge.payload.message,
+      signature: badSignature,
+    }),
+    401,
+    "rotated signer forbidden from new session",
+  );
+  status(
+    await call("/api/auth/logout", "POST", undefined, newSmart.cookie),
+    200,
+    "new smart owner logout",
   );
 
   const concurrentChallenges = await Promise.all(
@@ -677,7 +814,7 @@ async function main() {
   assert.ok(concurrentChallenges.some((r) => r.status === 429));
   assert.ok(concurrentChallenges.filter((r) => r.status === 200).length <= 4);
   process.stdout.write(
-    "PASS: Real Anvil EOA and ERC-1271 SIWE signatures, nonce replay protection, Postgres sessions, owner-isolated research profiles, concurrent caps, revocation, logout, strict origins. No trades or wallet permissions.\n",
+    "PASS: Real Anvil EOA and dynamically rotated ERC-1271 signer, encrypted proof at rest, continuous session/MCP revalidation and key revocation, nonce replay, Postgres owner isolation, caps, logout and strict origins. No trades or wallet permissions.\n",
   );
 }
 await main();

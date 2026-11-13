@@ -1,6 +1,6 @@
 import { agentAccountsConfig } from "./config";
 import { agentDb } from "./db";
-import { sha256 } from "./session";
+import { sha256, validateContractSession } from "./session";
 
 export const mcpTokenPattern = /^prf_[a-f0-9]{64}$/;
 export type RemoteResearchScope = {
@@ -27,6 +27,35 @@ export async function authorizeRemoteMcp(
   if (!remoteMcpEnabled() || !mcpTokenPattern.test(bearer)) return null;
   const config = agentAccountsConfig();
   const sql = agentDb();
+  // Reject legacy bearer keys that predate the verified authentication
+  // lineage. A contract account's bearer is bound to the issuing session's
+  // STILL-VALID ERC-1271 signature, not merely to its cached Postgres scope.
+  const issuers = await sql<
+    {
+      auth_kind: string;
+      auth_session_hash: string | null;
+      owner_address: string;
+      chain_id: number;
+    }[]
+  >`
+    SELECT k.auth_kind,k.auth_session_hash,a.owner_address,a.chain_id
+    FROM prigenfi_agent_mcp_keys k JOIN prigenfi_research_agents a ON k.agent_id=a.id
+    WHERE k.token_hash=${sha256(bearer)} AND k.revoked_at IS NULL
+      AND k.expires_at>now() AND a.revoked_at IS NULL AND a.expires_at>now()
+      AND a.chain_id=${config.chainId} LIMIT 1`;
+  const issuer = issuers[0];
+  if (!issuer || (issuer.auth_kind !== "eoa" && issuer.auth_kind !== "erc1271"))
+    return null;
+  if (issuer.auth_kind === "erc1271") {
+    if (
+      !issuer.auth_session_hash ||
+      !(await validateContractSession(issuer.auth_session_hash, {
+        address: issuer.owner_address,
+        chainId: issuer.chain_id,
+      }))
+    )
+      return null;
+  }
   const rows = await sql<
     {
       agent_id: string;
@@ -48,6 +77,8 @@ export async function authorizeRemoteMcp(
       AND k.revoked_at IS NULL AND k.expires_at>now()
       AND a.revoked_at IS NULL AND a.expires_at>now()
       AND a.chain_id=${config.chainId}
+      AND k.auth_kind=${issuer.auth_kind}
+      AND (k.auth_kind='eoa' OR k.auth_session_hash=${issuer.auth_session_hash})
       AND (k.window_started_at<=now()-interval '1 minute' OR k.window_count<30)
     RETURNING a.id AS agent_id, a.label, a.host, a.allowed_networks,
       a.allowed_markets, a.expires_at`;

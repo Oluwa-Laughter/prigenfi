@@ -31,7 +31,7 @@ A wallet connection or saved market **never authorizes an AI agent to move funds
 
 ## Critical path to confidential agent finance
 
-1. **Production control plane:** configure an approved HTTPS origin, isolated PostgreSQL, migrations, monitored auth, per-user data retention/export/deletion, and live deployment smoke. Recheck ERC-1271 signer changes and revoke stale sessions.
+1. **Production control plane:** configure an approved HTTPS origin, isolated PostgreSQL, migrations, monitored auth, per-user data retention/export/deletion, and live deployment smoke. Maintain current ERC-1271 signer revalidation and safe encrypted-proof-key rotation.
 2. **Independent authority:** integrate independently reviewed smart-account (ERC-4337/7579) session permissions for verified user-owned signing, venue/selector/asset scopes, budgets, expiry and immediate revocation; forbid agent-model text as authorization.
 3. **Confidential venue proof:** reproduce one real encrypted crypto-asset order→match→settle→finalize testnet trace on an independently verified Zama-compatible venue, including ACL, liquidity, quotes, failed fills, slippage and recovery. Never silently fall back to public execution.
 4. **Truthful accounting:** ingest finality-aware receipts and reconcile private execution metadata without leaking confidential balances, then derive actual cost basis and closed-position win rate/P&L.
@@ -42,3 +42,7 @@ The `services/api` Fastify service is intentionally **public metadata-only**; th
 ## Confidential execution foundation checked on November 12, 2026
 
 Two distinct Sepolia public RPC providers successfully agreed on the pinned Zama ConfidentialSwap proxy and implementation hashes at block 12,120,685. A reproducible SHA-256 registry and historical-code comparison lives at `pnpm verify:swap:quorum` and its observed evidence in `docs/evidence/confidential-swap-quorum.json`. It **does not validate** the RFQ source/ABI, supported Sepolia crypto pairs, quote or settlement. A new strict typed local smart-account session _review_ refuses sensitive calldata and public ERC-20 selectors and never signs, installs a module or permits trading, even if the venue code hash matches. Read the full security boundary at [Confidential execution foundation](CONFIDENTIAL_EXECUTION_FOUNDATION.md). No audited ERC-7579 validator, onchain encrypted spend cap, verified private trade, mainnet deployment or financial activity was added.
+
+## Live smart-wallet authorization hardening — November 13, 2026
+
+ERC-1271 research accounts no longer rely on login-time signature validity for the full session. A dedicated AES-256-GCM encrypted SIWE proof is dynamically rechecked on protected web requests and session-linked hosted MCP requests; signer rotation revokes affected browser credentials and all scoped research keys, and a new valid signer may reauthenticate. Local Anvil + PostgreSQL integration demonstrates an onchain signer rotation and denial of the previous MCP bearer without a browser refresh. This is **account research authorization only**, not an audited ERC-7579 spending hook. `0005_erc1271_session_authority.sql` explicitly invalidates all pre-upgrade sessions/keys. All mainnet capital movement remains disabled. See [Agent account security](AGENT_ACCOUNTS.md) and [Confidential execution foundation](CONFIDENTIAL_EXECUTION_FOUNDATION.md).

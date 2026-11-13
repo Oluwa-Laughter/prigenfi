@@ -1,4 +1,9 @@
-import { createPublicClient, http, getAddress } from "viem";
+import {
+  createPublicClient,
+  http,
+  getAddress,
+  recoverMessageAddress,
+} from "viem";
 import { parseSiweMessage } from "viem/siwe";
 import { authVerifyInput } from "@/lib/agent-accounts/policy";
 import { agentAccountsConfig } from "@/lib/agent-accounts/config";
@@ -74,7 +79,33 @@ export async function POST(req: Request) {
       verified = false;
     }
     if (!verified) return reply({ error: "INVALID_SIGNATURE" }, 401);
-    await createOwnerSession({ address, chainId: cfg.chainId });
+    // Classify by the CURRENT chain account bytecode, not by a client flag.
+    // ERC-1271 sessions keep an AES-GCM protected proof and are revalidated
+    // on EVERY account/MCP access. An EOA session never stores a signature.
+    const code = await chain.getBytecode({ address: getAddress(address) });
+    let eoaSigned = false;
+    try {
+      // Never classify a contract wallet as EOA just because a provider
+      // temporarily returns empty code. The EOA itself MUST cryptographically
+      // recover as the claimed address; an ERC-1271 signature often recovers
+      // a different owner address or cannot be ECDSA-recovered at all.
+      eoaSigned =
+        (
+          await recoverMessageAddress({
+            message,
+            signature: signature as `0x${string}`,
+          })
+        ).toLowerCase() === address;
+    } catch {
+      eoaSigned = false;
+    }
+    const contractAccount = (!!code && code !== "0x") || !eoaSigned;
+    await createOwnerSession(
+      { address, chainId: cfg.chainId },
+      contractAccount
+        ? { message, signature: signature as `0x${string}` }
+        : null,
+    );
     return reply({
       authenticated: true,
       address,

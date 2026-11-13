@@ -85,6 +85,8 @@ jobs:
             sleep 1
           done
           pnpm local:deploy
+      - name: Generate ephemeral local-only ERC-1271 proof-encryption key
+        run: echo "PRIGENFI_AUTH_PROOF_KEY=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Migrate isolated Postgres agent-account tables
         run: pnpm db:agents:migrate
       - name: TypeScript, API, SDK and external MCP client integration
