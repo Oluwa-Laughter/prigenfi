@@ -10,24 +10,24 @@ Target journey: authenticate wallet → configure agent, assets, risk and privac
 
 ## What is real today (verify before relying on it)
 
-| Area                       | State                                                                                                                                                                                                                 |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wallet auth                | Real SIWE (EIP-4361), EOA ECDSA recovery, ERC-1271 with live per-request revalidation, hashed HttpOnly sessions, PostgreSQL (`apps/web/src/app/api/auth/*`).                                                          |
-| Research backend           | Owner-scoped research profiles, revocable hosted MCP bearer keys, public-market watchlist (`/api/agents`, `/api/watchlist`, `/api/workspace/overview`). Migrations 0001–0005 in `infra/migrations`, operator-applied. |
-| MCP                        | Local stdio research server (`services/mcp-server/src/research-stdio.ts`), opt-in hosted owner-scoped and public research endpoints. **Read-only; no signing or execution tools.**                                    |
-| Market research            | DEX Screener adapter in `packages/shared/src/market-research.ts` with source/timestamp; `assessMarketIntegrity()` is risk screening only.                                                                             |
-| Zama                       | `@zama-fhe/sdk`/`react-sdk` 3.7.1 shield/transfer/decrypt/unshield UI against official Sepolia test wrappers. **End-to-end lifecycle NOT verified** (no provisioned test wallet).                                     |
-| Confidential venue         | Read-only code-identity checks of Zama's Sepolia ConfidentialSwap proxy (`verify:swap*`). **No RFQ ABI, pair, liquidity, order or settlement verified.**                                                              |
-| Smart accounts             | Read-only ERC-7579 compatibility assessor (`packages/shared/src/erc7579-assessment.ts`, `pnpm assess:account`). **No account stack selected; no module installed; no session authority.**                             |
-| Contracts                  | `AgentVault`/`VaultFactory`: dev-only immutable public ERC-20 transfer vault (not a smart account, not trading). `AgentSafetyPolicy`: UUPS research policy registry, execution permanently denied.                    |
-| Execution, accounting, P&L | **Not implemented.** Every gate returns `executionAllowed:false`. No durable jobs, fills, reconciliation or performance data.                                                                                         |
+| Area                       | State                                                                                                                                                                                                                                        |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wallet auth                | Real SIWE (EIP-4361), EOA ECDSA recovery, ERC-1271 with live per-request revalidation, hashed HttpOnly sessions, PostgreSQL (`apps/web/src/app/api/auth/*`).                                                                                 |
+| Research backend           | Owner-scoped research profiles, revocable hosted MCP bearer keys, public-market watchlist (`/api/agents`, `/api/watchlist`, `/api/workspace/overview`). Migrations 0001–0005 in `infra/migrations`, operator-applied.                        |
+| MCP                        | Local stdio research server (`services/mcp-server/src/research-stdio.ts`), opt-in hosted owner-scoped and public research endpoints. **Read-only; no signing or execution tools.**                                                           |
+| Market research            | DEX Screener adapter in `packages/shared/src/market-research.ts` with source/timestamp; `assessMarketIntegrity()` is risk screening only.                                                                                                    |
+| Zama                       | `@zama-fhe/sdk`/`react-sdk` 3.7.1 shield/transfer/decrypt/unshield UI against official Sepolia test wrappers. **End-to-end lifecycle NOT verified** (no provisioned test wallet).                                                            |
+| Confidential venue         | Read-only code-identity checks of Zama's Sepolia ConfidentialSwap proxy (`verify:swap*`). **No RFQ ABI, pair, liquidity, order or settlement verified.**                                                                                     |
+| Smart accounts             | Read-only ERC-7579 assessor (`pnpm assess:account`). Anvil-only, unaudited `PrigenAccountPrototype` (OZ 5.6.1 hooked) + `SessionCallExecutor` in `contracts/src/accounts/`. **Not deployed publicly; not wired to MCP/web; no amount caps.** |
+| Contracts                  | `AgentVault`/`VaultFactory`: dev-only immutable public ERC-20 transfer vault (not a smart account, not trading). `AgentSafetyPolicy`: UUPS research policy registry, execution permanently denied.                                           |
+| Execution, accounting, P&L | **Not implemented.** Every gate returns `executionAllowed:false`. No durable jobs, fills, reconciliation or performance data.                                                                                                                |
 
-Detailed records: `docs/BUILD_STATUS.md` (evidence log), `docs/NEXT_STEPS.md`, `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`, `docs/SMART_ACCOUNT_COMPATIBILITY.md`, `docs/CONFIDENTIAL_EXECUTION_FOUNDATION.md`, `docs/SECURITY_AND_UPGRADES.md`, `docs/AGENT_ACCOUNTS.md`.
+Detailed records: `docs/BUILD_STATUS.md` (evidence log), `docs/NEXT_STEPS.md`, `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`, `docs/SMART_ACCOUNT_COMPATIBILITY.md`, `docs/SMART_ACCOUNT_ARCHITECTURE.md`, `docs/CONFIDENTIAL_EXECUTION_FOUNDATION.md`, `docs/SECURITY_AND_UPGRADES.md`, `docs/AGENT_ACCOUNTS.md`.
 
 ## Roadmap (dependency order)
 
 1. **Smart-account compatibility (read-only)** — ERC-7579 assessor, canonical interface cross-checks, local Anvil fixtures, negative cases. _Done 2026-11-27; see `docs/SMART_ACCOUNT_COMPATIBILITY.md`._
-2. **Smart-account and session architecture** — select one maintained, audited stack; owner-controlled permissions, on-chain spend limits, selector/target restrictions, expiry, revocation, recovery. Anvil first; no module install or permission grant without explicit owner authorization.
+2. **Smart-account and session architecture** — _in progress; first slice in `docs/SMART_ACCOUNT_ARCHITECTURE.md`._ select one maintained, audited stack; owner-controlled permissions, on-chain spend limits, selector/target restrictions, expiry, revocation, recovery. Anvil first; no module install or permission grant without explicit owner authorization.
 3. **Real confidential execution** — prove a Zama Sepolia order→settlement lifecycle for one supported pair on a verified venue, including encryption, ACL, liquidity, settlement, failure/refund. Never fabricate missing functionality.
 4. **Agent orchestration** — research → proposal → policy evaluation → explicit owner approval → execution, with research and execution permissions kept separate.
 5. **Durable execution and accounting** — jobs, orders/fills, event reconciliation, finality, refunds, positions, verified analytics.
@@ -50,7 +50,7 @@ Detailed records: `docs/BUILD_STATUS.md` (evidence log), `docs/NEXT_STEPS.md`, `
 - `packages/shared` — schemas, registries, policy gates, market research, assessors, generated ABIs (`pnpm contracts:build`; never hand-edit `generated/`).
 - `packages/sdk` — block-consistent vault reads/simulation. `packages/zama` — official wrapper verification/SDK facade.
 - `services/mcp-server` — stdio MCP. `services/api` — public metadata only.
-- `contracts` — Foundry (no forge-std; tests use a minimal cheatcode interface). `contracts/test/helpers` holds Anvil-only fixtures.
+- `contracts` — Foundry; `contracts/src/accounts/` is the Anvil-only account prototype (no forge-std; tests use a minimal cheatcode interface). `contracts/test/helpers` holds Anvil-only fixtures.
 - `infra/migrations` — explicit PostgreSQL migrations. `infra/zama-registry` — byte-identical upstream snapshot (do not reformat).
 
 ## Commands
@@ -73,4 +73,4 @@ Foundry may be missing. Fetch the pinned release `v1.8.1` from `github.com/found
 
 ## Workflow
 
-Focused, reviewable commits with verified tests. Use the branch the session designates (`AGENTS.md` says `main`; cloud sessions may be given a `claude/*` branch — push there and do not open PRs unless asked). Never force-push. Record what was actually run, what failed and what was skipped.
+Focused, reviewable commits with verified tests. The owner has directed work to be committed and pushed to `main` (consistent with `AGENTS.md`). Never force-push. Record what was actually run, what failed and what was skipped.

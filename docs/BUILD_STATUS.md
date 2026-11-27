@@ -292,3 +292,18 @@ Audit baseline: `main` = `b7ab030`, GitHub run `43455300868` green; no open pull
 - `pnpm typecheck` (6 workspaces + tools), `pnpm lint`, `pnpm format:check` passed.
 - **Skipped in this session:** `pnpm build`, `pnpm test:browser`, Postgres-backed `test:agent-accounts`/`test:profile-mcp`, Slither. No web, auth, MCP or `contracts/src` code changed; CI runs these on push and its result must be checked independently.
 - **Not done:** no public-chain account was assessed; no smart-account stack selected; no module installed; no signature, UserOperation, approval, deployment or Sepolia/mainnet transaction.
+
+## November 27, 2026 — Milestone 2 first slice: prototype account and scoped session executor (Anvil-only)
+
+- Milestone 1 was fast-forwarded to `main` at the owner's request (`558ed1e`); GitHub run `46034979850` **passed** (verify + security jobs, including browser, Postgres auth/MCP and Slither).
+- Added `contracts/src/accounts/PrigenAccountPrototype.sol` (OZ 5.6.1 `AccountERC7579Hooked` + `SignerECDSA`, delegatecall refused) and `contracts/src/accounts/SessionCallExecutor.sol` (owner-configured, agent-bound, single-selector, zero-value, expiring, call-capped, revocable executor; token/approval/ERC-7984/module/upgrade selectors forbidden). Neither is in the generated production ABIs, deployed publicly, or connected to MCP/web.
+- Stack evidence: OpenZeppelin v5.4/v5.6 audit PDFs downloaded and their scope trees checked for the account files (first-party audits; 5.6.1 delta unreviewed). ERC-7984 selectors were derived from the pinned `@zama-fhe/sdk` ABI; one guessed `setOperator` selector was caught as wrong by `cast sig` and corrected before commit.
+- `scripts/security-scan.py` now scans both new contracts, with exact triage (executor session timestamps; one OZ virtual-dispatch dead-code false positive). An unused-return finding was fixed in code rather than triaged.
+
+### Verification (run in this session)
+
+- Foundry **52/52** across 6 suites (20 new session tests including two 512-run fuzzes); `forge fmt --check` clean.
+- Fresh Anvil + `pnpm local:deploy` + `LOCAL_INTEGRATION=1 pnpm test`: **125/125 in 22 files**, including a new live session-lifecycle test (EntryPoint impersonated via `anvil_impersonateAccount`, no keys).
+- `pnpm typecheck`, `pnpm lint`, `pnpm format:check` passed. Slither 0.11.6 via `scripts/security-scan.py` passed on all five targets (local run used the official solc 0.8.30 binary through `PRIGENFI_SLITHER_SOLC`).
+- **Skipped locally:** `pnpm build`, `pnpm test:browser`, Postgres `test:agent-accounts`/`test:profile-mcp` (no web/auth code changed; CI runs them).
+- **Not done:** no real EntryPoint/bundler UserOperation, no recovery, no encrypted budget, no venue, no Sepolia/mainnet deployment or transaction, no independent audit.

@@ -142,3 +142,7 @@ Every hosted MCP research bearer records issuer type and the source session hash
 ## Read-only ERC-7579 assessment — November 27, 2026
 
 `packages/shared/src/erc7579-assessment.ts` reads an account's ERC-7579 self-report through a minimal `Erc7579ChainReader` (chain ID, block, code, storage, sender-less `eth_call`) pinned to one block, and `scripts/assess-smart-account.ts` exposes it to operators. It sits beside, not inside, the vault, MCP and auth paths and holds no signer. Future account integration (Milestone 2) will add an audited stack and session module whose on-chain enforcement is tested independently; the assessor is only the identity/compatibility preflight. See `docs/SMART_ACCOUNT_COMPATIBILITY.md`.
+
+## Prototype smart account and session executor — November 27, 2026
+
+`contracts/src/accounts/` holds an Anvil-only `PrigenAccountPrototype` (OZ `AccountERC7579Hooked` + ECDSA owner, no delegatecall) and a `SessionCallExecutor` executor module. Owner authority flows EntryPoint → account → module configuration; agent authority is only `executeSession`, which makes one zero-value, single-selector call from the account inside an expiring, call-capped, revocable session. These contracts are separate from `AgentVault`, are not in generated ABIs and are not wired to MCP or the web app. See `docs/SMART_ACCOUNT_ARCHITECTURE.md`.
