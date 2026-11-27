@@ -1,5 +1,14 @@
 # Next engineering milestones
 
+## Current priority order — November 27, 2026
+
+Milestone 1 (read-only ERC-7579 compatibility assessment) is complete; see `docs/SMART_ACCOUNT_COMPATIBILITY.md`. Older sections below are preserved as history and partly superseded.
+
+1. **Milestone 2 — smart-account and session architecture.** Shortlist maintained ERC-7579 stacks with hook or session-policy support (the OZ 5.6.1 reference account has no hooks and allows delegatecall). For the chosen stack: reproduce source to runtime code hash, read audit scope against the exact version, and record a decision before adding any entry to `REVIEWED_ERC7579_IMPLEMENTATIONS`. Build on Anvil first: owner-only module install, a session/permission module enforcing target, selector, value, per-period limit and expiry, immediate revocation, delegatecall denial and recovery, each with on-chain negative tests. No module install or grant on a public chain without explicit owner authorization.
+2. **Assess real Sepolia accounts read-only** with `pnpm assess:account` once an operator RPC is configured, recording sanitized evidence. Self-report remains untrusted.
+3. **Milestone 3 — confidential execution proof** (requires the founder-provisioned Sepolia test wallet and verified ConfidentialSwap RFQ ABI/pairs; see `CONFIDENTIAL_EXECUTION_FOUNDATION.md`). Run in parallel with Milestone 2 only for read-only discovery.
+4. Milestones 4–6 (orchestration, durable execution/accounting, launch readiness) depend on 2 and 3.
+
 ## 1. Verify the real Sepolia confidential lifecycle
 
 Founder provisions a dedicated PrigenFi test-only injected wallet with limited faucet ETH; do not share/export its key. Use current verified wrapper registry, mint a small mock amount, shield with exact approval, authorize a scoped decryption permit, decrypt locally, confidentially transfer to a second test address, and verify SDK receipts plus receiver access. Exercise unshield proof/finalization, service failure, unauthorized decryption and wallet/network switching. Add a reviewed nonsecret pending-unshield recovery journal across reloads. Preserve transaction/block/version evidence without plaintext balances or credentials. No public PrigenFi contract deployment is necessary to test existing official wrappers.

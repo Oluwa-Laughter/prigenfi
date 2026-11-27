@@ -12,7 +12,8 @@
     "./confidential-session-review": "./src/confidential-session-review.ts",
     "./market-research": "./src/market-research.ts",
     "./market-integrity": "./src/market-integrity.ts",
-    "./agent-research-scope": "./src/agent-research-scope.ts"
+    "./agent-research-scope": "./src/agent-research-scope.ts",
+    "./erc7579-assessment": "./src/erc7579-assessment.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
