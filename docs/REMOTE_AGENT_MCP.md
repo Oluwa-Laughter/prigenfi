@@ -2,7 +2,7 @@
 
 PrigenFi supports two **different** MCP connections:
 
-- **Existing local stdio MCP** (`pnpm mcp`): runs on a developer's device, uses the nine general public-data research/availability tools, does not require wallet login, and **never** grants capital permissions. Codex already supports this integration. See [AGENT_CONNECTION.md](AGENT_CONNECTION.md).
+- **Existing local stdio MCP** (`pnpm mcp`): runs on a developer's device, uses the ten general research, availability and permission-preview tools, does not require wallet login, and **never** grants capital permissions. Codex already supports this integration. See [AGENT_CONNECTION.md](AGENT_CONNECTION.md).
 - **Wallet-scoped Streamable HTTP MCP** (`POST /api/mcp`): opt-in, server-side access for an agent profile created and owned through authenticated PrigenFi wallet sign-in. Each request is reauthorized from PostgreSQL and the resulting tools enforce its saved network and market limits. **This is a service-token developer preview, NOT an OAuth 2.1 implementation.** No public production service should be enabled without dedicated operator review, HTTPS, monitored rate limits and proper OAuth authorization infrastructure.
 
 ## Operator provisioning

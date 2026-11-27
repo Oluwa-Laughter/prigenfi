@@ -13,7 +13,8 @@ This skill is **read-only guidance**. An MCP connection, prompt, encrypted balan
 2. Inspect `confidential_capabilities_get` or `confidential_assets_list` if the connected host exposes them. Only the PrigenFi product allowlist of unbacked Zama Sepolia **crypto** test wrappers applies. An underlying test token is not a redeemable asset or the corresponding mainnet token.
 3. Call `agent_execution_status`. A remotely connected research token (or public anonymous MCP endpoint) cannot access wallets, confidential state, signers or execution tools.
 4. If available on the local MCP host, run `confidential_route_check` and `agent_plan_evaluate` with the authorized research draft. Never invent a quote or make an unsupported token route appear executable.
-5. Report separately: verified token metadata, presence of a compatible venue, encrypted-input/ACL verification, independently verified final settlement, smart-account owner permission and reorg reconciliation. If any is missing, respond **execution unavailable**. Do not propose a public DEX fallback when privacy is required.
+5. If the owner asks about letting an agent act for their account, use `agent_session_permission_preview` if offered and show the owner its plain-language summary and any rejection reasons. It is a preview only: it never grants a permission, never returns a transaction to sign, and the underlying session module is an unaudited local prototype.
+6. Report separately: verified token metadata, presence of a compatible venue, encrypted-input/ACL verification, independently verified final settlement, smart-account owner permission and reorg reconciliation. If any is missing, respond **execution unavailable**. Do not propose a public DEX fallback when privacy is required.
 
 ## Safety requirements
 

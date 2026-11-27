@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { startEphemeralAnvil } from "./helpers/ephemeral-anvil";
 import {
   type Abi,
   type Address,
@@ -18,7 +19,10 @@ import {
   erc7579ReaderFromClient,
 } from "../packages/shared/src/erc7579-assessment";
 
-const RPC = process.env.LOCAL_RPC_URL ?? "http://127.0.0.1:8545";
+// Private throwaway chain: impersonation and timestamp control here must not
+// disturb the shared Anvil used by the vault/MCP integration tests.
+let RPC = "";
+let node: Awaited<ReturnType<typeof startEphemeralAnvil>> | undefined;
 const FIXTURES = "contracts/out/Erc7579Fixtures.sol";
 
 async function artifact(name: string): Promise<{ abi: Abi; bytecode: Hex }> {
@@ -31,6 +35,14 @@ async function artifact(name: string): Promise<{ abi: Abi; bytecode: Hex }> {
 describe.skipIf(process.env.LOCAL_INTEGRATION !== "1")(
   "ERC-7579 assessment against live Anvil fixtures",
   () => {
+    beforeAll(async () => {
+      node = await startEphemeralAnvil();
+      RPC = node.url;
+    }, 30_000);
+    afterAll(async () => {
+      await node?.stop();
+    });
+
     it("classifies real deployed bytecode without sending any account transaction", async () => {
       if (!["127.0.0.1", "localhost"].includes(new URL(RPC).hostname))
         throw new Error("Local RPC required");

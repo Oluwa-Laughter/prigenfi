@@ -13,7 +13,8 @@
     "./market-research": "./src/market-research.ts",
     "./market-integrity": "./src/market-integrity.ts",
     "./agent-research-scope": "./src/agent-research-scope.ts",
-    "./erc7579-assessment": "./src/erc7579-assessment.ts"
+    "./erc7579-assessment": "./src/erc7579-assessment.ts",
+    "./session-permission": "./src/session-permission.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

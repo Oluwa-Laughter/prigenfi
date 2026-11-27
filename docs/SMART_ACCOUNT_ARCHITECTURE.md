@@ -49,6 +49,12 @@ ERC-7579 executor module. Per account (keyed by `msg.sender`, so only an owner-a
 - `tests/session-executor-local.test.ts` (live Anvil): deploy → Milestone 1 assessor reports `self-reported-erc7579`, hook support, no delegatecall → outsider install rejected → owner install and grant (EntryPoint address impersonated via `anvil_impersonateAccount`; no key) → agent call from the account → wrong caller, wrong selector, forbidden `approve` grant, and over-limit all rejected on-chain → revoke-all immediately deactivates.
 - Slither 0.11.6, all detectors: the account has only a dead-code false positive on `_rawSignatureValidation` (reached through OZ virtual dispatch, proven by the signature test); the executor has only Low timestamp findings for its session windows. Both are added to `scripts/security-scan.py` with file- and function-exact triage.
 
+## Owner-facing permission preview (2026-11-27)
+
+`packages/shared/src/session-permission.ts` mirrors `grantSession` exactly (same limits, same deny-list, same check order) and returns a plain-language summary, rejection reasons and the fixed blockers, with `canSign/canGrantSession/canInstallModule/executionAllowed: false`. It is exposed read-only as the local MCP tool `agent_session_permission_preview`: an agent can propose a session and the owner reviews what it would allow. It accepts no calldata, amount, key or signature fields and returns no transaction payload.
+
+Parity is enforced three ways: `tests/session-permission.test.ts` parses the Solidity source for the selector list and limits; `tests/session-permission-local.test.ts` sends 90 seeded grants (≈⅓ valid, ≈½ single-dimension invalid, rest random) to the deployed executor at exact block timestamps and requires identical accept/reject verdicts **and** identical first revert reasons; a deliberate mutation (call limit 100→99) was confirmed to fail both tests. Two checks need chain state and are always reported as remaining: target has code, executor installed.
+
 ## Next steps in Milestone 2
 
 1. Review the OZ 5.6.0→5.6.1 diff for account files; seek an independent review of this composition and module before any Sepolia deployment.

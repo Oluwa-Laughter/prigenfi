@@ -50,7 +50,9 @@ An owner has **not** signed an authenticated session or authorized fund movement
 
 ### Connect an existing AI host
 
-Run `pnpm agent:connect --check` to verify the actual local MCP stdio handshake, **nine consumer research tools**, the host-facing agent prompt and a locked execution boundary. Use `pnpm agent:connect --write` to generate nonsecret Codex and Claude Desktop configuration fragments under ignored `.local/agent-connection/`. You can also print them with `--print codex` or `--print claude`. **The checker does not register or authenticate a remote/user agent**. The consumer default `pnpm mcp` uses a dedicated research-only server that cannot enable developer vault tools from inherited environment settings; local Anvil simulations require explicit `pnpm mcp:dev`. The `/agents/connect` page and [agent connection documentation](docs/AGENT_CONNECTION.md) explain the actual host setup.
+Operators: see [docs/LOCAL_OPERATOR_RUNBOOK.md](docs/LOCAL_OPERATOR_RUNBOOK.md) for configuration and owner-only actions, `pnpm env:check` for a value-free readiness report, and [docs/CLAUDE_CLI_PROMPTS.md](docs/CLAUDE_CLI_PROMPTS.md) for local Claude Code prompts.
+
+Run `pnpm agent:connect --check` to verify the actual local MCP stdio handshake, **ten consumer research and permission-preview tools**, the host-facing agent prompt and a locked execution boundary. Use `pnpm agent:connect --write` to generate nonsecret Codex and Claude Desktop configuration fragments under ignored `.local/agent-connection/`. You can also print them with `--print codex` or `--print claude`. **The checker does not register or authenticate a remote/user agent**. The consumer default `pnpm mcp` uses a dedicated research-only server that cannot enable developer vault tools from inherited environment settings; local Anvil simulations require explicit `pnpm mcp:dev`. The `/agents/connect` page and [agent connection documentation](docs/AGENT_CONNECTION.md) explain the actual host setup.
 
 ## Wallet-authenticated agent research accounts
 

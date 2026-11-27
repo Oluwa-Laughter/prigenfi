@@ -15,18 +15,19 @@ pnpm mcp:dev  # developer-only local Anvil vault; NOT the normal agent server
 
 `pnpm mcp:dev` is a **separate local Anvil-only** entry point; developer wallet metadata and ERC-20 simulation tools require an explicitly configured test vault on chain 31337. No host can change startup-configured scope via tool arguments.
 
-| Default MCP tool                | Real capability                                                                                                                          |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `confidential_assets_list`      | Published Zama Sepolia test-wrapper metadata, never private balances                                                                     |
-| `confidential_capabilities_get` | Supported wallet-token capabilities and explicitly disabled confidential trading                                                         |
-| `confidential_route_check`      | Validate a typed private-only research draft; NEVER authorize execution                                                                  |
-| `agent_plan_evaluate`           | Validate a model's structured Sepolia wrapper research plan, amounts/slippage scope and expiry without granting authority                |
-| `agent_market_research_check`   | Validate a public EVM research step against caller-declared network/market/expiry and safe token query; no owner authentication          |
-| `market_search`                 | Real, public DEX Screener research for allowed EVM chains; chain-scoped contract address lookup or provider-limited global symbol search |
-| `market_pair_lookup`            | Exact public pool lookup on a selected chain, not an executable quote                                                                    |
-| `agent_execution_status`        | Explicit `NO_VERIFIED_TRADING_VENUE` / `privateExecution:false` response; never fake a fill                                              |
+| Default MCP tool                   | Real capability                                                                                                                                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `confidential_assets_list`         | Published Zama Sepolia test-wrapper metadata, never private balances                                                                                                                                 |
+| `confidential_capabilities_get`    | Supported wallet-token capabilities and explicitly disabled confidential trading                                                                                                                     |
+| `confidential_route_check`         | Validate a typed private-only research draft; NEVER authorize execution                                                                                                                              |
+| `agent_plan_evaluate`              | Validate a model's structured Sepolia wrapper research plan, amounts/slippage scope and expiry without granting authority                                                                            |
+| `agent_market_research_check`      | Validate a public EVM research step against caller-declared network/market/expiry and safe token query; no owner authentication                                                                      |
+| `market_search`                    | Real, public DEX Screener research for allowed EVM chains; chain-scoped contract address lookup or provider-limited global symbol search                                                             |
+| `market_pair_lookup`               | Exact public pool lookup on a selected chain, not an executable quote                                                                                                                                |
+| `agent_session_permission_preview` | Owner-facing preview of a scoped agent session against the exact `SessionCallExecutor` grant rules; rejection reasons and plain-language summary only. No calldata, signing, module install or grant |
+| `agent_execution_status`           | Explicit `NO_VERIFIED_TRADING_VENUE` / `privateExecution:false` response; never fake a fill                                                                                                          |
 
-The standard default MCP server advertises these **nine tools** and one prompt, `interpret_private_defi_goal`. The prompt is for a **connected AI host's own model** to interpret a voluntarily shared user goal. It does not load an LLM or a model key within PrigenFi. The host can see the user's goal, and public market requests can expose token symbols/addresses to DEX Screener. Do not transmit confidential user data to an untrusted host or public provider.
+The standard default MCP server advertises these **ten tools** and one prompt, `interpret_private_defi_goal`. The prompt is for a **connected AI host's own model** to interpret a voluntarily shared user goal. It does not load an LLM or a model key within PrigenFi. The host can see the user's goal, and public market requests can expose token symbols/addresses to DEX Screener. Do not transmit confidential user data to an untrusted host or public provider.
 
 Only when explicitly configured with a **local Anvil chain-31337 vault client** does the server additionally register the following developer-only tools:
 
@@ -43,7 +44,7 @@ Only when explicitly configured with a **local Anvil chain-31337 vault client** 
 
 All tool inputs have strict Zod schemas. Positive uint128 amounts and uint256 nonces are decimal strings. Address/chain scope cannot be changed through proposals. Idempotency keys are UUIDs. Max 100 proposals per connection; restart loses them. Errors do not contain RPC credentials, private values or raw exception messages. No signing, private decryption, arbitrary calls, raw execution or operator tools exist.
 
-`tests/mcp.test.ts` launches an external SDK client, discovers nine default tools and the host-interpretation prompt, checks validated public scope, metadata and denied execution. In explicit Anvil mode it verifies the developer tools and on-chain vault simulation without claiming trading. With LOCAL_INTEGRATION=1 it reads actual Anvil policy, simulates and proposes an allowed mock transfer, rejects over-budget proposals and reads status. No LLM or fabricated market data is needed.
+`tests/mcp.test.ts` launches an external SDK client, discovers ten default tools and the host-interpretation prompt, checks validated public scope, metadata and denied execution. In explicit Anvil mode it verifies the developer tools and on-chain vault simulation without claiming trading. With LOCAL_INTEGRATION=1 it reads actual Anvil policy, simulates and proposes an allowed mock transfer, rejects over-budget proposals and reads status. No LLM or fabricated market data is needed.
 
 Remote Streamable HTTP and OAuth are not implemented. Do not expose this process through an HTTP shim. Future remote work must validate issuer, audience, resource indicator, expiry and scopes; prevent token passthrough; bind user/agent/tenant on the server; and keep OAuth authorization separate from on-chain spending permissions. External metadata/tool text must be treated as untrusted data and cannot populate execution calldata or expand policy.
 

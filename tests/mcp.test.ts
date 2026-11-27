@@ -8,6 +8,7 @@ const names = [
   "confidential_capabilities_get",
   "confidential_route_check",
   "agent_plan_evaluate",
+  "agent_session_permission_preview",
   "agent_execution_status",
   "agent_market_research_check",
   "market_search",
@@ -96,6 +97,44 @@ it("external stdio client discovers tools and reads permitted metadata", async (
       JSON.parse((route.content as { text: string }[])[0].text)
         .executionAllowed,
     ).toBe(false);
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const sessionBase = {
+      chainId: 31337,
+      account: "0x1000000000000000000000000000000000000001",
+      executor: "0x2000000000000000000000000000000000000002",
+      agent: "0x3000000000000000000000000000000000000003",
+      target: "0x4000000000000000000000000000000000000004",
+      selector: "0x1234abcd",
+      validAfter: nowSeconds,
+      validUntil: nowSeconds + 3600,
+      maxCalls: 2,
+    };
+    const sessionOk = await client.callTool({
+      name: "agent_session_permission_preview",
+      arguments: sessionBase,
+    });
+    const okText = (sessionOk.content as { text: string }[])[0].text;
+    const okResult = JSON.parse(okText);
+    expect(okResult.status).toBe("reviewable");
+    expect(okResult.canSign).toBe(false);
+    expect(okResult.canGrantSession).toBe(false);
+    // No transaction payload of any kind is returned to the agent host.
+    expect(okText).not.toMatch(
+      /"(calldata|callData|data|userOperation|signature|transaction)"\s*:/,
+    );
+    expect(okText).not.toContain("0x9517e29f");
+    const sessionBad = await client.callTool({
+      name: "agent_session_permission_preview",
+      arguments: { ...sessionBase, selector: "0x095ea7b3" },
+    });
+    expect(
+      JSON.parse((sessionBad.content as { text: string }[])[0].text).rejections,
+    ).toContain("FORBIDDEN_SELECTOR");
+    const sessionSmuggle = await client.callTool({
+      name: "agent_session_permission_preview",
+      arguments: { ...sessionBase, calldata: "0xdeadbeef" },
+    });
+    expect(sessionSmuggle.isError).toBe(true);
     const validatedPlan = await client.callTool({
       name: "agent_plan_evaluate",
       arguments: {

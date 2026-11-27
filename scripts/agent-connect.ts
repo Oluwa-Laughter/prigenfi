@@ -16,6 +16,7 @@ const expected = [
   "confidential_capabilities_get",
   "confidential_route_check",
   "agent_plan_evaluate",
+  "agent_session_permission_preview",
   "agent_market_research_check",
   "market_search",
   "market_pair_lookup",

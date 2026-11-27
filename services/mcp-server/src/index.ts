@@ -21,6 +21,10 @@ import {
 } from "@prigenfi/shared/agent-research-scope";
 import { assessMarketIntegrity } from "@prigenfi/shared/market-integrity";
 import {
+  previewSessionPermission,
+  sessionPermissionRequestSchema,
+} from "@prigenfi/shared/session-permission";
+import {
   marketSearchSchema,
   marketPairLookupSchema,
   marketNetworkSchema,
@@ -149,6 +153,25 @@ export function createMcpServer(client?: PrigenFiClient) {
       },
     },
     (input) => safe(() => evaluateAgentResearchPlan(input)),
+  );
+  // An agent may PROPOSE a narrowly scoped session; the owner reviews the
+  // plain-language preview. Nothing is signed, encoded, installed or granted.
+  server.registerTool(
+    "agent_session_permission_preview",
+    {
+      description:
+        "Preview, for the account OWNER to review, a narrowly scoped agent session (one target, one function, call cap, expiry) against the exact rules of PrigenFi's prototype SessionCallExecutor. Returns would-be-rejected reasons and a plain-language summary. Never signs, never returns calldata, never installs modules or grants permission; token-moving and approval functions are always refused. Prototype is Anvil-only and unaudited.",
+      inputSchema: sessionPermissionRequestSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        openWorldHint: false,
+      },
+    },
+    (input) =>
+      safe(() =>
+        previewSessionPermission(input, Math.floor(Date.now() / 1000)),
+      ),
   );
   // The AI reasoning happens in the user's MCP host, NOT through hardcoded
   // keyword matching or a model impersonated by the server. The host sees the

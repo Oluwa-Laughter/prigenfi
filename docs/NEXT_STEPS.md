@@ -5,9 +5,11 @@
 Milestone 1 (read-only ERC-7579 compatibility assessment) is complete; see `docs/SMART_ACCOUNT_COMPATIBILITY.md`. Older sections below are preserved as history and partly superseded.
 
 1. **Milestone 2 — smart-account and session architecture (in progress).** First slice done: `docs/SMART_ACCOUNT_ARCHITECTURE.md` (OZ 5.6.1 hooked account prototype + scoped session executor, Anvil-only). Remaining: OZ 5.6.0→5.6.1 diff review, a real EntryPoint v0.8 UserOperation flow on Anvil, recovery/rotation, an account-wide policy hook, and independent review before any Sepolia deployment. Original plan: Shortlist maintained ERC-7579 stacks with hook or session-policy support (the OZ 5.6.1 reference account has no hooks and allows delegatecall). For the chosen stack: reproduce source to runtime code hash, read audit scope against the exact version, and record a decision before adding any entry to `REVIEWED_ERC7579_IMPLEMENTATIONS`. Build on Anvil first: owner-only module install, a session/permission module enforcing target, selector, value, per-period limit and expiry, immediate revocation, delegatecall denial and recovery, each with on-chain negative tests. No module install or grant on a public chain without explicit owner authorization.
-2. **Assess real Sepolia accounts read-only** with `pnpm assess:account` once an operator RPC is configured, recording sanitized evidence. Self-report remains untrusted.
-3. **Milestone 3 — confidential execution proof** (requires the founder-provisioned Sepolia test wallet and verified ConfidentialSwap RFQ ABI/pairs; see `CONFIDENTIAL_EXECUTION_FOUNDATION.md`). Run in parallel with Milestone 2 only for read-only discovery.
-4. Milestones 4–6 (orchestration, durable execution/accounting, launch readiness) depend on 2 and 3.
+2. **Owner actions now unblocking the roadmap** (see `docs/LOCAL_OPERATOR_RUNBOOK.md` §6 and prompts in `docs/CLAUDE_CLI_PROMPTS.md`): provision the dedicated Sepolia test wallet and run the Zama lifecycle (prompt 4); refresh read-only Sepolia evidence (prompt 3); arrange independent review of `contracts/src/accounts/*`.
+3. **Product:** surface the owner permission preview in the `/agents` workspace (prompt 7), disabled grant control, full viewport browser tests.
+4. **Assess real Sepolia accounts read-only** with `pnpm assess:account` once an operator RPC is configured, recording sanitized evidence. Self-report remains untrusted.
+5. **Milestone 3 — confidential execution proof** (requires the founder-provisioned Sepolia test wallet and verified ConfidentialSwap RFQ ABI/pairs; see `CONFIDENTIAL_EXECUTION_FOUNDATION.md`). Run in parallel with Milestone 2 only for read-only discovery.
+6. Milestones 4–6 (orchestration, durable execution/accounting, launch readiness) depend on 2 and 3.
 
 ## 1. Verify the real Sepolia confidential lifecycle
 

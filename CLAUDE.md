@@ -14,7 +14,7 @@ Target journey: authenticate wallet → configure agent, assets, risk and privac
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Wallet auth                | Real SIWE (EIP-4361), EOA ECDSA recovery, ERC-1271 with live per-request revalidation, hashed HttpOnly sessions, PostgreSQL (`apps/web/src/app/api/auth/*`).                                                                                 |
 | Research backend           | Owner-scoped research profiles, revocable hosted MCP bearer keys, public-market watchlist (`/api/agents`, `/api/watchlist`, `/api/workspace/overview`). Migrations 0001–0005 in `infra/migrations`, operator-applied.                        |
-| MCP                        | Local stdio research server (`services/mcp-server/src/research-stdio.ts`), opt-in hosted owner-scoped and public research endpoints. **Read-only; no signing or execution tools.**                                                           |
+| MCP                        | Local stdio server (`services/mcp-server/src/research-stdio.ts`) with 10 tools incl. `agent_session_permission_preview`; opt-in hosted owner-scoped and public research endpoints. **Read-only; no signing or execution tools.**             |
 | Market research            | DEX Screener adapter in `packages/shared/src/market-research.ts` with source/timestamp; `assessMarketIntegrity()` is risk screening only.                                                                                                    |
 | Zama                       | `@zama-fhe/sdk`/`react-sdk` 3.7.1 shield/transfer/decrypt/unshield UI against official Sepolia test wrappers. **End-to-end lifecycle NOT verified** (no provisioned test wallet).                                                            |
 | Confidential venue         | Read-only code-identity checks of Zama's Sepolia ConfidentialSwap proxy (`verify:swap*`). **No RFQ ABI, pair, liquidity, order or settlement verified.**                                                                                     |
@@ -63,7 +63,10 @@ pnpm test:contracts               # Foundry (forge fmt --root contracts --check 
 anvil --silent & pnpm local:deploy && LOCAL_INTEGRATION=1 pnpm test
 pnpm build && pnpm test:browser   # after UI changes; viewports 320–1440px
 pnpm assess:account --chain 31337 --account 0x...
+pnpm env:check --file apps/web/.env.local   # status only, never values
 ```
+
+Operator setup, `.env` locations and owner-only actions: `docs/LOCAL_OPERATOR_RUNBOOK.md`. Ready-made local CLI prompts: `docs/CLAUDE_CLI_PROMPTS.md`.
 
 Postgres-backed auth/MCP integration: see `.github/workflows/ci.yml` (`db:agents:migrate`, `test:agent-accounts`, `test:profile-mcp`).
 
